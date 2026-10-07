@@ -72,7 +72,42 @@ async function go(){
 /* ---- i18n: kaynak metinler Türkçe, İngilizce görünüm çeviri katmanıyla gelir ---- */
 let LANG='tr';
 const pref=()=>{let l;try{l=localStorage.getItem('lang')}catch(_){}return l||((navigator.language||'').startsWith('tr')?'tr':'en')};
-const D=Object.fromEntries(`Bebeğin adını yazın=>Please enter the baby's name
+const D=Object.fromEntries(`Gelen ürün önerileri=>Product suggestions received
+Henüz öneri yok. Sayfanızı açan misafirler "Ürün öner" ile ekleyebilir.=>No suggestions yet. Guests can add one with "Suggest an item".
+Listeye ekle=>Add to list
+bağlantı=>link
+Toplu ekle ve Amazon istek listesi=>Bulk add and Amazon wish list
+Hızlı başlangıç: hazır bir bebek listesiyle başlayın, sonra düzenleyin.=>Quick start: begin with a ready-made baby list, then edit it.
+Örnek listeyi ekle=>Add the sample list
+Listeye aktar=>Import to list
+Sayfayı aileye devret=>Hand the page over to the family
+Ailenin e-posta adresi=>The family's email address
+Sayfayı devret=>Hand over the page
+E-posta adresini yazın=>Enter the email address
+Eklenecek ürün bulunamadı=>No items found to add
+Aileye devret=>Hand over to family
+Sayfa devredildi.=>The page was handed over.
+Sayfa bu hesaba devredilsin mi?=>Hand the page over to this account?
+Sayfa bu hesaba devredilsin mi? Devirden sonra sayfayı siz yönetemezsiniz.=>Hand the page over to this account? You will no longer be able to manage it.
+Ailenin kayıtlı e-posta adresi=>The family's registered email address
+Bu e-postayla kayıtlı hesap bulunamadı. Aile önce Minilist'e kayıt olmalı.=>No account is registered with this email. The family must sign up for Minilist first.
+Bu hesabın zaten bir sayfası var.=>This account already has a page.
+Ebeveyn Girişi (Admin)=>Parent login (Admin)
+Bu sizin sayfanız ·=>This is your page ·
+Ürün ekle ve yönet=>Add items and manage
+Ürün öner=>Suggest an item
++ Ürün öner=>+ Suggest an item
+Ürün veya marka ara...=>Search items or brands...
+Tüm kategoriler=>All categories
+Aramanıza uygun ürün bulunamadı.=>No items match your search.
+Aileye bir ürün önerin. Öneri sadece ailenin panelinde görünür, aile isterse listeye ekler.=>Suggest an item to the family. Only the family sees it in their dashboard and they can add it to the list.
+Ürün bağlantısı (isteğe bağlı)=>Item link (optional)
+Lütfen ürün adı ve adınızı yazın=>Please enter the item name and your name
+Öneriniz iletildi!=>Your suggestion was sent!
+WhatsApp'ta paylaş=>Share on WhatsApp
+Bağlantıyı kopyala=>Copy link
+Kopyalandı=>Copied
+Bebeğin adını yazın=>Please enter the baby's name
 Kaçıncı haftada olduğunuzu seçin=>Please choose which week you are in
 Kaçıncı haftadasın?=>Which week are you in?
 Bebeğinizin boyutunu her hafta meyve veya sebzeyle kendiliğinden göstereceğiz.=>We will automatically show your baby's size as a fruit or vegetable each week.
@@ -82,15 +117,13 @@ Bebeğinizin yolculuğu, sevdiklerinizle birlikte=>Your baby's journey, shared w
 Kendi sayfanızı açın: doğuma geri sayım, hediye listesi ve ortak hediye katkısı tek bağlantıda.=>Open your own page: birth countdown, gift list and group gifts in a single link.
 Hediye listesi=>Gift list
 Aile ve arkadaşlar ürünü ayırır, aynı hediye iki kez alınmaz. Ortak hediyeye herkes katkıda bulunur.=>Family and friends reserve items so nothing is bought twice. Everyone can chip in on group gifts.
-Tahmin oyunu=>Guessing game
-Cinsiyet, isim, doğum günü ve kilo tahmini. Doğumdan sonra puanlı sıralama açıklanır.=>Guess the gender, name, birthday and weight. A scored ranking is revealed after the birth.
 Bebeğe mektup=>Letters to the baby
 Herkes bebeğe mektup bırakır. Mektuplar sizin seçtiğiniz günde açılır.=>Everyone leaves the baby a letter. Letters open on the day you choose.
 Hafta hafta notlar=>Weekly notes
 Gelişmeleri paylaşın, sevdikleriniz kalp bıraksın.=>Share updates and let your loved ones send hearts.
 Örnek sayfaya bak=>See an example page
 Ücretsiz=>Free
-Sayfa, 25 ürüne kadar liste, tahmin oyunu, mektup duvarı, güncellemeler, WhatsApp ve QR.=>Page, list of up to 25 items, guessing game, letter wall, updates, WhatsApp and QR.
+Sayfa, 25 ürüne kadar liste, ürün önerileri, mektup duvarı, güncellemeler, WhatsApp ve QR.=>Page, list of up to 25 items, product suggestions, letter wall, updates, WhatsApp and QR.
 Reklamsız sayfa, sınırsız ürün ve anı defteri PDF indirme. Tek seferlik ödeme.=>Ad-free page, unlimited items and memory book PDF download. One-time payment.
 Giriş yap veya sayfanı aç=>Log in or open your page
 E-posta=>Email
@@ -136,8 +169,6 @@ Paylaşıldı=>Shared
 Sayfa ayarları=>Page settings
 Sayfa dili / Page language=>Page language
 Mektupların açılacağı tarih=>Date letters open
-Bebek doğdu 🎉 (tahmin sonuçları herkese açılır)=>Baby is born 🎉 (guess results become public)
-Doğum bilgileri (tahmin puanı için):=>Birth details (for guess scoring):
 Doğum kilosu (gram)=>Birth weight (grams)
 Kaydet=>Save
 Kaydedildi=>Saved
@@ -168,12 +199,6 @@ Katkı tutarını girin=>Enter a contribution amount
 Teşekkürler!=>Thank you!
 Büyüme notları=>Growth notes
 Ebeveynler yakında ilk notu paylaşacak.=>The parents will share the first note soon.
-Tahmin sonuçları=>Guess results
-Cinsiyet, isim, doğum günü ve kiloyu tahmin et. Sonuçlar bebek doğunca açıklanır.=>Guess the gender, name, birthday and weight. Results are revealed after the birth.
-İsim tahmini=>Name guess
-Tahminimi gönder=>Submit my guess
-Tahmininiz kaydedildi!=>Your guess was saved!
-Bu oyunda tahmin yapan olmadı.=>Nobody made a guess.
 Henüz mektup yok.=>No letters yet.
 Mektubu bırak=>Leave letter
 Bebeğe bir mektup bırakın=>Leave a letter for the baby
@@ -231,7 +256,7 @@ const P=[[/^Hata: /,'Error: '],
 [/Çok fazla deneme, lütfen daha sonra tekrar deneyin/,'Too many attempts, please try again later'],
 [/^(.+) sayfası$/,'$1 page'],[/^((?:💙 )?)(.+) geldi!$/,'$1$2 is here!'],[/^(.+) geliyor!$/,'$1 is coming!'],
 [/^Ürünleriniz \((\d+)\)$/,'Your items ($1)'],[/^(\d+) adet kaldı$/,'$1 left'],[/^(\d+)\. hafta$/,'Week $1'],
-[/^(\d+) mektup, (\d+) tahmin geldi$/,'$1 letters, $2 guesses received'],[/^(.+) · (\d+) puan$/,'$1 · $2 pts'],
+[/^(\d+) mektup geldi$/,'$1 letters received'],[/^(\d+) ürün eklendi$/,'$1 items added'],[/^(\d+) ürün eklendi\. Ücretsiz planda 25 ürün sınırı var, kalanlar eklenmedi\.$/,'$1 items added. The free plan allows 25 items, the rest were not added.'],[/^Gelen ürün önerileri \((\d+)\)$/,'Product suggestions received ($1)'],
 [/ · (\d+) adet$/,' · $1 pcs'],[/ · Ortak hediye (\d+) TL$/,' · Group gift $1 TL'],
 [/^Mektuplar (.+) tarihinde açılacak\. Şimdi yaz, o güne kadar sır kalsın\.$/,'Letters open on $1. Write now and keep it secret until then.'],
 [/^Mektuplar ebeveynlerin seçtiği gün açılacak\. Şimdi yaz, o güne kadar sır kalsın\.$/,'Letters open on a day the parents choose. Write now and keep it secret until then.'],
@@ -257,11 +282,10 @@ function home(){
   <p>Kendi sayfanızı açın: doğuma geri sayım, hediye listesi ve ortak hediye katkısı tek bağlantıda.</p><button id="cta">Ücretsiz sayfanı aç</button></div></div>
   <div class="w"><div class="grid">
   <div class="card"><h3>Hediye listesi</h3><p class="mu">Aile ve arkadaşlar ürünü ayırır, aynı hediye iki kez alınmaz. Ortak hediyeye herkes katkıda bulunur.</p></div>
-  <div class="card"><h3>Tahmin oyunu</h3><p class="mu">Cinsiyet, isim, doğum günü ve kilo tahmini. Doğumdan sonra puanlı sıralama açıklanır.</p></div>
   <div class="card"><h3>Bebeğe mektup</h3><p class="mu">Herkes bebeğe mektup bırakır. Mektuplar sizin seçtiğiniz günde açılır.</p></div>
   <div class="card"><h3>Hafta hafta notlar</h3><p class="mu">Gelişmeleri paylaşın, sevdikleriniz kalp bıraksın.</p></div></div>
   <div class="r" id="demo" style="margin:16px 0;display:none"><a href="#/p/demo"><button class="g">Örnek sayfaya bak</button></a></div>
-  <div class="grid"><div class="card"><h3>Ücretsiz</h3><p class="mu">Sayfa, 25 ürüne kadar liste, tahmin oyunu, mektup duvarı, güncellemeler, WhatsApp ve QR.</p></div>
+  <div class="grid"><div class="card"><h3>Ücretsiz</h3><p class="mu">Sayfa, 25 ürüne kadar liste, ürün önerileri, mektup duvarı, güncellemeler, WhatsApp ve QR.</p></div>
   <div class="card"><h3>Pro${PAYMENTS?'':' <span class="pill">Yakında</span>'}</h3><p class="mu">Reklamsız sayfa, sınırsız ürün ve anı defteri PDF indirme. Tek seferlik ödeme.</p></div></div></div>
   <div class="w"><div class="card" style="max-width:380px;margin:auto"><h3>Giriş yap veya sayfanı aç</h3>
   <input id="em" type="email" placeholder="E-posta"><input id="pw" type="password" placeholder="Şifre (en az 6 karakter)">
@@ -275,6 +299,28 @@ function home(){
     if(err(error))return;if(data.session)nav('#/panel');else alert('E-postanıza gelen bağlantıyla hesabı doğrulayın, sonra giriş yapın.')};
 }
 
+
+const STARTER={tr:[['Park yatak ve anne yanı beşik','Bebek odası','Chicco Next2Me','Anne yanı olarak kullanılabilen, sallanabilir beşik.',1,0],['3\'ü 1 arada bebek arabası (oto koltuklu)','Taşıma ve seyahat','Hamilton X1 Plus','Ortak hediyeye uygundur, dilediğiniz tutarda katkıda bulunabilirsiniz.',1,15000],['Bebek bakım çantası ve alt açma seti','Bakım ve sağlık','Skip Hop Duo','Siyah veya bej tercihimiz.',1,0],['Cam biberon seti (0-6 ay)','Beslenme','Philips Avent','Yavaş akışlı cam biberon, 240 ml.',3,0],['Müslin örtü seti (4\'lü)','Tekstil','Liewood','%100 organik pamuk müslin örtü.',2,0]],
+en:[['Bassinet / co-sleeper','Nursery','Chicco Next2Me','Bedside bassinet that rocks.',1,0],['3-in-1 stroller travel system','Travel','Hamilton X1 Plus','Great as a group gift, chip in any amount.',1,15000],['Diaper bag and changing set','Care','Skip Hop Duo','We prefer black or beige.',1,0],['Glass bottle set (0-6 months)','Feeding','Philips Avent','Slow-flow glass bottle, 8 oz.',3,0],['Muslin swaddle set (4-pack)','Textiles','Liewood','100% organic cotton muslin.',2,0]]};
+const BKM=`(()=>{const r=[...document.querySelectorAll('[id^="itemName_"]')].map(a=>{const t=(a.textContent||a.title||'').trim().replace(/\\|/g,'-');const h=a.href?a.href.split('?')[0].split('/ref=')[0]:'';const li=a.closest('li,[data-itemid]');const im=li&&li.querySelector('img');return t+' | '+h+' | '+(im&&im.src||'')});if(!r.length){alert('Liste bulunamadı. Amazon istek listesi sayfasında olduğunuzdan ve ürünleri aşağı kaydırarak yüklediğinizden emin olun.');return}const s=r.join('\\n');(navigator.clipboard?navigator.clipboard.writeText(s):Promise.reject()).then(()=>alert(r.length+' ürün kopyalandı. Minilist panelinde yapıştırın.'),()=>prompt('Kopyalayıp Minilist panelinde yapıştırın',s))})()`;
+const isU=x=>/^https?:\/\//i.test(x||'');
+function nameFromUrl(l){try{const x=new URL(l),seg=x.pathname.split('/').filter(Boolean).find(t=>t.length>3&&!/^(dp|gp|product|hz|wishlist|ref|exec|obidos)$/i.test(t)&&/[a-z]/i.test(t));
+  const n=decodeURIComponent(seg||'').replace(/[-_+]+/g,' ').trim();return n&&!/^[A-Z0-9]{10}$/.test(n)?n:x.hostname.replace(/^www\./,'')+' ürünü'}catch(_){return l}}
+function parseLines(pg,txt){return txt.split('\n').map(x=>x.trim()).filter(Boolean).map(l=>{const q=l.split('|').map(x=>x.trim());let name=q[0],link='',img='';
+  if(isU(q[0])){link=q[0];name=nameFromUrl(link)}else{link=isU(q[1])?q[1]:'';img=isU(q[2])?q[2]:''}
+  try{if(link&&/amazon\./i.test(new URL(link).hostname)){const x=new URL(link);link=x.origin+x.pathname.replace(/\/ref=.*$/,'')}}catch(_){}
+  return {page_id:pg.id,name:name.slice(0,120),category:LANG==='en'?'Imported':'Aktarılan',quantity:1,target_amount:0,link,image:img,description:''}}).filter(r=>r.name)}
+async function addRows(pg,rows){
+  if(!rows.length)return alert('Eklenecek ürün bulunamadı');
+  const room=pg.plan==='free'?Math.max(0,25-(window.PRODS||[]).length):Infinity,cut=rows.length>room;
+  if(room===0)return alert('Ücretsiz planda en fazla 25 ürün eklenebilir. Pro ile sınırsız.');
+  const use=rows.slice(0,room),{error}=await sb.from('products').insert(use);if(err(error))return;
+  alert(cut?use.length+' ürün eklendi. Ücretsiz planda 25 ürün sınırı var, kalanlar eklenmedi.':use.length+' ürün eklendi');go()}
+window.sga=async id=>{const x=(window.SG||[]).find(r=>r.id===id),pg=window.PG;if(!x)return;
+  const {error}=await sb.from('products').insert({page_id:pg.id,name:x.name,category:LANG==='en'?'Suggested':'Öneri',quantity:1,target_amount:0,link:u(x.link)?x.link:'',description:(x.note?x.from_name+': '+x.note:x.from_name+(LANG==='en'?' suggested this':' önerdi'))});
+  if(err(error))return;await sb.from('product_suggestions').delete().eq('id',id);go()};
+async function tp(id){const m=prompt('Ailenin kayıtlı e-posta adresi');if(!m)return;if(!confirm('Sayfa bu hesaba devredilsin mi?'))return;
+  const {error}=await sb.rpc('transfer_page',{p_page:id,p_email:m.trim()});if(!err(error)){alert('Sayfa devredildi.');go()}}
 async function panel(user){
   const {data:pg}=await sb.from('pages').select('*').eq('owner',user.id).maybeSingle();
   if(!pg){
@@ -312,7 +358,7 @@ async function panel(user){
 const LG={
 privacy:{tr:`<h2>Gizlilik ve KVKK Aydınlatma Metni</h2><p class="mu">Son güncelleme: 7 Ekim 2026. Bu sayfa bilgilendirme amaçlıdır.</p>
 <h3>1. Veri sorumlusu</h3><p>Minilist (minilist.co) hizmetinin işletmecisi.</p>
-<h3>2. İşlenen veriler</h3><ul><li><b>Hesap:</b> e-posta adresi ve şifre (şifre geri döndürülemez biçimde, karma/hash olarak saklanır).</li><li><b>Aile sayfası:</b> bebeğin adı, anne ve baba adları, tahmini doğum tarihi, hediye listesi, haftalık notlar ve ebeveynin girdiği diğer bilgiler.</li><li><b>Misafirler:</b> hesap açmadan bıraktıkları ad, not, mektup, tahmin ve hediye ayırma/katkı bilgileri.</li><li><b>Teknik:</b> barındırma sağlayıcısının tuttuğu IP ve cihaz kayıtları; ayrıca kötüye kullanımı önlemek için misafir işlemlerinde IP adresi en fazla 1 gün tutulur.</li><li><b>Reklam:</b> ücretsiz planda reklam sağlayıcısının çerezleri.</li></ul>
+<h3>2. İşlenen veriler</h3><ul><li><b>Hesap:</b> e-posta adresi ve şifre (şifre geri döndürülemez biçimde, karma/hash olarak saklanır).</li><li><b>Aile sayfası:</b> bebeğin adı, anne ve baba adları, tahmini doğum tarihi, hediye listesi, haftalık notlar ve ebeveynin girdiği diğer bilgiler.</li><li><b>Misafirler:</b> hesap açmadan bıraktıkları ad, not, mektup, isim veya ürün önerisi ve hediye ayırma/katkı bilgileri.</li><li><b>Teknik:</b> barındırma sağlayıcısının tuttuğu IP ve cihaz kayıtları; ayrıca kötüye kullanımı önlemek için misafir işlemlerinde IP adresi en fazla 1 gün tutulur.</li><li><b>Reklam:</b> ücretsiz planda reklam sağlayıcısının çerezleri.</li></ul>
 <h3>3. Amaç ve hukuki sebep</h3><p>Hizmeti sunmak ve hesabı yönetmek (sözleşmenin ifası), güvenliği sağlamak, yasal yükümlülükleri yerine getirmek, ücretli plan ödemesini doğrulamak. Reklam çerezleri için ayrıca onayınız istenir.</p>
 <h3>4. Aktarım</h3><p>Verileriniz, hizmeti sunmak için çalıştığımız sağlayıcılara aktarılır ve bunlar yurt dışında olabilir: veritabanı ve kimlik doğrulama (Supabase), yayın ve barındırma (Vercel), ödeme (Polar, kart bilgilerinizi biz görmeyiz) ve ücretsiz planda reklam sağlayıcısı. Yurt dışı aktarımda KVKK'daki şartlara uyulur.</p>
 <h3>5. Saklama</h3><p>Verileriniz hesabınız açık kaldığı sürece saklanır. Silme talebiniz üzerine hesabınız ve sayfanız silinir.</p>
@@ -320,14 +366,14 @@ privacy:{tr:`<h2>Gizlilik ve KVKK Aydınlatma Metni</h2><p class="mu">Son günce
 <h3>7. Önemli: sayfanız herkese açıktır</h3><p>Aile sayfası, bağlantıyı bilen herkes tarafından görülebilir. Bağlantıyı yalnızca güvendiğiniz kişilerle paylaşın ve sağlık gibi hassas bilgileri girmeyin. Bebeğe ait bilgileri ebeveyn olarak siz girersiniz.</p>`,
 en:`<h2>Privacy and Data Protection Notice</h2><p class="mu">Last updated: October 7, 2026. This page is for information purposes.</p>
 <h3>1. Data controller</h3><p>The operator of the Minilist service (minilist.co).</p>
-<h3>2. Data we process</h3><ul><li><b>Account:</b> email address and password (the password is stored as a one-way hash).</li><li><b>Family page:</b> baby's name, parents' names, due date, gift list, weekly notes and other information entered by the parent.</li><li><b>Guests:</b> the name, note, letter, guess and gift reservation/contribution details they leave without creating an account.</li><li><b>Technical:</b> IP and device logs kept by our hosting provider; to prevent abuse, the IP address of guest actions is also kept for at most 1 day.</li><li><b>Advertising:</b> cookies from the ad provider on the free plan.</li></ul>
+<h3>2. Data we process</h3><ul><li><b>Account:</b> email address and password (the password is stored as a one-way hash).</li><li><b>Family page:</b> baby's name, parents' names, due date, gift list, weekly notes and other information entered by the parent.</li><li><b>Guests:</b> the name, note, letter, name or product suggestion and gift reservation/contribution details they leave without creating an account.</li><li><b>Technical:</b> IP and device logs kept by our hosting provider; to prevent abuse, the IP address of guest actions is also kept for at most 1 day.</li><li><b>Advertising:</b> cookies from the ad provider on the free plan.</li></ul>
 <h3>3. Purpose and legal basis</h3><p>To provide the service and manage your account (performance of a contract), keep it secure, meet legal obligations and verify payment for the paid plan. We ask for your consent for advertising cookies.</p>
 <h3>4. Sharing and transfers</h3><p>Your data is shared with providers we use to run the service, which may be located abroad: database and authentication (Supabase), hosting and delivery (Vercel), payments (Polar; we never see your card details) and, on the free plan, the ad provider. Cross-border transfers follow applicable law.</p>
 <h3>5. Retention</h3><p>We keep your data while your account is open. On your deletion request we delete your account and page.</p>
 <h3>6. Your rights</h3><p>You can ask whether we process your data, request access, correction or deletion, object to processing and claim compensation for damage, as provided by the Turkish Personal Data Protection Law (KVKK, Art. 11) and other applicable law. Contact channels will be published on this page soon.</p>
 <h3>7. Important: your page is public</h3><p>A family page can be viewed by anyone who has the link. Share the link only with people you trust and do not enter sensitive information such as health details. You enter information about the baby as a parent.</p>`},
 terms:{tr:`<h2>Kullanım Şartları</h2><p class="mu">Son güncelleme: 7 Ekim 2026. Bu sayfa bilgilendirme amaçlıdır.</p>
-<h3>1. Hizmet</h3><p>Minilist, ailelerin hamilelikten itibaren hediye listesi, tahmin oyunu, mektup ve güncellemelerle çevrelerini sürece katmasını sağlar. Hizmeti kullanarak bu şartları kabul edersiniz.</p>
+<h3>1. Hizmet</h3><p>Minilist, ailelerin hamilelikten itibaren hediye listesi, mektup ve güncellemelerle çevrelerini sürece katmasını sağlar. Hizmeti kullanarak bu şartları kabul edersiniz.</p>
 <h3>2. Hesap</h3><p>Hesap bilgilerinizin doğruluğundan ve güvenliğinden siz sorumlusunuz. Bir hesap için bir aile sayfası açılabilir.</p>
 <h3>3. İçerik</h3><p>Sayfanıza ve misafirlerin bıraktığı içeriğe siz ve misafirler sorumlusunuz. Hukuka aykırı, aşağılayıcı veya başkalarının haklarını ihlal eden içerikleri kaldırma ve ilgili hesapları kapatma hakkımız saklıdır.</p>
 <h3>4. Ödeme toplanmaz</h3><p>Minilist hediye parası toplamaz, tutmaz veya aktarmaz. "Ortak hediye" katkıları yalnızca bir söz kaydıdır; ödeme aile ile katkıda bulunan arasında gerçekleşir.</p>
@@ -336,7 +382,7 @@ terms:{tr:`<h2>Kullanım Şartları</h2><p class="mu">Son güncelleme: 7 Ekim 20
 <h3>7. Sorumluluk</h3><p>Hizmet "olduğu gibi" sunulur; kesintisiz veya hatasız olacağı garanti edilmez. Yasaların izin verdiği ölçüde dolaylı zararlardan sorumlu değiliz.</p>
 <h3>8. Değişiklik ve uyuşmazlık</h3><p>Şartları güncelleyebiliriz; önemli değişiklikleri duyururuz. Türk hukuku uygulanır; tüketici mercilerine başvuru hakkınız saklıdır.</p>`,
 en:`<h2>Terms of Use</h2><p class="mu">Last updated: October 7, 2026. This page is for information purposes.</p>
-<h3>1. The service</h3><p>Minilist lets families involve their circle from pregnancy onward with a gift list, guessing game, letters and updates. By using the service you accept these terms.</p>
+<h3>1. The service</h3><p>Minilist lets families involve their circle from pregnancy onward with a gift list, letters and updates. By using the service you accept these terms.</p>
 <h3>2. Account</h3><p>You are responsible for the accuracy and security of your account details. One family page can be created per account.</p>
 <h3>3. Content</h3><p>You and your guests are responsible for the content on your page. We may remove unlawful, abusive or rights-infringing content and close the related accounts.</p>
 <h3>4. We do not collect payments for gifts</h3><p>Minilist does not collect, hold or transfer gift money. "Group gift" contributions are only a record of a promise; the payment happens between the family and the contributor.</p>
@@ -376,9 +422,9 @@ async function admin(){
   <input id="fq" placeholder="Ara: e-posta, adres veya bebek adı"><div id="list"></div></div>`;
   const draw=()=>{const q=$('fq').value.toLowerCase();
     $('list').innerHTML=rows.filter(r=>[r.email,r.slug,r.baby_name].join(' ').toLowerCase().includes(q)).map(r=>`<div class="card" style="margin:8px 0"><b>${e(r.baby_name)}</b> · <a href="#/p/${e(r.slug)}">${e(r.slug)}</a>
-    <div class="mu">${e(r.email)} · ${r.products} ürün, ${r.letters} mektup, ${r.guesses} tahmin</div>
+    <div class="mu">${e(r.email)} · ${r.products} ürün, ${r.letters} mektup</div>
     <div class="r"><span class="pill">${r.plan==='pro'?'Pro'+(r.plan_source==='admin'?' (hediye)':''):'Ücretsiz'}</span>
-    <button class="${r.plan==='pro'?'d':''}" onclick="sp('${e(r.id)}','${r.plan==='pro'?'free':'pro'}')">${r.plan==='pro'?'Ücretsize çevir':'Ücretsiz Pro ver'}</button></div></div>`).join('')||'<p class="mu">Sonuç yok.</p>'};
+    <button class="${r.plan==='pro'?'d':''}" onclick="sp('${e(r.id)}','${r.plan==='pro'?'free':'pro'}')">${r.plan==='pro'?'Ücretsize çevir':'Ücretsiz Pro ver'}</button><button class="g" onclick="tp('${e(r.id)}')">Aileye devret</button></div></div>`).join('')||'<p class="mu">Sonuç yok.</p>'};
   $('fq').oninput=draw;draw();$('lo').onclick=out;
 }
 async function sp(id,plan){
@@ -431,7 +477,8 @@ function hero(pg){
   const cm=f?(f[3]<1?'<1':f[3]):'',g=f?(f[4]<1?'<1':f[4]):'';
   return `<div class="hero2"><div class="w">${mon?`<span class="eb">${L('BEKLENEN GELİŞ','DUE')} · ${e(mon)} 👶</span>`:''}<h1>${e(pg.baby_name)} geliyor!</h1>
   <p class="sub">${L('Küçük misafirimizin hazırlıklarını birlikte tamamlayalım. Listeden istediğiniz ürünü tek başınıza alabilir ya da ortak hediyeye katkıda bulunabilirsiniz.','Help us get ready for our little one. Reserve an item on your own, or chip in on a group gift.')}</p>
-  ${pg.parents?`<div class="par">${e(pg.parents)} ❤️</div>`:''}</div></div>
+  ${pg.parents?`<div class="par">${e(pg.parents)} ❤️</div>`:''}
+  <div class="r" style="margin-top:16px"><a href="${wa(pg)}" target="_blank" rel="noopener"><button>${L('WhatsApp\'ta paylaş','Share on WhatsApp')}</button></a><button class="g" id="cpl">${L('Bağlantıyı kopyala','Copy link')}</button></div></div></div>
   ${tgt&&!pg.born?`<div class="w"><div class="info">
   ${f?`<div class="card bcard"><div><div class="sl">${L('Şu an yaklaşık','Right now about')}</div><h2>${w>40?'40+':w}. hafta</h2>
   <p>${e(pg.baby_name)} ${L(`yaklaşık bir <strong>${f[0]}</strong> büyüklüğünde.`,`is about the size of a <strong>${f[1]}</strong>.`)}</p>
@@ -453,13 +500,27 @@ async function pub(slug){
   const tot=Object.fromEntries((PD.totals||[]).map(t=>[t.product_id,t]));
   clearInterval(window._tk);
   app.innerHTML=`${hero(pg)}
-  <div class="w"><div class="grid">${ps.map(p=>{const g=p.target_amount>0,t=tot[p.id]||{qty:0,amt:0},left=p.quantity-t.qty,full=g?t.amt>=p.target_amount:left<=0,pc=Math.min(100,Math.round(t.amt/p.target_amount*100));
+  <div class="w" id="pgw"></div>`;
+
+  if(pg.due_date&&!pg.born)tick(pg.due_date);
+  $('pgw').innerHTML=`<div class="r" style="margin-bottom:14px"><input id="pq" placeholder="Ürün veya marka ara..." style="flex:1;min-width:180px"><select id="pcat" style="width:auto"><option value="">Tüm kategoriler</option>${[...new Set(ps.map(x=>x.category).filter(Boolean))].map(c=>`<option>${e(c)}</option>`).join('')}</select><button id="psg">+ Ürün öner</button></div><div class="grid" id="pgrid"></div>`;
+  const cardH=p=>{const g=p.target_amount>0,t=tot[p.id]||{qty:0,amt:0},left=p.quantity-t.qty,full=g?t.amt>=p.target_amount:left<=0,pc=Math.min(100,Math.round(t.amt/p.target_amount*100));
   return `<div class="card">${u(p.image)?`<img src="${u(p.image)}" alt="" loading="lazy">`:''}<div class="mu">${e(p.category)}</div><h3 style="margin:4px 0">${e(p.name)}</h3>
   ${g?`<span class="pill">Ortak hediye</span><div class="bar"><i style="width:${pc}%"></i></div><div class="mu">${t.amt} / ${p.target_amount} TL</div>`:`<div class="mu">${full?'Tamamı ayrıldı':left+' adet kaldı'}</div>`}
   <p class="mu">${e(p.description)}</p><div class="r">${u(p.link)?`<a href="${u(p.link)}" target="_blank" rel="noopener">Ürünü incele</a>`:''}
-  <button ${full?'disabled':''} onclick="rv(${p.id})">${full?'Ayrıldı':g?'Katkıda bulun':'Bu ürünü alıyorum'}</button></div></div>`}).join('')||'<p class="mu">Liste yakında burada olacak.</p>'}</div></div>`;
-  if(pg.due_date&&!pg.born)tick(pg.due_date);
+  <button ${full?'disabled':''} onclick="rv(${p.id})">${full?'Ayrıldı':g?'Katkıda bulun':'Bu ürünü alıyorum'}</button></div></div>`};
+  const drawG=()=>{const q=$('pq').value.toLowerCase(),c=$('pcat').value;
+    const l=ps.filter(x=>(!c||x.category===c)&&(!q||(x.name||'').toLowerCase().includes(q)||(x.description||'').toLowerCase().includes(q)));
+    $('pgrid').innerHTML=l.map(cardH).join('')||`<p class="mu">${ps.length?'Aramanıza uygun ürün bulunamadı.':'Liste yakında burada olacak.'}</p>`};
+  drawG();$('pq').oninput=drawG;$('pcat').onchange=drawG;
+  $('cpl').onclick=()=>navigator.clipboard.writeText(plink(pg)).then(()=>alert('Kopyalandı'),()=>prompt('Bağlantı',plink(pg)));
+  $('psg').onclick=()=>{dlg.innerHTML=`<h3>Ürün öner</h3><p class="mu">Aileye bir ürün önerin. Öneri sadece ailenin panelinde görünür, aile isterse listeye ekler.</p><input id="sn" placeholder="Ürün adı" maxlength="120"><input id="sl2" placeholder="Ürün bağlantısı (isteğe bağlı)" maxlength="500"><input id="sf" placeholder="Adınız" maxlength="80"><textarea id="st" placeholder="Not (isteğe bağlı)" maxlength="300"></textarea><div class="r"><button id="sok">Gönder</button><button class="g" onclick="dlg.close()">Vazgeç</button></div>`;
+    dlg.showModal();
+    $('sok').onclick=async()=>{const n=$('sn').value.trim(),f=$('sf').value.trim();if(!n||!f)return alert('Lütfen ürün adı ve adınızı yazın');
+      const {error}=await sb.rpc('guest_product_suggest',{p_slug:slug,p_name:n,p_from:f,p_link:$('sl2').value.trim()||null,p_note:$('st').value.trim()||null});if(err(error))return;dlg.close();alert('Öneriniz iletildi!')}};
+  (async()=>{try{const {data:own}=await sb.rpc('is_owner',{pid:pg.id});if(own===true){const d=document.createElement('div');d.className='w';d.style.paddingBottom='0';d.innerHTML='<div class="card" style="background:var(--soft)">Bu sizin sayfanız · <a href="#/panel">Ürün ekle ve yönet</a></div>';app.prepend(d)}}catch(_){}})();
   extras(pg,PD);
+  {const f=document.createElement('div');f.className='w mu';f.style.cssText='text-align:center;padding:8px 0 0';f.innerHTML='<a href="#/panel" style="font-size:12px;color:var(--mu)">Ebeveyn Girişi (Admin)</a>';app.append(f)}
   if(pg.plan==='free'){const f=document.createElement('div');f.className='w mu';f.style.textAlign='center';f.innerHTML='<a href="#/">Minilist ile oluşturuldu · Sen de kendi sayfanı aç</a>';app.append(f)}
   window.rv=id=>{const p=ps.find(x=>x.id===id),g=p.target_amount>0,l=p.quantity-(tot[id]?.qty||0);
     dlg.innerHTML=`<h3>${e(p.name)}</h3><input id="rn" placeholder="Adınız" maxlength="80">${g?'<input id="ra" type="number" min="1" placeholder="Katkı tutarı (TL)">':`<input id="rq" type="number" min="1" max="${l}" value="1">`}<textarea id="rt" placeholder="Not (isteğe bağlı)" maxlength="300"></textarea><div class="r"><button id="ok">Gönder</button><button class="g" onclick="dlg.close()">Vazgeç</button></div>`;
@@ -480,16 +541,10 @@ window.hr=async(id,b)=>{const {error}=await sb.rpc('heart',{uid:id});if(err(erro
 
 async function extras(pg,PD){
   const box=[...app.querySelectorAll('.w')].pop(),d=document.createElement('div');box.append(d);
-  const ups=PD.updates||[],open=pg.letters_open_at&&pg.letters_open_at<=today(),ls=PD.letters||[],gs=PD.guesses||[];
-  const sc=g=>(g.gender&&g.gender===pg.res_gender?1:0)+(g.guess_name&&pg.res_name&&g.guess_name.trim().toLowerCase()===pg.res_name.toLowerCase()?2:0)
-    +(g.guess_date&&pg.res_date?(g.guess_date===pg.res_date?3:Math.abs(new Date(g.guess_date)-new Date(pg.res_date))<=2*864e5?1:0):0)
-    +(g.guess_weight&&pg.res_weight&&Math.abs(g.guess_weight-pg.res_weight)<=100?2:0);
-  const board=gs.map(g=>({...g,s:sc(g)})).sort((a,b)=>b.s-a.s).map((g,i)=>`<div class="card" style="margin-bottom:8px">${i+1}. ${e(g.name)} · ${g.s} puan</div>`).join('')||'<p class="mu">Bu oyunda tahmin yapan olmadı.</p>';
+  const ups=PD.updates||[],open=pg.letters_open_at&&pg.letters_open_at<=today(),ls=PD.letters||[];
   d.innerHTML=`${pg.born?`<br><div class="card" style="background:var(--soft)"><h2 style="margin:0">💙 ${e(pg.baby_name)} geldi!</h2></div>`:''}
   ${!pg.born&&pg.theme!=='neutral'?`<br><div class="card" style="background:var(--soft)"><b>${pg.theme==='girl'?'💗 Cinsiyet belli oldu: kız!':'💙 Cinsiyet belli oldu: erkek!'}</b></div>`:''}
   <br><h3>Büyüme notları</h3>${ups.map(x=>`<div class="card" style="margin-bottom:8px">${x.week?`<span class="pill">${x.week}. hafta</span> `:''}${e(x.body)}<div class="r"><button class="g" data-n="${x.hearts}" onclick="hr(${x.id},this)">💙 ${x.hearts}</button></div></div>`).join('')||'<p class="mu">Ebeveynler yakında ilk notu paylaşacak.</p>'}
-  <br><h3>${pg.born?'Tahmin sonuçları':'Tahmin oyunu'}</h3>${pg.born?board:`<div class="card"><p class="mu">Cinsiyet, isim, doğum günü ve kiloyu tahmin et. Sonuçlar bebek doğunca açıklanır.</p>
-  <input id="gn" placeholder="Adınız" maxlength="80">${sel('gg')}<input id="gm" placeholder="İsim tahmini" maxlength="60"><input id="gd" type="date"><input id="gw" type="number" min="1000" max="6000" placeholder="Doğum kilosu (gram)"><button id="gs">Tahminimi gönder</button></div>`}
   <br><h3>İsim tavsiyesi</h3><div class="card"><p class="mu">Aileye bir isim önerin. Öneriler sadece ailenin panelinde görünür.</p><input id="nn" placeholder="Önerdiğiniz isim" maxlength="60"><input id="nf" placeholder="Adınız" maxlength="80"><input id="nt" placeholder="Anlamı veya notunuz (isteğe bağlı)" maxlength="200"><button id="nsb">Öneriyi gönder</button></div>
   <br><h3>Bebeğe mektup</h3><div class="card">${open?ls.map(l=>`<p><b>${e(l.name)}:</b> ${e(l.body)}</p>`).join('')||'<p class="mu">Henüz mektup yok.</p>':`<p class="mu">Mektuplar ${pg.letters_open_at?e(pg.letters_open_at)+' tarihinde':'ebeveynlerin seçtiği gün'} açılacak. Şimdi yaz, o güne kadar sır kalsın.</p>`}
   <input id="ln" placeholder="Adınız" maxlength="80"><textarea id="lb" placeholder="Bebeğe bir mektup bırakın" maxlength="1000"></textarea><button id="ls">Mektubu bırak</button></div>
@@ -498,9 +553,6 @@ async function extras(pg,PD){
   <br><div class="card r"><a href="${wa(pg)}" target="_blank" rel="noopener"><button>WhatsApp'ta paylaş</button></a><div id="qrv"></div></div>`;
   if($('adbox'))try{(window.adsbygoogle=window.adsbygoogle||[]).push({})}catch(_){}
   if(window.QRCode)new QRCode($('qrv'),{text:plink(pg),width:120,height:120});
-  if($('gs'))$('gs').onclick=async()=>{const n=$('gn').value.trim();if(!n)return alert('Adınızı yazın');
-    const {error}=await sb.rpc('guest_guess',{p_slug:pg.slug,p_name:n,p_gender:$('gg').value||null,p_gname:$('gm').value.trim()||null,p_date:$('gd').value||null,p_weight:+$('gw').value||null});
-    if(!err(error)){alert('Tahmininiz kaydedildi!');['gn','gm','gd','gw'].forEach(i=>$(i).value='')}};
   $('nsb').onclick=async()=>{const a=$('nn').value.trim(),f=$('nf').value.trim();if(!a||!f)return alert('Lütfen isim ve adınızı yazın');
     const {error}=await sb.rpc('guest_suggest',{p_slug:pg.slug,p_name:a,p_from:f,p_note:$('nt').value.trim()||null});if(!err(error)){alert('Öneriniz iletildi!');['nn','nf','nt'].forEach(i=>$(i).value='')}};
   $('ls').onclick=async()=>{const n=$('ln').value.trim(),b=$('lb').value.trim();if(!n||!b)return alert('Adınızı ve mektubu yazın');
@@ -510,33 +562,51 @@ async function extras(pg,PD){
 async function pextras(pg){
   const box=[...app.querySelectorAll('.w')].pop(),d=document.createElement('div');box.append(d);
   const gq=t=>sb.from(t).select('*').eq('page_id',pg.id).order('id',{ascending:false});
-  const [ls,gr,ns,ups]=(await Promise.all(['letters','guesses','name_suggestions','updates'].map(gq))).map(r=>r.data||[]);const gc=gr.length;
+  const [ls,ns,ups,sg]=(await Promise.all(['letters','name_suggestions','updates','product_suggestions'].map(gq))).map(r=>r.data||[]);
   const v=x=>e(x??'');
-  d.innerHTML=`${pg.plan==='free'?`<br><div class="card"><h3>Reklamsız Pro</h3><p class="mu">Reklamları kaldırır, ürün sınırını açar ve anı defterini PDF indirmenizi sağlar. Tek seferlik ödeme.</p>${PAYMENTS?'<button id="up">Pro\'ya geç</button>':'<p class="mu"><b>Beta:</b> Pro özellikleri davet edilen ailelere ücretsiz açılır.</p>'}</div>`:'<br><div class="card"><b>Pro aktif ✓</b><div class="r"><button id="bk">Anı defterini indir (PDF)</button></div></div>'}
+  window.SG=sg;window.PG=pg;
+  d.innerHTML=`
+  <br><div class="card"><h3>Gelen ürün önerileri (${sg.length})</h3>${sg.map(x=>`<p><b>${e(x.name)}</b> · ${e(x.from_name)}${x.note?` <span class="mu">— ${e(x.note)}</span>`:''}${u(x.link)?` <a href="${u(x.link)}" target="_blank" rel="noopener">bağlantı</a>`:''} <button class="g" onclick="sga(${x.id})">Listeye ekle</button> <button class="d" onclick="dx('product_suggestions',${x.id})">Sil</button></p>`).join('')||'<p class="mu">Henüz öneri yok. Sayfanızı açan misafirler "Ürün öner" ile ekleyebilir.</p>'}</div>
+  <br><div class="card"><h3>Toplu ekle ve Amazon istek listesi</h3>
+  <p class="mu"><b>Hızlı başlangıç:</b> hazır bir bebek listesiyle başlayın, sonra düzenleyin.</p><button class="g" id="stl">Örnek listeyi ekle</button>
+  <p class="mu" style="margin-top:14px"><b>Amazon istek listesi:</b> Amazon, listelerini başka sitelerin otomatik okumasına izin vermiyor. Bu yüzden listeyi tarayıcınızdan siz aktarırsınız:</p>
+  <ol class="mu"><li>Aşağıdaki <a id="bkm" href="#">Minilist'e aktar</a> bağlantısını yer imleri çubuğuna sürükleyin (bir kez).</li><li>Amazon'da istek listenizi açın, tüm ürünler yüklenene kadar aşağı kaydırın ve yer imine tıklayın. Liste kopyalanır.</li><li>Aşağıdaki kutuya yapıştırıp "Listeye aktar" deyin.</li></ol>
+  <textarea id="bk" rows="5" placeholder="Her satıra bir ürün: Ürün adı | https://bağlantı | https://görsel (görsel isteğe bağlı). Sadece ürün bağlantısı da yapıştırabilirsiniz."></textarea>
+  <button id="bkgo">Listeye aktar</button></div>
+  <br><div class="card"><h3>Sayfayı aileye devret</h3><p class="mu">Sayfayı sizin için hazırladıysanız veya birine veriyorsanız: aile önce Minilist'e kayıt olsun, sonra e-posta adreslerini yazın. Devirden sonra sayfanın yönetimi onlarda olur, sizin erişiminiz kalkar.</p>
+  <input id="tr_em" type="email" placeholder="Ailenin e-posta adresi"><button class="d" id="tr_go">Sayfayı devret</button></div>
+  ${pg.plan==='free'?`<br><div class="card"><h3>Reklamsız Pro</h3><p class="mu">Reklamları kaldırır, ürün sınırını açar ve anı defterini PDF indirmenizi sağlar. Tek seferlik ödeme.</p>${PAYMENTS?'<button id="up">Pro\'ya geç</button>':'<p class="mu"><b>Beta:</b> Pro özellikleri davet edilen ailelere ücretsiz açılır.</p>'}</div>`:'<br><div class="card"><b>Pro aktif ✓</b><div class="r"><button id="bk">Anı defterini indir (PDF)</button></div></div>'}
   <br><div class="card"><h3>Hafta hafta paylaş</h3><p class="mu">Kısa bir not yeterli: bebek ne yaptı, nasıl hissediyorsunuz? Aile kalp bırakır.</p>
   <input id="uw" type="number" min="1" max="42" placeholder="Hamilelik haftası"><textarea id="ub" placeholder="Bu hafta neler oldu?"></textarea><button id="pu">Paylaş</button></div>
   <br><div class="card"><h3>Sayfa ayarları</h3><input id="s_bn" value="${v(pg.baby_name)}" placeholder="Bebeğin adı"><input id="s_pa" value="${v(pg.parents)}" placeholder="Anne ve baba adları"><label class="mu">Sayfa dili / Page language</label><select id="s_lang"><option value="tr">Türkçe</option><option value="en">English</option></select><label class="mu">Sayfa teması (cinsiyet belli olunca değiştirin, sayfada duyuru çıkar)</label><select id="s_theme"><option value="neutral">Nötr (sürpriz)</option><option value="girl">Kız teması</option><option value="boy">Erkek teması</option></select>
   <label class="mu">Tahmini doğum tarihi</label><input id="s_dd" type="date" value="${v(pg.due_date)}">
   <input id="s_wl" value="${v(pg.wishlist_url)}" placeholder="Harici hediye listesi bağlantısı (Amazon vb.)">
   <label class="mu">Mektupların açılacağı tarih</label><input id="s_lo" type="date" value="${v(pg.letters_open_at)}">
-  <label><input id="s_born" type="checkbox" style="width:auto" ${pg.born?'checked':''}> Bebek doğdu 🎉 (tahmin sonuçları herkese açılır)</label>
-  <p class="mu">Doğum bilgileri (tahmin puanı için):</p><input id="s_rn" value="${v(pg.res_name)}" placeholder="Bebeğin adı"><input id="s_rd" type="date" value="${v(pg.res_date)}"><input id="s_rw" type="number" value="${v(pg.res_weight)}" placeholder="Doğum kilosu (gram)">${sel('s_rg')}
+  <label><input id="s_born" type="checkbox" style="width:auto" ${pg.born?'checked':''}> Bebek doğdu 🎉 (sayfada doğum haberi görünür)</label>
   <button id="sv">Kaydet</button></div>
-  <br><div class="card"><b>${ls.length} mektup, ${gc} tahmin geldi</b><p class="mu">Mektuplar ${pg.letters_open_at?v(pg.letters_open_at)+' tarihinde':'bir tarih seçince'} herkese açılır.</p>
+  <br><div class="card"><b>${ls.length} mektup geldi</b><p class="mu">Mektuplar ${pg.letters_open_at?v(pg.letters_open_at)+' tarihinde':'bir tarih seçince'} herkese açılır.</p>
   ${ls.map(l=>`<p><b>${e(l.name)}:</b> ${e(l.body)} <button class="d" onclick="dx('letters',${l.id})">Sil</button></p>`).join('')}
   <a href="${wa(pg)}" target="_blank" rel="noopener"><button>${pg.born?'Doğum haberini WhatsApp\'ta ilet':'WhatsApp\'ta davet et'}</button></a><div id="qrp" style="margin-top:12px"></div></div>
   <br><div class="card"><h3>İsim önerileri</h3>${ns.map(n=>`<p><b>${e(n.name)}</b> · ${e(n.from_name)}${n.note?` <span class="mu">— ${e(n.note)}</span>`:''} <button class="d" onclick="dx('name_suggestions',${n.id})">Sil</button></p>`).join('')||'<p class="mu">Henüz isim önerisi yok.</p>'}</div>
   <br><div class="card"><h3>Paylaşımlarınız</h3>${ups.map(u=>`<p>${u.week?`<b>${u.week}. hafta</b> · `:''}${e(u.body)} <button class="d" onclick="dx('updates',${u.id})">Sil</button></p>`).join('')||'<p class="mu">Henüz paylaşım yok.</p>'}</div>
   <br><div class="card"><h3>Tehlikeli bölge</h3><div class="r"><button class="d" id="dpg">Sayfamı sil</button><button class="d" id="dac">Hesabımı sil</button></div></div>`;
-  $('s_rg').value=pg.res_gender||'';$('s_lang').value=pg.lang||'tr';$('s_theme').value=pg.theme||'neutral';
+  $('s_lang').value=pg.lang||'tr';$('s_theme').value=pg.theme||'neutral';
   if($('bk'))$('bk').onclick=()=>book(pg);
   if($('up'))$('up').onclick=async()=>{const {data,error}=await sb.functions.invoke('polar-checkout');if(err(error))return;if(data?.url)location.href=data.url;else alert(data?.error||'Ödeme açılamadı')};
   if(window.QRCode)new QRCode($('qrp'),{text:plink(pg),width:120,height:120});
+
+  $('stl').onclick=async()=>{const k=LANG==='en'?'en':'tr',rows=STARTER[k].map(r=>({page_id:pg.id,name:r[0],category:r[1],description:r[2]+' · '+r[3],quantity:r[4],target_amount:r[5]}));
+    await addRows(pg,rows)};
+  $('bkgo').onclick=()=>addRows(pg,parseLines(pg,$('bk').value));
+  $('bkm').onclick=ev=>ev.preventDefault();$('bkm').href='javascript:'+encodeURIComponent(BKM);
+  $('tr_go').onclick=async()=>{const m=$('tr_em').value.trim();if(!m)return alert('E-posta adresini yazın');
+    if(!confirm('Sayfa bu hesaba devredilsin mi? Devirden sonra sayfayı siz yönetemezsiniz.'))return;
+    const {error}=await sb.rpc('transfer_page',{p_page:pg.id,p_email:m});if(err(error))return;alert('Sayfa devredildi.');go()};
   $('dpg').onclick=async()=>{if(!confirm('Sayfa silinsin mi? Bu işlem geri alınamaz.'))return;const {error}=await sb.from('pages').delete().eq('id',pg.id);if(!err(error))go()};
   $('dac').onclick=async()=>{if(!confirm('Hesabınız ve tüm verileriniz kalıcı olarak silinsin mi? Bu işlem geri alınamaz.'))return;const {error}=await sb.rpc('delete_my_account');if(err(error))return;await sb.auth.signOut();alert('Hesabınız silindi.');nav('#/')};
   $('pu').onclick=async()=>{const b=$('ub').value.trim();if(!b)return;const {error}=await sb.from('updates').insert({page_id:pg.id,body:b,week:+$('uw').value||null});if(!err(error)){alert('Paylaşıldı');go()}};
   $('sv').onclick=async()=>{const n=k=>$(k).value.trim()||null;
-    const {error}=await sb.from('pages').update({baby_name:$('s_bn').value.trim(),parents:$('s_pa').value.trim(),lang:$('s_lang').value,theme:$('s_theme').value,wishlist_url:n('s_wl'),due_date:n('s_dd'),letters_open_at:n('s_lo'),res_name:n('s_rn'),res_date:n('s_rd'),res_gender:n('s_rg'),res_weight:+$('s_rw').value||null,born:$('s_born').checked}).eq('id',pg.id);
+    const {error}=await sb.from('pages').update({baby_name:$('s_bn').value.trim(),parents:$('s_pa').value.trim(),lang:$('s_lang').value,theme:$('s_theme').value,wishlist_url:n('s_wl'),due_date:n('s_dd'),letters_open_at:n('s_lo'),born:$('s_born').checked}).eq('id',pg.id);
     if(!err(error)){alert('Kaydedildi');go()}};
 }
 </script></body></html>
