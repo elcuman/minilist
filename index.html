@@ -21,6 +21,24 @@ img{width:100%;height:150px;object-fit:cover;border-radius:12px}
 dialog{border:0;border-radius:20px;padding:22px;width:min(400px,92%)}
 .r{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.mu{color:var(--mu);font-size:14px}
 a{color:var(--bl)}
+.hero2{background:radial-gradient(circle at 85% 20%,rgba(255,255,255,.9),transparent 30%),linear-gradient(135deg,var(--soft) 0%,var(--bg) 55%,var(--cr) 100%);padding:40px 0 28px;position:relative;overflow:hidden}
+.hero2 .w{position:relative;z-index:1}
+.hero2:after{content:"";position:absolute;width:380px;height:380px;right:-120px;bottom:-170px;border-radius:50%;background:rgba(255,255,255,.45)}
+.hero2 h1{font-size:clamp(40px,8vw,72px);line-height:.98;letter-spacing:-2.5px;margin:14px 0 14px}
+.hero2 .sub{font-size:17px;color:#52616d;max-width:600px;margin:0}
+.eb{display:inline-block;padding:7px 14px;border-radius:99px;background:rgba(255,255,255,.8);color:var(--bl);font-size:12px;font-weight:800;letter-spacing:.6px}
+.par{margin-top:18px;font-weight:700;color:var(--bl);font-size:17px}
+.info{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;padding-top:8px}
+.bcard{display:flex;gap:20px;align-items:center;justify-content:space-between;padding:26px}
+.sl{color:var(--bl);text-transform:uppercase;font-size:12px;letter-spacing:1.4px;font-weight:800}
+.bcard h2{font-size:32px;margin:6px 0}.bcard p{margin:0 0 4px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.stats div{background:var(--soft);padding:10px 14px;border-radius:14px}
+.stats b{display:block;font-size:16px}.stats span{font-size:12px;color:var(--mu)}
+.fruit{font-size:84px;line-height:1;width:128px;height:128px;border-radius:50%;background:var(--cr);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cdown{padding:26px;display:flex;flex-direction:column;justify-content:center}.cdown h3{margin:6px 0 16px;font-size:21px}
+.cg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.cg div{background:var(--cr);border-radius:14px;padding:12px 4px;text-align:center}
+.cg b{display:block;font-size:22px}.cg span{font-size:11px;color:var(--mu)}
+@media(max-width:760px){.info{grid-template-columns:1fr}.bcard{flex-direction:column-reverse;align-items:flex-start}.fruit{width:96px;height:96px;font-size:60px}}
 [data-theme=girl]{--bg:#fbf1f3;--bl:#b0566f;--soft:#f9e1e8;--cr:#f5e6dc;--gr:#8aa68f}
 [data-theme=boy]{--bg:#eef4f8;--bl:#3f7396;--soft:#d9e9f3;--cr:#e8e3d6}
 [data-theme=neutral]{--bg:#f4f3ec;--bl:#5f8a68;--soft:#e4eddc;--cr:#efe6d3;--gr:#5f8a68}
@@ -54,7 +72,12 @@ async function go(){
 /* ---- i18n: kaynak metinler Türkçe, İngilizce görünüm çeviri katmanıyla gelir ---- */
 let LANG='tr';
 const pref=()=>{let l;try{l=localStorage.getItem('lang')}catch(_){}return l||((navigator.language||'').startsWith('tr')?'tr':'en')};
-const D=Object.fromEntries(`Hamilelikten çocukluğa=>From pregnancy to childhood
+const D=Object.fromEntries(`Bebeğin adını yazın=>Please enter the baby's name
+Kaçıncı haftada olduğunuzu seçin=>Please choose which week you are in
+Kaçıncı haftadasın?=>Which week are you in?
+Bebeğinizin boyutunu her hafta meyve veya sebzeyle kendiliğinden göstereceğiz.=>We will automatically show your baby's size as a fruit or vegetable each week.
+Tahmini doğum tarihini biliyorsanız (isteğe bağlı)=>If you know the due date (optional)
+Hamilelikten çocukluğa=>From pregnancy to childhood
 Bebeğinizin yolculuğu, sevdiklerinizle birlikte=>Your baby's journey, shared with the people you love
 Kendi sayfanızı açın: doğuma geri sayım, hediye listesi ve ortak hediye katkısı tek bağlantıda.=>Open your own page: birth countdown, gift list and group gifts in a single link.
 Hediye listesi=>Gift list
@@ -256,10 +279,16 @@ async function panel(user){
   const {data:pg}=await sb.from('pages').select('*').eq('owner',user.id).maybeSingle();
   if(!pg){
     app.innerHTML=`<div class="w"><div class="card"><h2>Sayfanı oluştur</h2>
-    <input id="sl" placeholder="Adres (ör: ilber-doruk)"><p class="mu">Gizliliğiniz için adresin sonuna rastgele bir ek getirilir.</p><input id="bn" placeholder="Bebeğin adı"><input id="pa" placeholder="Anne ve baba adları"><label class="mu">Sayfa dili / Page language</label><select id="pl"><option value="tr">Türkçe</option><option value="en">English</option></select><label class="mu">Sayfa teması</label><select id="pt"><option value="neutral">Nötr (sürpriz)</option><option value="girl">Kız teması</option><option value="boy">Erkek teması</option></select>
-    <label class="mu">Tahmini doğum tarihi</label><input id="dd" type="date">
+    <input id="bn" placeholder="Bebeğin adı"><input id="pa" placeholder="Anne ve baba adları">
+    <label class="mu">Kaçıncı haftadasın?</label><select id="wk"><option value="">Seçin</option>${Array.from({length:37},(_,i)=>`<option value="${i+4}">${i+4}. hafta</option>`).join('')}</select>
+    <p class="mu">Bebeğinizin boyutunu her hafta meyve veya sebzeyle kendiliğinden göstereceğiz.</p>
+    <label class="mu">Sayfa teması</label><select id="pt"><option value="neutral">Nötr (sürpriz)</option><option value="girl">Kız teması</option><option value="boy">Erkek teması</option></select>
+    <label class="mu">Tahmini doğum tarihini biliyorsanız (isteğe bağlı)</label><input id="dd" type="date">
     <div class="r"><button id="mk">Sayfayı oluştur</button><button class="g" id="lo">Çıkış yap</button></div></div></div>`;
-    $('mk').onclick=async()=>{const {error}=await sb.from('pages').insert({slug:await mkslug($('sl').value),baby_name:$('bn').value.trim(),parents:$('pa').value.trim(),lang:$('pl').value,theme:$('pt').value,due_date:$('dd').value||null});if(!err(error))go()};
+    $('mk').onclick=async()=>{const bn=$('bn').value.trim();if(!bn)return alert('Bebeğin adını yazın');
+      let dd=$('dd').value;const w=+$('wk').value;
+      if(!dd){if(!w)return alert('Kaçıncı haftada olduğunuzu seçin');const d=new Date();d.setDate(d.getDate()+280-w*7);dd=ymd(d)}
+      const {error}=await sb.from('pages').insert({slug:await mkslug(bn),baby_name:bn,parents:$('pa').value.trim(),lang:LANG,theme:$('pt').value,due_date:dd});if(!err(error))go()};
     $('lo').onclick=out;return;
   }
   const ps=(await sb.from('products').select('*').eq('page_id',pg.id).order('id')).data||[];
@@ -391,20 +420,45 @@ async function book(pg){
 }
 async function dp(id){if(confirm('Ürün silinsin mi?')){const {error}=await sb.from('products').delete().eq('id',id);if(!err(error))go()}}
 
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+// hafta: [Türkçe ad, English name, emoji, boy cm, ağırlık g] (yaklaşık değerler)
+const FR={4:['haşhaş tohumu','poppy seed','🌱',.1,0],5:['susam tanesi','sesame seed','🌱',.2,0],6:['mercimek','lentil','🫘',.6,0],7:['yaban mersini','blueberry','🫐',1.3,1],8:['ahududu','raspberry','🍓',1.6,1],9:['kiraz','cherry','🍒',2.3,2],10:['çilek','strawberry','🍓',3.1,4],11:['incir','fig','🟣',4.1,7],12:['limon','lime','🍋',5.4,14],13:['şeftali','peach','🍑',7.4,23],14:['nektarin','nectarine','🍑',8.7,43],15:['elma','apple','🍎',10.1,70],16:['avokado','avocado','🥑',11.6,100],17:['nar','pomegranate','🍎',13,140],18:['dolmalık biber','bell pepper','🫑',14.2,190],19:['mango','mango','🥭',15.3,240],20:['muz','banana','🍌',25.6,300],21:['havuç','carrot','🥕',26.7,360],22:['balkabağı','squash','🎃',27.8,430],23:['papaya','papaya','🥭',28.9,500],24:['mısır','ear of corn','🌽',30,600],25:['şalgam','turnip','🌱',34.6,660],26:['marul','head of lettuce','🥬',35.6,760],27:['karnabahar','cauliflower','🥦',36.6,875],28:['patlıcan','eggplant','🍆',37.6,1000],29:['kabak','zucchini','🥒',38.6,1150],30:['lahana','cabbage','🥬',39.9,1320],31:['hindistan cevizi','coconut','🥥',41.1,1500],32:['ananas','pineapple','🍍',42.4,1700],33:['ananas','pineapple','🍍',43.7,1920],34:['kavun','cantaloupe','🍈',45,2150],35:['bal kavunu','honeydew melon','🍈',46.2,2380],36:['marul başı','romaine lettuce','🥬',47.4,2620],37:['pazı demeti','bunch of chard','🥬',48.6,2860],38:['pırasa','leek','🌱',49.8,3080],39:['mini karpuz','mini watermelon','🍉',50.7,3290],40:['karpuz','watermelon','🍉',51.2,3460]};
+const gwk=due=>{const d=Math.ceil((new Date(due+'T00:00:00')-Date.now())/864e5);return Math.floor((280-d)/7)};
+const L=(t,n)=>LANG==='en'?n:t;
+function hero(pg){
+  const due=pg.due_date,tgt=due?new Date(due+'T00:00:00'):null,w=due?gwk(due):null,f=w!==null&&w>=4?FR[Math.min(40,w)]:null;
+  const mon=tgt?tgt.toLocaleDateString(LANG==='en'?'en-US':'tr-TR',{month:'long',year:'numeric'}).toLocaleUpperCase(LANG==='en'?'en-US':'tr-TR'):'';
+  const cm=f?(f[3]<1?'<1':f[3]):'',g=f?(f[4]<1?'<1':f[4]):'';
+  return `<div class="hero2"><div class="w">${mon?`<span class="eb">${L('BEKLENEN GELİŞ','DUE')} · ${e(mon)} 👶</span>`:''}<h1>${e(pg.baby_name)} geliyor!</h1>
+  <p class="sub">${L('Küçük misafirimizin hazırlıklarını birlikte tamamlayalım. Listeden istediğiniz ürünü tek başınıza alabilir ya da ortak hediyeye katkıda bulunabilirsiniz.','Help us get ready for our little one. Reserve an item on your own, or chip in on a group gift.')}</p>
+  ${pg.parents?`<div class="par">${e(pg.parents)} ❤️</div>`:''}</div></div>
+  ${tgt&&!pg.born?`<div class="w"><div class="info">
+  ${f?`<div class="card bcard"><div><div class="sl">${L('Şu an yaklaşık','Right now about')}</div><h2>${w>40?'40+':w}. hafta</h2>
+  <p>${e(pg.baby_name)} ${L(`yaklaşık bir <strong>${f[0]}</strong> büyüklüğünde.`,`is about the size of a <strong>${f[1]}</strong>.`)}</p>
+  <div class="stats"><div><b>~${cm} cm</b><span>${L('Boy','Length')}</span></div><div><b>~${g} g</b><span>${L('Ağırlık','Weight')}</span></div><div><b>${L(f[0],f[1])}</b><span>${L('Yaklaşık boyut','Size')}</span></div></div></div>
+  <div class="fruit" aria-hidden="true">${f[2]}</div></div>`:''}
+  <div class="card cdown"><div class="sl">${L('Tahmini doğuma kalan','Time until the due date')}</div><h3>${e(pg.baby_name)} ${L('için sabırsızlanıyoruz ✨','— we can\'t wait ✨')}</h3>
+  <div class="cg"><div><b id="cd_d">--</b><span>${L('Gün','Days')}</span></div><div><b id="cd_h">--</b><span>${L('Saat','Hours')}</span></div><div><b id="cd_m">--</b><span>${L('Dakika','Minutes')}</span></div><div><b id="cd_s">--</b><span>${L('Saniye','Seconds')}</span></div></div>
+  <p class="mu" style="margin-top:14px">${L('Tahmini tarih','Due date')}: ${e(tgt.toLocaleDateString(LANG==='en'?'en-US':'tr-TR',{day:'numeric',month:'long',year:'numeric'}))}</p></div></div></div>`:''}`;
+}
+function tick(due){clearInterval(window._tk);const t=new Date(due+'T00:00:00').getTime(),set=(i,v)=>{const n=$(i);if(n&&n.firstChild)n.firstChild.nodeValue=v};
+  const run=()=>{if(!$('cd_d')){clearInterval(window._tk);return}const x=Math.max(0,t-Date.now());
+    set('cd_d',Math.floor(x/864e5));set('cd_h',String(Math.floor(x/36e5%24)).padStart(2,'0'));set('cd_m',String(Math.floor(x/6e4%60)).padStart(2,'0'));set('cd_s',String(Math.floor(x/1e3%60)).padStart(2,'0'))};
+  run();window._tk=setInterval(run,1000)}
 async function pub(slug){
   const {data:PD}=await sb.rpc('get_page',{p_slug:slug});const pg=PD&&PD.page;
   if(!pg){app.innerHTML='<div class="w"><h2>Sayfa bulunamadı</h2><a href="#/">Ana sayfaya dön</a></div>';return}
   LANG=pg.lang||'tr';document.body.dataset.theme=pg.theme||'neutral';document.title=pg.baby_name+(LANG==='en'?' is coming!':' geliyor!');
   const ps=PD.products||[];
   const tot=Object.fromEntries((PD.totals||[]).map(t=>[t.product_id,t]));
-  const days=pg.due_date?Math.ceil((new Date(pg.due_date)-Date.now())/864e5):null;
-  app.innerHTML=`<div class="hero"><div class="w"><span class="pill">${e(pg.parents)}</span><h1>${e(pg.baby_name)} geliyor!</h1>
-  ${days!==null?`<p><b style="font-size:28px">${Math.max(0,days)}</b> gün kaldı</p>`:''}</div></div>
+  clearInterval(window._tk);
+  app.innerHTML=`${hero(pg)}
   <div class="w"><div class="grid">${ps.map(p=>{const g=p.target_amount>0,t=tot[p.id]||{qty:0,amt:0},left=p.quantity-t.qty,full=g?t.amt>=p.target_amount:left<=0,pc=Math.min(100,Math.round(t.amt/p.target_amount*100));
   return `<div class="card">${u(p.image)?`<img src="${u(p.image)}" alt="" loading="lazy">`:''}<div class="mu">${e(p.category)}</div><h3 style="margin:4px 0">${e(p.name)}</h3>
   ${g?`<span class="pill">Ortak hediye</span><div class="bar"><i style="width:${pc}%"></i></div><div class="mu">${t.amt} / ${p.target_amount} TL</div>`:`<div class="mu">${full?'Tamamı ayrıldı':left+' adet kaldı'}</div>`}
   <p class="mu">${e(p.description)}</p><div class="r">${u(p.link)?`<a href="${u(p.link)}" target="_blank" rel="noopener">Ürünü incele</a>`:''}
   <button ${full?'disabled':''} onclick="rv(${p.id})">${full?'Ayrıldı':g?'Katkıda bulun':'Bu ürünü alıyorum'}</button></div></div>`}).join('')||'<p class="mu">Liste yakında burada olacak.</p>'}</div></div>`;
+  if(pg.due_date&&!pg.born)tick(pg.due_date);
   extras(pg,PD);
   if(pg.plan==='free'){const f=document.createElement('div');f.className='w mu';f.style.textAlign='center';f.innerHTML='<a href="#/">Minilist ile oluşturuldu · Sen de kendi sayfanı aç</a>';app.append(f)}
   window.rv=id=>{const p=ps.find(x=>x.id===id),g=p.target_amount>0,l=p.quantity-(tot[id]?.qty||0);
