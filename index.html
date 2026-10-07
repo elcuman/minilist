@@ -65,6 +65,11 @@ async function go(){
   if(isP)return pub(decodeURIComponent(h.slice(4)));
   const {data:{session}}=await sb.auth.getSession();
   if(window._rec)return;
+  if(h.startsWith('#/devral/')){try{localStorage.setItem('claim',decodeURIComponent(h.slice(9)))}catch(_){}
+    if(session)return nav('#/panel');
+    home();const b=document.createElement('div');b.className='w';b.style.paddingBottom='0';b.innerHTML='<div class="card" style="background:var(--soft)"><b>Bu sayfa size devredildi 🎉</b><p class="mu" style="margin:6px 0 0">Devralmak için aşağıdan kayıt olun (ya da giriş yapın). E-posta doğrulaması istenirse doğrulayıp bu siteye dönün, sayfa otomatik size geçer.</p></div>';app.prepend(b);return}
+  let cl=null;try{cl=localStorage.getItem('claim')}catch(_){}
+  if(session&&cl&&h!=='#/panel')return nav('#/panel');
   if(h==='#/privacy'||h==='#/terms')return legal(h.slice(2));
   if(h==='#/admin'&&session)return admin();
   if(h==='#/panel'&&session)return panel(session.user);
@@ -73,7 +78,20 @@ async function go(){
 /* ---- i18n: kaynak metinler Türkçe, İngilizce görünüm çeviri katmanıyla gelir ---- */
 let LANG='tr';
 const pref=()=>{let l;try{l=localStorage.getItem('lang')}catch(_){}return l||((navigator.language||'').startsWith('tr')?'tr':'en')};
-const D=Object.fromEntries(`Gelen ürün önerileri=>Product suggestions received
+const D=Object.fromEntries(`Davet bağlantısı oluştur=>Create invite link
+Davet bağlantısı oluşturulsun mu? Bağlantıyı açıp kayıt olan kişi sayfanın sahibi olur.=>Create an invite link? Whoever signs up and opens it becomes the owner of the page.
+Bu sayfa size devredildi 🎉=>This page was handed over to you 🎉
+Devralmak için aşağıdan kayıt olun (ya da giriş yapın). E-posta doğrulaması istenirse doğrulayıp bu siteye dönün, sayfa otomatik size geçer.=>Sign up below (or log in) to take it over. If email verification is requested, verify and come back to this site, the page will be handed over automatically.
+Sayfa size devredildi. Hoş geldiniz!=>The page was handed over to you. Welcome!
+Davet bağlantısı geçersiz veya süresi dolmuş.=>The invite link is invalid or has expired.
+Aile henüz kayıt olmadıysa sorun değil. Bir davet bağlantısı oluşturun, aileye WhatsApp veya e-postayla gönderin. Aile kayıt olup bağlantıyı açınca sayfa onların olur ve sizin erişiminiz kalkar. Bağlantı tek kullanımlıktır ve 30 gün geçerlidir.=>No problem if the family has not signed up yet. Create an invite link and send it to them by WhatsApp or email. When they sign up and open it, the page becomes theirs and you lose access. The link is single-use and valid for 30 days.
+Ailenin e-posta adresi (isteğe bağlı, sadece e-posta taslağı için)=>The family's email address (optional, only for the email draft)
+WhatsApp ile gönder=>Send via WhatsApp
+E-posta taslağı aç=>Open email draft
+Bağlantıyı sadece ailenize verin. Bağlantıya sahip olan ve kayıt olan ilk kişi sayfayı devralır. Yenisini oluşturursanız eskisi geçersiz olur.=>Give the link only to your family. The first person who signs up and opens it takes over the page. Creating a new one invalidates the old one.
+Ailenin e-posta adresi (boş bırakabilirsiniz)=>The family's email address (you may leave it empty)
+Davet bağlantısı (kopyalayıp aileye gönderin)=>Invite link (copy and send it to the family)
+Gelen ürün önerileri=>Product suggestions received
 Henüz öneri yok. Sayfanızı açan misafirler "Ürün öner" ile ekleyebilir.=>No suggestions yet. Guests can add one with "Suggest an item".
 Listeye ekle=>Add to list
 bağlantı=>link
@@ -320,11 +338,18 @@ async function addRows(pg,rows){
 window.sga=async id=>{const x=(window.SG||[]).find(r=>r.id===id),pg=window.PG;if(!x)return;
   const {error}=await sb.from('products').insert({page_id:pg.id,name:x.name,category:LANG==='en'?'Suggested':'Öneri',quantity:1,target_amount:0,link:u(x.link)?x.link:'',description:(x.note?x.from_name+': '+x.note:x.from_name+(LANG==='en'?' suggested this':' önerdi'))});
   if(err(error))return;await sb.from('product_suggestions').delete().eq('id',id);go()};
-async function tp(id){const m=prompt('Ailenin kayıtlı e-posta adresi');if(!m)return;if(!confirm('Sayfa bu hesaba devredilsin mi?'))return;
-  const {error}=await sb.rpc('transfer_page',{p_page:id,p_email:m.trim()});if(!err(error)){alert('Sayfa devredildi.');go()}}
+async function tp(id){const m=prompt('Ailenin e-posta adresi (boş bırakabilirsiniz)');if(m===null)return;
+  const {data:tok,error}=await sb.rpc('create_transfer',{p_page:id,p_email:(m||'').trim()||null});if(err(error))return;
+  prompt('Davet bağlantısı (kopyalayıp aileye gönderin)',location.origin+location.pathname+'#/devral/'+tok)}
 async function panel(user){
   const {data:pg}=await sb.from('pages').select('*').eq('owner',user.id).maybeSingle();
+  if(pg){let c0=null;try{c0=localStorage.getItem('claim');if(c0)localStorage.removeItem('claim')}catch(_){}if(c0)alert('Bu hesabın zaten bir sayfası var.')}
   if(!pg){
+    let cl=null;try{cl=localStorage.getItem('claim')}catch(_){}
+    if(cl){try{localStorage.removeItem('claim')}catch(_){}
+      const {error}=await sb.rpc('claim_transfer',{p_token:cl});
+      if(!error){alert('Sayfa size devredildi. Hoş geldiniz!');return go()}
+      alert(error.message)}
     app.innerHTML=`<div class="w"><div class="card"><h2>Sayfanı oluştur</h2>
     <input id="bn" placeholder="Bebeğin adı"><input id="pa" placeholder="Anne ve baba adları">
     <label class="mu">Kaçıncı haftadasın?</label><select id="wk"><option value="">Seçin</option>${Array.from({length:37},(_,i)=>`<option value="${i+4}">${i+4}. hafta</option>`).join('')}</select>
@@ -334,7 +359,7 @@ async function panel(user){
     <div class="r"><button id="mk">Sayfayı oluştur</button><button class="g" id="lo">Çıkış yap</button></div></div></div>`;
     $('mk').onclick=async()=>{const bn=$('bn').value.trim();if(!bn)return alert('Bebeğin adını yazın');
       let dd=$('dd').value;const w=+$('wk').value;
-      if(!dd){if(!w)return alert('Kaçıncı haftada olduğunuzu seçin');const d=new Date();d.setDate(d.getDate()+280-w*7);dd=ymd(d)}
+      if(!dd){if(!w)return alert('Kaçıncı haftada olduğunuzu seçin');dd=dueFromWeek(w)}
       const {error}=await sb.from('pages').insert({slug:await mkslug(bn),baby_name:bn,parents:$('pa').value.trim(),lang:LANG,theme:$('pt').value,due_date:dd});if(!err(error))go()};
     $('lo').onclick=out;return;
   }
@@ -470,7 +495,9 @@ async function dp(id){if(confirm('Ürün silinsin mi?')){const {error}=await sb.
 const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 // hafta: [Türkçe ad, English name, emoji, boy cm, ağırlık g] (yaklaşık değerler)
 const FR={4:['haşhaş tohumu','poppy seed','⚫',.1,0],5:['susam tanesi','sesame seed','⚪',.2,0],6:['mercimek','lentil','🟤',.6,0],7:['yaban mersini','blueberry','🫐',1.3,1],8:['üzüm','grape','🍇',1.6,1],9:['kiraz','cherry','🍒',2.3,2],10:['çilek','strawberry','🍓',3.1,4],11:['zeytin','olive','🫒',4.1,7],12:['kivi','kiwi','🥝',5.4,14],13:['şeftali','peach','🍑',7.4,23],14:['limon','lemon','🍋',8.7,43],15:['elma','apple','🍎',10.1,70],16:['avokado','avocado','🥑',11.6,100],17:['armut','pear','🍐',13,140],18:['dolmalık biber','bell pepper','🫑',14.2,190],19:['mango','mango','🥭',15.3,240],20:['muz','banana','🍌',25.6,300],21:['havuç','carrot','🥕',26.7,360],22:['tatlı patates','sweet potato','🍠',27.8,430],23:['papaya','papaya','papaya',28.9,500],24:['mısır','ear of corn','🌽',30,600],25:['patates','potato','🥔',34.6,660],26:['marul','head of lettuce','🥬',35.6,760],27:['brokoli','broccoli','🥦',36.6,875],28:['patlıcan','eggplant','🍆',37.6,1000],29:['salatalık','cucumber','🥒',38.6,1150],30:['ananas','pineapple','🍍',39.9,1320],31:['hindistan cevizi','coconut','🥥',41.1,1500],32:['kavun','cantaloupe','🍈',42.4,1700],33:['lahana','cabbage','🥬',43.7,1920],34:['patlıcan','eggplant','🍆',45,2150],35:['bal kavunu','honeydew melon','🍈',46.2,2380],36:['marul başı','head of romaine','🥬',47.4,2620],37:['ananas','pineapple','🍍',48.6,2860],38:['tatlı patates','sweet potato','🍠',49.8,3080],39:['kavun','melon','🍈',50.7,3290],40:['karpuz','watermelon','🍉',51.2,3460]};
-const gwk=due=>{const d=Math.ceil((new Date(due+'T00:00:00')-Date.now())/864e5);return Math.floor((280-d)/7)};
+const dayN=(y,m,d)=>Date.UTC(y,m,d)/864e5,tdayN=()=>{const n=new Date();return dayN(n.getFullYear(),n.getMonth(),n.getDate())},dueN=x=>{const [y,m,d]=x.split('-').map(Number);return dayN(y,m-1,d)};
+const gwk=due=>Math.floor((280-(dueN(due)-tdayN()))/7);
+const dueFromWeek=w=>new Date((tdayN()+280-w*7)*864e5).toISOString().slice(0,10);
 const L=(t,n)=>LANG==='en'?n:t;
 function hero(pg){
   const due=pg.due_date,tgt=due?new Date(due+'T00:00:00'):null,w=due?gwk(due):null,f=w!==null&&w>=4?FR[Math.min(40,w)]:null;
@@ -574,8 +601,9 @@ async function pextras(pg){
   <ol class="mu"><li>Aşağıdaki <a id="bkm" href="#">Minilist'e aktar</a> bağlantısını yer imleri çubuğuna sürükleyin (bir kez).</li><li>Amazon'da istek listenizi açın, tüm ürünler yüklenene kadar aşağı kaydırın ve yer imine tıklayın. Liste kopyalanır.</li><li>Aşağıdaki kutuya yapıştırıp "Listeye aktar" deyin.</li></ol>
   <textarea id="bk" rows="5" placeholder="Her satıra bir ürün: Ürün adı | https://bağlantı | https://görsel (görsel isteğe bağlı). Sadece ürün bağlantısı da yapıştırabilirsiniz."></textarea>
   <button id="bkgo">Listeye aktar</button></div>
-  <br><div class="card"><h3>Sayfayı aileye devret</h3><p class="mu">Sayfayı sizin için hazırladıysanız veya birine veriyorsanız: aile önce Minilist'e kayıt olsun, sonra e-posta adreslerini yazın. Devirden sonra sayfanın yönetimi onlarda olur, sizin erişiminiz kalkar.</p>
-  <input id="tr_em" type="email" placeholder="Ailenin e-posta adresi"><button class="d" id="tr_go">Sayfayı devret</button></div>
+  <br><div class="card"><h3>Sayfayı aileye devret</h3><p class="mu">Aile henüz kayıt olmadıysa sorun değil. Bir davet bağlantısı oluşturun, aileye WhatsApp veya e-postayla gönderin. Aile kayıt olup bağlantıyı açınca sayfa onların olur ve sizin erişiminiz kalkar. Bağlantı tek kullanımlıktır ve 30 gün geçerlidir.</p>
+  <input id="tr_em" type="email" placeholder="Ailenin e-posta adresi (isteğe bağlı, sadece e-posta taslağı için)"><button class="d" id="tr_go">Davet bağlantısı oluştur</button>
+  <div id="tr_out" style="margin-top:10px"></div></div>
   ${pg.plan==='free'?`<br><div class="card"><h3>Reklamsız Pro</h3><p class="mu">Reklamları kaldırır, ürün sınırını açar ve anı defterini PDF indirmenizi sağlar. Tek seferlik ödeme.</p>${PAYMENTS?'<button id="up">Pro\'ya geç</button>':'<p class="mu"><b>Beta:</b> Pro özellikleri davet edilen ailelere ücretsiz açılır.</p>'}</div>`:'<br><div class="card"><b>Pro aktif ✓</b><div class="r"><button id="bk">Anı defterini indir (PDF)</button></div></div>'}
   <br><div class="card"><h3>Hafta hafta paylaş</h3><p class="mu">Kısa bir not yeterli: bebek ne yaptı, nasıl hissediyorsunuz? Aile kalp bırakır.</p>
   <input id="uw" type="number" min="1" max="42" placeholder="Hamilelik haftası"><textarea id="ub" placeholder="Bu hafta neler oldu?"></textarea><button id="pu">Paylaş</button></div>
@@ -600,9 +628,12 @@ async function pextras(pg){
     await addRows(pg,rows)};
   $('bkgo').onclick=()=>addRows(pg,parseLines(pg,$('bk').value));
   $('bkm').onclick=ev=>ev.preventDefault();$('bkm').href='javascript:'+encodeURIComponent(BKM);
-  $('tr_go').onclick=async()=>{const m=$('tr_em').value.trim();if(!m)return alert('E-posta adresini yazın');
-    if(!confirm('Sayfa bu hesaba devredilsin mi? Devirden sonra sayfayı siz yönetemezsiniz.'))return;
-    const {error}=await sb.rpc('transfer_page',{p_page:pg.id,p_email:m});if(err(error))return;alert('Sayfa devredildi.');go()};
+  $('tr_go').onclick=async()=>{const m=$('tr_em').value.trim();
+    if(!confirm('Davet bağlantısı oluşturulsun mu? Bağlantıyı açıp kayıt olan kişi sayfanın sahibi olur.'))return;
+    const {data:tok,error}=await sb.rpc('create_transfer',{p_page:pg.id,p_email:m||null});if(err(error))return;
+    const lk=location.origin+location.pathname+'#/devral/'+tok,msg=LANG==='en'?`${pg.baby_name}'s Minilist page is yours! Sign up and open this link to take it over: ${lk}`:`${pg.baby_name} sayfası artık sizin! Kayıt olup bu bağlantıyı açarak devralın: ${lk}`;
+    $('tr_out').innerHTML=`<input id="tr_link" readonly value="${e(lk)}"><div class="r"><button class="g" id="tr_cp">Bağlantıyı kopyala</button><a href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener"><button class="g">WhatsApp ile gönder</button></a><a href="mailto:${encodeURIComponent(m)}?subject=${encodeURIComponent('Minilist')}&body=${encodeURIComponent(msg)}"><button class="g">E-posta taslağı aç</button></a></div><p class="mu">Bağlantıyı sadece ailenize verin. Bağlantıya sahip olan ve kayıt olan ilk kişi sayfayı devralır. Yenisini oluşturursanız eskisi geçersiz olur.</p>`;
+    $('tr_cp').onclick=()=>navigator.clipboard.writeText(lk).then(()=>alert('Kopyalandı'),()=>$('tr_link').select())};
   $('dpg').onclick=async()=>{if(!confirm('Sayfa silinsin mi? Bu işlem geri alınamaz.'))return;const {error}=await sb.from('pages').delete().eq('id',pg.id);if(!err(error))go()};
   $('dac').onclick=async()=>{if(!confirm('Hesabınız ve tüm verileriniz kalıcı olarak silinsin mi? Bu işlem geri alınamaz.'))return;const {error}=await sb.rpc('delete_my_account');if(err(error))return;await sb.auth.signOut();alert('Hesabınız silindi.');nav('#/')};
   $('pu').onclick=async()=>{const b=$('ub').value.trim();if(!b)return;const {error}=await sb.from('updates').insert({page_id:pg.id,body:b,week:+$('uw').value||null});if(!err(error)){alert('Paylaşıldı');go()}};
