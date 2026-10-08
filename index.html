@@ -124,14 +124,40 @@ footer.w{text-align:center}
 .lock .ring{width:150px}
 .lock .core{font-size:52px}
 
-/* Ana sayfa */
-.hh{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:center;padding-top:72px}
-.hh .lead{margin-bottom:20px}
-.hv{text-align:center}
-.fl{list-style:none;padding:0;margin:20px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:26px 36px}
-.fl li{display:grid;grid-template-columns:52px 1fr;gap:14px;align-items:start}
-.fl .ic{width:52px;height:52px;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-size:24px}
-.fl h3{font-size:20px;margin-bottom:4px}
+/* Ana sayfa: ürünün kendisi, telefon çerçevesinde canlı önizleme */
+.hp{display:grid;grid-template-columns:minmax(0,1fr) 360px;grid-template-areas:"t p" "k p";gap:8px 64px;padding-top:64px}
+.hp .t{grid-area:t}.hp .k{grid-area:k}.hp .side{grid-area:p;position:sticky;top:16px;align-self:start}
+.hp h1{font-size:clamp(40px,6vw,62px)}
+.hp .lead{margin-bottom:20px}
+.keys{list-style:none;padding:0;margin:28px 0 0}
+.keys li{display:grid;grid-template-columns:28px 1fr;gap:14px;padding:16px 0;border-top:1px solid var(--line)}
+.keys h3{font-size:20px;margin:0 0 4px}
+.keys p{margin:0}
+.pin{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;font:700 13px/1 var(--sans)}
+.pv .pin{position:absolute;right:10px;top:8px;z-index:2;box-shadow:0 0 0 3px var(--bg)}
+.pv{width:340px;max-width:100%;margin:0 auto;border-radius:48px;background:var(--ink);padding:10px;box-shadow:0 34px 60px -34px rgba(46,42,59,.55)}
+.scr{height:min(660px,78vh);overflow-y:auto;border-radius:38px;background:var(--bg);color:var(--ink);overscroll-behavior:contain;scrollbar-width:none;position:relative}
+.scr::-webkit-scrollbar{display:none}
+.pv .hero{padding:30px 14px 4px;position:relative}
+.pv .ring{width:168px;margin-bottom:12px}.pv .core{font-size:62px}
+.pv h1{font-size:36px;margin:8px 0 6px}.pv h2{font-size:23px}
+.pv .wk{font-size:14px}.pv .par{font-size:16px}.pv .sib,.pv .mu{font-size:13px}
+.pv .cd{gap:12px;padding:8px 16px;margin:12px auto 4px}.pv .cd b{font-size:19px}.pv .cd span{font-size:11px}
+.pv .greet{font-size:15px;margin:16px 0 0;padding:14px 18px 0;position:relative}.pv .greet footer{font-size:13px}
+.pv .sec{padding:28px 14px 0;position:relative}
+.pv .prod{margin-bottom:10px}.pv .prod .noimg{height:74px;font-size:28px}.pv .prod h3{font-size:15px}.pv .prod .pb{padding:10px 12px 12px}
+.pv .tl{margin-left:6px;padding-left:20px}.pv .tl .it:before{left:-29px;width:14px;height:14px}
+.pv .pimg{height:130px;border-radius:14px;margin:4px 0 8px;background:linear-gradient(135deg,var(--soft),var(--warm));display:grid;place-items:center;font-size:40px}
+.pv .letter{padding:12px 14px;margin-bottom:8px;font-size:14px}
+.pv .share{margin:28px 14px 0;padding:16px 0 26px;position:relative}
+.pv .lock{padding:90px 20px 0;max-width:none}.pv .lock .ring{width:130px}
+.fin{border:1.5px solid var(--line);border-radius:12px;background:#fff;padding:10px 14px;color:var(--mu);text-align:left;margin:6px 0 10px}
+.b{display:inline-block;background:var(--ac);color:#fff;border-radius:99px;padding:8px 15px;font-weight:650;font-size:13px}.b.g{background:var(--soft);color:var(--ac)}.b.off{opacity:.45}
+.pvc{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:16px}
+.pvc button{display:flex;align-items:center;gap:6px;background:var(--card);color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line);padding:6px 12px 6px 8px;font-size:13px;font-weight:600}
+.pvc button[aria-pressed=true]{box-shadow:inset 0 0 0 2px var(--ink)}
+.pvc .dot{width:16px;height:16px;border-radius:50%}
+.pvn{text-align:center;color:var(--mu);font-size:13px;margin-top:8px}
 .plans{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .plans .ac{border-color:var(--ac)}
 
@@ -157,8 +183,8 @@ footer.w{text-align:center}
 .legal{line-height:1.7}.legal h2{font-size:32px}.legal h3{font-size:20px;margin-top:26px}
 
 @media (max-width:760px){
-  .hh,.two,.plans{grid-template-columns:1fr}
-  .hh{padding-top:48px;gap:20px}.hv{order:-1}
+  .two,.plans{grid-template-columns:1fr}
+  .hp{grid-template-columns:1fr;grid-template-areas:"t" "p" "k";padding-top:48px}.hp .side{position:static;margin:16px 0 8px}
   .gg{grid-template-columns:1fr}.gg>img,.gg .noimg{min-height:0;height:170px}
   .story{grid-template-columns:1fr;gap:8px;text-align:center}
   .cd{padding:10px 18px}
@@ -414,28 +440,57 @@ $('lg').onclick=()=>{try{localStorage.setItem('lang',LANG==='tr'?'en':'tr')}catc
 sb.auth.onAuthStateChange(ev=>{if(ev==='PASSWORD_RECOVERY'){window._rec=1;return setTimeout(recover,0)}if(ev==='SIGNED_IN'){let f;try{f=sessionStorage.getItem('oauth');sessionStorage.removeItem('oauth')}catch(_){}if(f)setTimeout(()=>nav('#/panel'),0)}});
 addEventListener('hashchange',go);go();
 
+// Ana sayfadaki canlı önizleme: gerçek aile sayfasının bileşenleriyle çizilen örnek sayfa.
+// Butonlar sadece görünüm (span), bu yüzden önizlemede tıklanabilir/odaklanabilir bir şey yok.
+function demoPhone(){
+  const f=FR[24],pin=n=>`<span class="pin" aria-hidden="true">${n}</span>`;
+  return `<div class="pv" id="pv" data-pal="lilac"><div class="scr" id="pvs" role="img" aria-label="${L('Örnek bir aile sayfası','A sample family page')}">
+  <div class="pvpg">
+  <div class="hero">${pin(1)}${ringHTML({week:24,emoji:f[2]})}<p class="wk">${L(`24. hafta: yaklaşık bir ${f[0]} kadar`,`Week 24: about the size of an ${f[1]}`)}</p>
+  <h1>${L('Defne geliyor!','Defne is coming!')}</h1><p class="par">${L('Ayşe ve Mehmet','Ayşe & Mehmet')}</p><p class="sib">${L('Ela abla da sabırsızlanıyor','Big sister Ela can\'t wait either')}</p>
+  <div class="cd"><div><b>112</b><span>${L('gün','days')}</span></div><div><b>09</b><span>${L('saat','hours')}</span></div><div><b>41</b><span>${L('dakika','min')}</span></div></div></div>
+  <blockquote class="greet">${pin(2)}<p>${L('Defne\'yi beklerken her hafta biraz daha heyecanlanıyoruz. Bu sayfayı onu sizinle birlikte karşılamak için açtık.','Every week we get a little more excited. We made this page to welcome Defne together with you.')}</p><footer>${L('Ayşe ve Mehmet','Ayşe & Mehmet')}</footer></blockquote>
+  <div class="sec">${pin(3)}<h2>${L('Hediye listesi','Gift list')}</h2>
+  <div class="prod"><div class="pb"><span><span class="pill">${L('Ortak hediye','Group gift')}</span></span><h3>${L('3\'ü 1 arada bebek arabası','3-in-1 stroller')}</h3><div class="bar"><i style="width:62%"></i></div><div class="meta">9.300 / 15.000 TL</div><div class="r"><span></span><span class="b">${L('Katkıda bulun','Contribute')}</span></div></div></div>
+  <div class="prod"><div class="noimg">🛏️</div><div class="pb"><div class="meta">${L('Bebek odası','Nursery')}</div><h3>${L('Anne yanı beşik','Bedside bassinet')}</h3><div class="meta">${L('1 adet kaldı','1 left')}</div><div class="r"><span></span><span class="b">${L('Bu ürünü alıyorum','I\'ll get this')}</span></div></div></div>
+  <div class="prod done"><div class="pb"><div class="meta">${L('Tekstil','Textiles')}</div><h3>${L('Müslin örtü seti','Muslin swaddle set')}</h3><div class="meta">${L('Tamamı ayrıldı','All reserved')}</div><div class="r"><span></span><span class="b off">${L('Ayrıldı','Reserved')}</span></div></div></div></div>
+  <div class="sec">${pin(4)}<h2>${L('Büyüme notları','Growth notes')}</h2><div class="tl"><article class="it"><div class="wkl">${L('24. hafta','Week 24')}</div><p>${L('Bu hafta ilk tekmeyi hissettik!','We felt the first kick this week!')}</p><div class="pimg" aria-hidden="true">👣</div><span class="b g">💙 12</span></article></div></div>
+  <div class="sec">${pin(5)}<h2>${L('Bebeğe mektup','Letters to the baby')}</h2>
+  <div class="letter"><p>${L('Canım torunum, seni kucağıma alacağım günü sayıyorum.','My dear grandchild, I am counting the days until I hold you.')}</p><div class="from">Fatma, <span class="rel">${L('anneannesi','Grandma')}</span></div></div>
+  <div class="letter"><p>${L('Sana ilk kitabını ben okuyacağım, söz!','I will read you your first book, promise!')}</p><div class="from">Zeynep, <span class="rel">${L('teyzesi','Aunt')}</span></div></div></div>
+  <div class="share">${pin(6)}<h2>${L('Sevdiklerinizle paylaşın','Share it with your people')}</h2><span class="b">${L('WhatsApp\'ta paylaş','Share on WhatsApp')}</span></div>
+  </div>
+  <div class="lock pvlk" hidden>${ringHTML({week:0,emoji:'🔒'})}<h2>${L('Bu sayfa şifreli','This page is password protected')}</h2><p class="mu">${L('Aile bu sayfayı bir şifreyle korudu.','The family protected this page with a password.')}</p><div class="fin">${L('Sayfa şifresi','Page password')}</div><span class="b">${L('Sayfayı aç','Open the page')}</span></div>
+  </div></div>`;
+}
 function home(){
   document.title='Minilist';
-  const f=FR[24];
-  app.innerHTML=`<section class="w hh"><div>
+  const K=[
+    [L('Hamilelik halkası ve geri sayım','Pregnancy ring and countdown'),L('Halka 40 haftada dolar. Ortasında bu haftanın meyvesi var; kapak fotoğrafı yüklerseniz fotoğrafınız. Altında doğuma kalan süre.','The ring fills over 40 weeks. In the middle is this week\'s fruit, or your cover photo if you add one. Below it, the time left until the due date.')],
+    [L('Ailenin sesi','The family\'s voice'),L('Kendi karşılama mesajınız, abla ya da abinin adı ve isterseniz ismin hikayesi.','Your own welcome message, the big sibling\'s name and, if you like, the story behind the name.')],
+    [L('Hediye listesi','Gift list'),L('Misafir bir ürünü ayırır, aynı hediye iki kez alınmaz. Büyük hediyelerde herkes ortak hediyeye katkıda bulunur, çubuk dolar.','Guests reserve an item so nothing is bought twice. For big gifts everyone chips in and the bar fills up.')],
+    [L('Hafta hafta notlar','Week by week notes'),L('Kısa bir not ve isterseniz bir fotoğraf. Sevdikleriniz kalp bırakır.','A short note and a photo if you like. Your loved ones send hearts.')],
+    [L('Bebeğe mektuplar','Letters to the baby'),L('Herkes kim olduğunu seçerek yazar: anneanne, teyze, amca... Mektuplar sizin seçtiğiniz gün açılır ve anı defterinde kalır.','Everyone signs with who they are: grandma, aunt, uncle... Letters open on the day you choose and stay in the memory book.')],
+    [L('Tek bağlantı','One link'),L('WhatsApp\'tan gönderin ya da QR kodu okutun. Kimsenin hesap açması gerekmez.','Send it on WhatsApp or scan the QR code. Nobody needs an account.')]];
+  app.innerHTML=`<section class="w hp"><div class="t">
   <h1>Bebeğinizin yolculuğu, sevdiklerinizle birlikte</h1>
-  <p class="lead">Kendi sayfanızı açın: doğuma geri sayım, hediye listesi ve ortak hediye katkısı tek bağlantıda.</p>
+  <p class="lead">${L('Ailenize ve dostlarınıza açacağınız sayfa tam olarak bu. Telefonda kaydırarak gezebilirsiniz.','This is exactly the page your family and friends will see. Scroll through it on the phone.')}</p>
   <div class="r"><button id="cta">Ücretsiz sayfanı aç</button><a href="#/p/demo" id="demo" hidden><button class="g">Örnek sayfaya bak</button></a></div></div>
-  <div class="hv">${ringHTML({week:24,emoji:f[2]})}<p class="wk">${L(`24. hafta: yaklaşık bir ${f[0]} kadar`,`Week 24: about the size of an ${f[1]}`)}</p><p class="mu">${L('Her hafta, bebeğin boyutu bir meyveyle','Each week, the baby\'s size as a fruit')}</p></div></section>
-  <section class="w"><h2>${L('Bir hediye listesinden fazlası','More than a gift list')}</h2><ul class="fl">
-  <li><span class="ic" aria-hidden="true">🎁</span><div><h3>Hediye listesi</h3><p class="mu">Aile ve arkadaşlar ürünü ayırır, aynı hediye iki kez alınmaz. Ortak hediyeye herkes katkıda bulunur.</p></div></li>
-  <li><span class="ic" aria-hidden="true">💌</span><div><h3>Bebeğe mektup</h3><p class="mu">Herkes bebeğe mektup bırakır. Mektuplar sizin seçtiğiniz günde açılır.</p></div></li>
-  <li><span class="ic" aria-hidden="true">🌱</span><div><h3>Hafta hafta notlar</h3><p class="mu">Gelişmeleri paylaşın, sevdikleriniz kalp bıraksın.</p></div></li>
-  <li><span class="ic" aria-hidden="true">👵</span><div><h3>${L('Bütün aile bir arada','The whole family together')}</h3><p class="mu">${L('Anneanne, teyze, amca... Herkes kim olduğunu söyleyerek yazar. Anı defterinde ailenin sesi kalır.','Grandma, aunts, uncles... Everyone signs with who they are, and the memory book keeps the family\'s voices.')}</p></div></li>
-  <li><span class="ic" aria-hidden="true">📷</span><div><h3>${L('Fotoğraflar ve kişisel dokunuşlar','Photos and personal touches')}</h3><p class="mu">${L('Kapak fotoğrafı, haftalık fotoğraflar, karşılama mesajınız, ismin hikayesi ve sayfanın rengi sizden.','A cover photo, weekly photos, your welcome message, the story of the name and the page colour are yours to set.')}</p></div></li>
-  <li><span class="ic" aria-hidden="true">🔒</span><div><h3>${L('İsterseniz aile şifresi','An optional family password')}</h3><p class="mu">${L('Sayfayı bağlantıya ek olarak bir şifreyle koruyun. Fotoğraflar yüklenmeden önce konum bilgisinden arındırılır.','Protect the page with a password on top of the link. Photos are stripped of location data before upload.')}</p></div></li>
-  </ul></section>
+  <div class="side">${demoPhone()}
+  <div class="pvc" role="group" aria-label="${L('Önizlemeyi dene','Try the preview')}">${PALS.map(([k,t,n,c],i)=>`<button type="button" data-pal="${k}" aria-pressed="${i===0}"><span class="dot" style="background:${c}"></span>${L(t,n)}</button>`).join('')}<button type="button" id="pvl" aria-pressed="false">🔒 ${L('Şifreli hali','Locked view')}</button></div>
+  <p class="pvn">${L('Rengi siz seçersiniz. İsterseniz sayfaya bir aile şifresi koyarsınız.','You choose the colour. Add a family password if you like.')}</p></div>
+  <ol class="keys k">${K.map(([h,p],i)=>`<li><span class="pin" aria-hidden="true">${i+1}</span><div><h3>${h}</h3><p class="mu">${p}</p></div></li>`).join('')}
+  <li><span class="pin" aria-hidden="true">+</span><div><h3>${L('Sizin paneliniz','Your dashboard')}</h3><p class="mu">${L('Ürün ekleme, Amazon listesinden aktarma, kim ne aldı, isim önerileri ve fotoğraflı anı defteri (PDF).','Add items, import from an Amazon list, see who got what, name suggestions and a memory book with your photos (PDF).')}</p></div></li></ol></section>
   <section class="w plans"><div class="card"><h3>Ücretsiz</h3><p class="mu">Sayfa, 25 ürüne kadar liste, ürün önerileri, mektup duvarı, güncellemeler, WhatsApp ve QR.</p></div>
   <div class="card ac"><h3>Pro${PAYMENTS?'':' <span class="pill">Yakında</span>'}</h3><p class="mu">Reklamsız sayfa, sınırsız ürün ve anı defteri PDF indirme. Tek seferlik ödeme.</p></div></section>
   <section class="w narrow"><div class="card pad"><h2>Giriş yap veya sayfanı aç</h2>
   <input id="em" type="email" autocomplete="email" placeholder="E-posta"><input id="pw" type="password" autocomplete="current-password" placeholder="Şifre (en az 6 karakter)">
   <div class="r"><button id="li">Giriş yap</button><button id="su" class="g">Kayıt ol</button></div>${GOOGLE?'<button id="gg" class="g" style="width:100%;margin-top:8px">Google ile devam et</button>':''}<p class="mu" style="margin:8px 0"><a href="#" id="fp">Şifremi unuttum</a></p><p class="mu">Kayıt olarak şunları kabul edersiniz: <a href="#/terms">Kullanım Şartları</a> · <a href="#/privacy">Gizlilik ve KVKK</a></p></div></section>`;
   ringGo();
+  const pcb=[...document.querySelectorAll('.pvc button[data-pal]')];
+  pcb.forEach(b=>b.onclick=()=>{$('pv').dataset.pal=b.dataset.pal;pcb.forEach(x=>x.setAttribute('aria-pressed',x===b))});
+  $('pvl').onclick=()=>{const on=$('pvl').getAttribute('aria-pressed')!=='true';$('pvl').setAttribute('aria-pressed',on);
+    document.querySelector('#pv .pvpg').hidden=on;document.querySelector('#pv .pvlk').hidden=!on;$('pvs').scrollTop=0};
   $('fp').onclick=async ev=>{ev.preventDefault();const m=$('em').value.trim();if(!m)return alert('E-posta adresinizi yazın');const {error}=await sb.auth.resetPasswordForEmail(m,{redirectTo:location.origin+location.pathname});if(!err(error))alert('Şifre sıfırlama bağlantısı e-postanıza gönderildi.')};
   $('cta').onclick=()=>{$('em').scrollIntoView({behavior:'smooth',block:'center'});$('em').focus({preventScroll:true})};
   sb.rpc('get_page',{p_slug:'demo'}).then(r=>{if(r&&r.data&&$('demo'))$('demo').hidden=false});
