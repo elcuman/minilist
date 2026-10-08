@@ -1,49 +1,169 @@
 <!DOCTYPE html>
 <html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
 <title>Minilist</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="theme-color" content="#F7F5F9">
+<link rel="preload" href="fonts/young-serif-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/figtree-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js" integrity="sha384-iLddHTLokph6Omwoyid4XKxHaWa6w41BnoEj0q5oOrzmYPpHIKt1wyjReA7s//pP" crossorigin="anonymous"></script>
 <style>
-:root{--bg:#f6f3ee;--tx:#263746;--mu:#71808c;--bl:#527d92;--soft:#e6f0f4;--cr:#eee5d8;--rd:#bd7474;--gr:#6f9b7d}
+@font-face{font-family:"Young Serif";src:url(fonts/young-serif-latin-400.woff2) format("woff2");font-weight:400;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Young Serif";src:url(fonts/young-serif-latin-ext-400.woff2) format("woff2");font-weight:400;font-display:swap;unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:Figtree;src:url(fonts/figtree-latin-wght.woff2) format("woff2");font-weight:300 900;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:Figtree;src:url(fonts/figtree-latin-ext-wght.woff2) format("woff2");font-weight:300 900;font-display:swap;unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+/* Süt, mürekkep, leylak; kayısı sadece halkadaki meyvede. Palet, ailenin seçimine göre değişir. */
+:root{--bg:#F7F5F9;--card:#fff;--ink:#2E2A3B;--mu:#676174;--line:#E4DFEA;--ac:#7A5C9E;--soft:#ECE6F3;--warm:#F2B880;--danger:#A8434C;
+  --serif:"Young Serif",Georgia,"Times New Roman",serif;--sans:Figtree,system-ui,-apple-system,"Segoe UI",sans-serif}
+[data-pal=rose]{--bg:#FBF5F7;--ac:#A4486B;--soft:#F6E3EA;--line:#EFDFE5}
+[data-pal=sea]{--bg:#F3F7FA;--ac:#2E6689;--soft:#DFEBF3;--line:#DCE6ED}
+[data-pal=sage]{--bg:#F4F7F4;--ac:#46705A;--soft:#E1ECE4;--line:#DCE6DF}
+[data-pal=apricot]{--bg:#FCF7F2;--ac:#9C5221;--soft:#F7E6D6;--line:#EFE1D3}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 Inter,-apple-system,"Segoe UI",sans-serif}
-.w{width:min(1000px,calc(100% - 32px));margin:auto;padding:24px 0}
-.hero{background:linear-gradient(135deg,var(--soft),var(--bg) 55%,var(--cr));padding:48px 0;text-align:center}
-h1{font-size:clamp(32px,6vw,56px);line-height:1;letter-spacing:-2px;margin:12px 0}
-.card{background:#fff;border-radius:20px;box-shadow:0 12px 36px rgba(38,55,70,.08);padding:20px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
-input,select,textarea,button{font:inherit;padding:10px 14px;border:1px solid #ddd;border-radius:12px;width:100%;margin:4px 0}
-button{background:var(--bl);color:#fff;border:0;font-weight:700;cursor:pointer;width:auto}
-button.g{background:var(--soft);color:var(--bl)}button.d{background:var(--rd)}button:disabled{opacity:.5;cursor:default}
-button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--bl);outline-offset:2px}
-.pill{display:inline-block;background:var(--soft);color:var(--bl);padding:4px 12px;border-radius:99px;font-size:13px;font-weight:700}
-.bar{height:8px;background:var(--cr);border-radius:9px;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--gr)}
-img{width:100%;height:150px;object-fit:cover;border-radius:12px}
-dialog{border:0;border-radius:20px;padding:22px;width:min(400px,92%)}
-.r{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.mu{color:var(--mu);font-size:14px}
-a{color:var(--bl)}
-.hero2{background:radial-gradient(circle at 85% 20%,rgba(255,255,255,.9),transparent 30%),linear-gradient(135deg,var(--soft) 0%,var(--bg) 55%,var(--cr) 100%);padding:40px 0 28px;position:relative;overflow:hidden}
-.hero2 .w{position:relative;z-index:1}
-.hero2:after{content:"";position:absolute;width:380px;height:380px;right:-120px;bottom:-170px;border-radius:50%;background:rgba(255,255,255,.45)}
-.hero2 h1{font-size:clamp(40px,8vw,72px);line-height:.98;letter-spacing:-2.5px;margin:14px 0 14px}
-.hero2 .sub{font-size:17px;color:#52616d;max-width:600px;margin:0}
-.eb{display:inline-block;padding:7px 14px;border-radius:99px;background:rgba(255,255,255,.8);color:var(--bl);font-size:12px;font-weight:800;letter-spacing:.6px}
-.par{margin-top:18px;font-weight:700;color:var(--bl);font-size:17px}
-.info{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;padding-top:8px}
-.bcard{display:flex;gap:20px;align-items:center;justify-content:space-between;padding:26px}
-.sl{color:var(--bl);text-transform:uppercase;font-size:12px;letter-spacing:1.4px;font-weight:800}
-.bcard h2{font-size:32px;margin:6px 0}.bcard p{margin:0 0 4px}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--sans)}
+h1,h2,h3{font-family:var(--serif);font-weight:400;line-height:1.15;margin:0 0 .45em;text-wrap:balance}
+h1{font-size:clamp(40px,9vw,72px);line-height:1.02;letter-spacing:-.01em}
+h2{font-size:clamp(26px,4.6vw,34px)}
+h3{font-size:21px}
+p{margin:0 0 .8em}
+a{color:var(--ac);text-underline-offset:3px}
+.w{width:min(1040px,calc(100% - 32px));margin-inline:auto;padding-block:28px}
+.narrow{width:min(680px,calc(100% - 32px))}
+.mu{color:var(--mu);font-size:15px}
+.sm{font-size:14px}
+.pre{white-space:pre-line}
+.lead{color:var(--mu);font-size:18px;max-width:60ch}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:14px}
+.card.pad{padding:28px}
+.r{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.r.c{justify-content:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.pill{display:inline-block;background:var(--soft);color:var(--ac);padding:3px 12px;border-radius:99px;font-size:14px;font-weight:650}
+label{display:block;font-size:14px;font-weight:600;margin:14px 0 2px}
+input,select,textarea{font:inherit;color:inherit;width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;margin:4px 0}
+input[type=checkbox],input[type=radio]{width:auto;margin:0 6px 0 0;accent-color:var(--ac)}
+input[type=file]{border-style:dashed;padding:9px;font-size:14px}
+textarea{min-height:96px;resize:vertical}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--soft);border-color:var(--ac)}
+button{font:inherit;font-weight:650;background:var(--ac);color:#fff;border:0;border-radius:99px;padding:11px 20px;cursor:pointer;margin:4px 0;width:auto}
+button:hover{filter:brightness(1.07)}
+button.g{background:var(--soft);color:var(--ac)}
+button.d{background:transparent;color:var(--danger);box-shadow:inset 0 0 0 1.5px currentColor}
+button.sm{padding:6px 13px;font-size:14px}
+button:disabled{opacity:.45;cursor:default;filter:none}
+button:focus-visible,a:focus-visible{outline:3px solid var(--ac);outline-offset:3px}
+dialog{border:0;border-radius:22px;padding:24px;width:min(420px,calc(100% - 32px));color:var(--ink)}
+dialog::backdrop{background:rgba(46,42,59,.45)}
+dialog h3{margin-bottom:10px}
+img{max-width:100%}
+#lg{position:fixed;top:10px;right:10px;z-index:5;margin:0;background:var(--card);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line);padding:6px 14px;font-size:14px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.errt{color:var(--danger);font-weight:600}
+footer.w{text-align:center}
+
+/* 40 haftalık halka: sayfanın tek gösterişli öğesi */
+.ring{position:relative;width:min(250px,68vw);aspect-ratio:1;margin:0 auto 18px}
+.ring svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.ring .trk{fill:none;stroke:var(--line);stroke-width:3.2}
+.ring .prg{fill:none;stroke:var(--ac);stroke-width:3.2;stroke-linecap:round;transition:stroke-dashoffset 1.8s cubic-bezier(.2,.7,.2,1)}
+.ring .tk{fill:var(--mu)}
+.ring .core{position:absolute;inset:11%;border-radius:50%;background:var(--soft);display:grid;place-items:center;overflow:hidden;font-size:clamp(60px,17vw,92px);line-height:1}
+.ring .core img{width:100%;height:100%;object-fit:cover}
+.ring .badge{position:absolute;width:21%;aspect-ratio:1;border-radius:50%;background:var(--warm);display:grid;place-items:center;font-size:clamp(20px,6vw,30px);transform:translate(-50%,-50%);box-shadow:0 0 0 4px var(--bg)}
+@media (prefers-reduced-motion:reduce){.ring .prg{transition:none}}
+.pap{display:block;width:84px;height:58px;border-radius:70% 45% 65% 45%;transform:rotate(-20deg);background:linear-gradient(135deg,#f3c66d,#e69a55);position:relative}.pap:before{content:"";position:absolute;width:10px;height:10px;background:#668466;border-radius:50%;top:-3px;right:7px}
+.badge .pap{width:28px;height:19px}.badge .pap:before{width:5px;height:5px}
+
+/* Aile sayfası */
+.hero{text-align:center;padding:44px 0 4px}
+.hero .w{padding-block:0}
+.wk{font-weight:650;color:var(--ac);font-size:17px;margin:0 0 2px}
+.hero h1{margin:14px 0 10px}
+.par{font-size:19px;margin:0 0 4px}
+.sib{color:var(--mu);margin:0 0 8px}
+.hero .r.c{margin-top:16px}
+.cd{display:inline-flex;gap:clamp(14px,4vw,26px);margin:22px auto 8px;padding:12px 24px;border-radius:99px;background:var(--card);border:1px solid var(--line)}
+.cd b{display:block;font:400 26px/1.1 var(--serif);font-variant-numeric:tabular-nums}
+.cd span{font-size:13px;color:var(--mu)}
+.greet{margin:20px 0 0;padding:0;text-align:center;font-size:20px;line-height:1.6}
+.greet p{white-space:pre-line;margin:0}
+.greet footer{color:var(--mu);font-size:15px;margin-top:10px}
+.story{display:grid;grid-template-columns:minmax(0,auto) 1fr;gap:28px;align-items:center;border-block:1px solid var(--line);padding:26px 0}
+.story .nm{font:400 clamp(44px,9vw,68px)/1 var(--serif);color:var(--ac);overflow-wrap:anywhere}
+.story h2{font-size:22px}
+.story p{white-space:pre-line;margin:0}
+.sec{padding-top:44px}
+.sh{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.sh h2,.sh .lead{margin-bottom:4px}
+.flt{margin-bottom:14px}.flt input{flex:1;min-width:180px}.flt select{width:auto}
+.prod{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
+.prod>img,.prod .noimg{width:100%;height:170px;object-fit:cover;display:block;background:var(--soft)}
+.prod .noimg{display:grid;place-items:center;font-size:36px;height:110px}
+.prod .pb{padding:14px 16px 16px;display:flex;flex-direction:column;flex:1}
+.prod h3{font-family:var(--sans);font-weight:650;font-size:17px;margin:2px 0 6px}
+.prod .meta{font-size:13px;color:var(--mu)}
+.prod .r{margin-top:auto;padding-top:8px;justify-content:space-between}
+.prod.done{opacity:.55}
+.gg{display:grid;grid-template-columns:200px 1fr;margin-bottom:14px}
+.gg>img,.gg .noimg{height:100%;min-height:170px}
+.bar{height:10px;background:var(--soft);border-radius:9px;overflow:hidden;margin:10px 0 6px}
+.bar i{display:block;height:100%;background:var(--ac);border-radius:9px}
+.tl{position:relative;margin:8px 0 0 7px;padding-left:26px;border-left:2px solid var(--line)}
+.tl .it{position:relative;padding-bottom:26px;max-width:620px}
+.tl .it:before{content:"";position:absolute;left:-35px;top:3px;width:16px;height:16px;border-radius:50%;background:var(--bg);box-shadow:inset 0 0 0 4px var(--ac)}
+.tl .wkl{font-weight:650;color:var(--ac);font-size:15px;margin-bottom:4px}
+.tl img{display:block;width:100%;max-height:420px;object-fit:cover;border-radius:16px;margin:4px 0 8px}
+.two{display:grid;grid-template-columns:1.2fr 1fr;gap:28px;align-items:start}
+.letters{display:grid;gap:12px}
+.letter{background:var(--card);border:1px solid var(--line);border-radius:4px 20px 20px 20px;padding:18px 20px}
+.letter p{white-space:pre-line;margin:0 0 8px}
+.from{color:var(--mu);font-size:14px}
+.rel{color:var(--ac);font-weight:600}
+.share{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:44px}
+.qr{background:#fff;padding:10px;border-radius:14px;border:1px solid var(--line);line-height:0}
+.lock{text-align:center;max-width:400px;padding-top:12vh}
+.lock .ring{width:150px}
+.lock .core{font-size:52px}
+
+/* Ana sayfa */
+.hh{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:center;padding-top:72px}
+.hh .lead{margin-bottom:20px}
+.hv{text-align:center}
+.fl{list-style:none;padding:0;margin:20px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:26px 36px}
+.fl li{display:grid;grid-template-columns:52px 1fr;gap:14px;align-items:start}
+.fl .ic{width:52px;height:52px;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-size:24px}
+.fl h3{font-size:20px;margin-bottom:4px}
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.plans .ac{border-color:var(--ac)}
+
+/* Panel */
+.phd{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.phd h1{font-size:clamp(32px,6vw,48px);margin:0}
+.panel .card h3{margin-bottom:8px}
+.sharec{display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}
+.sharec a{overflow-wrap:anywhere}
+.cov{display:flex;gap:16px;align-items:flex-start}
+.thumb{width:84px;height:84px;border-radius:50%;object-fit:cover;background:var(--soft);display:grid;place-items:center;font-size:30px;flex-shrink:0}
+.sw{border:0;padding:0;margin:14px 0 6px;display:flex;flex-wrap:wrap;gap:8px}
+.sw legend{font-size:14px;font-weight:600;margin-bottom:6px;padding:0}
+.sw label{display:flex;align-items:center;margin:0;padding:7px 12px 7px 9px;border:1.5px solid var(--line);border-radius:99px;font-weight:500;cursor:pointer}
+.sw label:has(input:checked){border-color:var(--ac)}
+.sw .dot{width:18px;height:18px;border-radius:50%;margin-right:6px}
+.li{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.li:last-child{border-bottom:0}
+.li img{width:56px;height:56px;border-radius:10px;object-fit:cover}
 .stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.stats div{background:var(--soft);padding:10px 14px;border-radius:14px}
-.stats b{display:block;font-size:16px}.stats span{font-size:12px;color:var(--mu)}
-.pap{display:block;width:84px;height:58px;border-radius:70% 45% 65% 45%;transform:rotate(-20deg);background:linear-gradient(135deg,#f3c66d,#e69a55);position:relative;box-shadow:inset -8px -5px 14px rgba(130,70,20,.12)}.pap:before{content:"";position:absolute;width:10px;height:10px;background:#668466;border-radius:50%;top:-3px;right:7px}.pap:after{content:"••••";position:absolute;color:#7e5531;letter-spacing:7px;left:22px;top:19px;font-size:11px}
-.fruit{font-size:84px;line-height:1;width:128px;height:128px;border-radius:50%;background:var(--cr);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.cdown{padding:26px;display:flex;flex-direction:column;justify-content:center}.cdown h3{margin:6px 0 16px;font-size:21px}
-.cg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.cg div{background:var(--cr);border-radius:14px;padding:12px 4px;text-align:center}
-.cg b{display:block;font-size:22px}.cg span{font-size:11px;color:var(--mu)}
-@media(max-width:760px){.info{grid-template-columns:1fr}.bcard{flex-direction:column-reverse;align-items:flex-start}.fruit{width:96px;height:96px;font-size:60px}}
-[data-theme=girl]{--bg:#fbf1f3;--bl:#b0566f;--soft:#f9e1e8;--cr:#f5e6dc;--gr:#8aa68f}
-[data-theme=boy]{--bg:#eef4f8;--bl:#3f7396;--soft:#d9e9f3;--cr:#e8e3d6}
-[data-theme=neutral]{--bg:#f4f3ec;--bl:#5f8a68;--soft:#e4eddc;--cr:#efe6d3;--gr:#5f8a68}
-</style><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script></head><body><button id="lg" class="g" style="position:fixed;top:10px;right:10px;z-index:5;margin:0">EN</button><div id="app"></div><dialog id="dlg"></dialog>
+.stats b{display:block;font-size:18px}.stats span{font-size:13px;color:var(--mu)}
+.st{border-collapse:collapse;width:100%;font-size:14px;white-space:nowrap}.st th,.st td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line)}.st th:nth-child(-n+3),.st td:nth-child(-n+3){text-align:left}.st th{color:var(--mu);font-weight:600}
+.legal{line-height:1.7}.legal h2{font-size:32px}.legal h3{font-size:20px;margin-top:26px}
+
+@media (max-width:760px){
+  .hh,.two,.plans{grid-template-columns:1fr}
+  .hh{padding-top:48px;gap:20px}.hv{order:-1}
+  .gg{grid-template-columns:1fr}.gg>img,.gg .noimg{min-height:0;height:170px}
+  .story{grid-template-columns:1fr;gap:8px;text-align:center}
+  .cd{padding:10px 18px}
+}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous"></script></head><body><button id="lg">EN</button><div id="app"></div><dialog id="dlg"></dialog>
 <footer class="w mu" style="text-align:center"><a href="#/privacy">Gizlilik ve KVKK</a> · <a href="#/terms">Kullanım Şartları</a></footer>
 <script>
 const SUPABASE_URL='https://wkzjdcqpnosvvfsmqkjw.supabase.co', SUPABASE_KEY='sb_publishable_QQZK8UFIlFolBibWCpMTDg_m0rubZdz';
@@ -60,7 +180,7 @@ const out=()=>sb.auth.signOut().then(()=>nav('#/'));
 async function go(){
   if(SUPABASE_URL.includes('PROJE-ID')){app.innerHTML='<div class="w"><div class="card"><h3>Kurulum eksik</h3><p>index.html içindeki SUPABASE_URL ve SUPABASE_KEY değerlerini kendi Supabase projenizle değiştirin.</p></div></div>';return}
   const h=location.hash,isP=h.startsWith('#/p/');
-  if(!isP){LANG=pref();document.body.removeAttribute('data-theme')}
+  if(!isP){LANG=pref();document.body.removeAttribute('data-theme');document.body.removeAttribute('data-pal')}
   $('lg').style.display=isP?'none':'block';$('lg').textContent=LANG==='tr'?'EN':'TR';
   if(isP)return pub(decodeURIComponent(h.slice(4)));
   const {data:{session}}=await sb.auth.getSession();
@@ -296,22 +416,29 @@ addEventListener('hashchange',go);go();
 
 function home(){
   document.title='Minilist';
-  app.innerHTML=`<div class="hero"><div class="w"><span class="pill">Hamilelikten çocukluğa</span>
+  const f=FR[24];
+  app.innerHTML=`<section class="w hh"><div>
   <h1>Bebeğinizin yolculuğu, sevdiklerinizle birlikte</h1>
-  <p>Kendi sayfanızı açın: doğuma geri sayım, hediye listesi ve ortak hediye katkısı tek bağlantıda.</p><button id="cta">Ücretsiz sayfanı aç</button></div></div>
-  <div class="w"><div class="grid">
-  <div class="card"><h3>Hediye listesi</h3><p class="mu">Aile ve arkadaşlar ürünü ayırır, aynı hediye iki kez alınmaz. Ortak hediyeye herkes katkıda bulunur.</p></div>
-  <div class="card"><h3>Bebeğe mektup</h3><p class="mu">Herkes bebeğe mektup bırakır. Mektuplar sizin seçtiğiniz günde açılır.</p></div>
-  <div class="card"><h3>Hafta hafta notlar</h3><p class="mu">Gelişmeleri paylaşın, sevdikleriniz kalp bıraksın.</p></div></div>
-  <div class="r" id="demo" style="margin:16px 0;display:none"><a href="#/p/demo"><button class="g">Örnek sayfaya bak</button></a></div>
-  <div class="grid"><div class="card"><h3>Ücretsiz</h3><p class="mu">Sayfa, 25 ürüne kadar liste, ürün önerileri, mektup duvarı, güncellemeler, WhatsApp ve QR.</p></div>
-  <div class="card"><h3>Pro${PAYMENTS?'':' <span class="pill">Yakında</span>'}</h3><p class="mu">Reklamsız sayfa, sınırsız ürün ve anı defteri PDF indirme. Tek seferlik ödeme.</p></div></div></div>
-  <div class="w"><div class="card" style="max-width:380px;margin:auto"><h3>Giriş yap veya sayfanı aç</h3>
-  <input id="em" type="email" placeholder="E-posta"><input id="pw" type="password" placeholder="Şifre (en az 6 karakter)">
-  <div class="r"><button id="li">Giriş yap</button><button id="su" class="g">Kayıt ol</button></div>${GOOGLE?'<button id="gg" class="g" style="width:100%;margin-top:8px">Google ile devam et</button>':''}<p class="mu" style="margin:8px 0"><a href="#" id="fp">Şifremi unuttum</a></p><p class="mu">Kayıt olarak şunları kabul edersiniz: <a href="#/terms">Kullanım Şartları</a> · <a href="#/privacy">Gizlilik ve KVKK</a></p></div></div>`;
+  <p class="lead">Kendi sayfanızı açın: doğuma geri sayım, hediye listesi ve ortak hediye katkısı tek bağlantıda.</p>
+  <div class="r"><button id="cta">Ücretsiz sayfanı aç</button><a href="#/p/demo" id="demo" hidden><button class="g">Örnek sayfaya bak</button></a></div></div>
+  <div class="hv">${ringHTML({week:24,emoji:f[2]})}<p class="wk">${L(`24. hafta: yaklaşık bir ${f[0]} kadar`,`Week 24: about the size of an ${f[1]}`)}</p><p class="mu">${L('Her hafta, bebeğin boyutu bir meyveyle','Each week, the baby\'s size as a fruit')}</p></div></section>
+  <section class="w"><h2>${L('Bir hediye listesinden fazlası','More than a gift list')}</h2><ul class="fl">
+  <li><span class="ic" aria-hidden="true">🎁</span><div><h3>Hediye listesi</h3><p class="mu">Aile ve arkadaşlar ürünü ayırır, aynı hediye iki kez alınmaz. Ortak hediyeye herkes katkıda bulunur.</p></div></li>
+  <li><span class="ic" aria-hidden="true">💌</span><div><h3>Bebeğe mektup</h3><p class="mu">Herkes bebeğe mektup bırakır. Mektuplar sizin seçtiğiniz günde açılır.</p></div></li>
+  <li><span class="ic" aria-hidden="true">🌱</span><div><h3>Hafta hafta notlar</h3><p class="mu">Gelişmeleri paylaşın, sevdikleriniz kalp bıraksın.</p></div></li>
+  <li><span class="ic" aria-hidden="true">👵</span><div><h3>${L('Bütün aile bir arada','The whole family together')}</h3><p class="mu">${L('Anneanne, teyze, amca... Herkes kim olduğunu söyleyerek yazar. Anı defterinde ailenin sesi kalır.','Grandma, aunts, uncles... Everyone signs with who they are, and the memory book keeps the family\'s voices.')}</p></div></li>
+  <li><span class="ic" aria-hidden="true">📷</span><div><h3>${L('Fotoğraflar ve kişisel dokunuşlar','Photos and personal touches')}</h3><p class="mu">${L('Kapak fotoğrafı, haftalık fotoğraflar, karşılama mesajınız, ismin hikayesi ve sayfanın rengi sizden.','A cover photo, weekly photos, your welcome message, the story of the name and the page colour are yours to set.')}</p></div></li>
+  <li><span class="ic" aria-hidden="true">🔒</span><div><h3>${L('İsterseniz aile şifresi','An optional family password')}</h3><p class="mu">${L('Sayfayı bağlantıya ek olarak bir şifreyle koruyun. Fotoğraflar yüklenmeden önce konum bilgisinden arındırılır.','Protect the page with a password on top of the link. Photos are stripped of location data before upload.')}</p></div></li>
+  </ul></section>
+  <section class="w plans"><div class="card"><h3>Ücretsiz</h3><p class="mu">Sayfa, 25 ürüne kadar liste, ürün önerileri, mektup duvarı, güncellemeler, WhatsApp ve QR.</p></div>
+  <div class="card ac"><h3>Pro${PAYMENTS?'':' <span class="pill">Yakında</span>'}</h3><p class="mu">Reklamsız sayfa, sınırsız ürün ve anı defteri PDF indirme. Tek seferlik ödeme.</p></div></section>
+  <section class="w narrow"><div class="card pad"><h2>Giriş yap veya sayfanı aç</h2>
+  <input id="em" type="email" autocomplete="email" placeholder="E-posta"><input id="pw" type="password" autocomplete="current-password" placeholder="Şifre (en az 6 karakter)">
+  <div class="r"><button id="li">Giriş yap</button><button id="su" class="g">Kayıt ol</button></div>${GOOGLE?'<button id="gg" class="g" style="width:100%;margin-top:8px">Google ile devam et</button>':''}<p class="mu" style="margin:8px 0"><a href="#" id="fp">Şifremi unuttum</a></p><p class="mu">Kayıt olarak şunları kabul edersiniz: <a href="#/terms">Kullanım Şartları</a> · <a href="#/privacy">Gizlilik ve KVKK</a></p></div></section>`;
+  ringGo();
   $('fp').onclick=async ev=>{ev.preventDefault();const m=$('em').value.trim();if(!m)return alert('E-posta adresinizi yazın');const {error}=await sb.auth.resetPasswordForEmail(m,{redirectTo:location.origin+location.pathname});if(!err(error))alert('Şifre sıfırlama bağlantısı e-postanıza gönderildi.')};
   $('cta').onclick=()=>{$('em').scrollIntoView({behavior:'smooth',block:'center'});$('em').focus({preventScroll:true})};
-  sb.rpc('get_page',{p_slug:'demo'}).then(r=>{if(r&&r.data&&$('demo'))$('demo').style.display='flex'});
+  sb.rpc('get_page',{p_slug:'demo'}).then(r=>{if(r&&r.data&&$('demo'))$('demo').hidden=false});
   if($('gg'))$('gg').onclick=async()=>{try{sessionStorage.setItem('oauth','1')}catch(_){}const {error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});err(error)};
   $('li').onclick=async()=>{const {error}=await sb.auth.signInWithPassword({email:$('em').value,password:$('pw').value});if(!err(error))nav('#/panel')};
   $('su').onclick=async()=>{const {data,error}=await sb.auth.signUp({email:$('em').value,password:$('pw').value});
@@ -350,54 +477,58 @@ async function panel(user){
       const {error}=await sb.rpc('claim_transfer',{p_token:cl});
       if(!error){alert('Sayfa size devredildi. Hoş geldiniz!');return go()}
       alert(error.message)}
-    app.innerHTML=`<div class="w"><div class="card"><h2>Sayfanı oluştur</h2>
-    <input id="bn" placeholder="Bebeğin adı"><input id="pa" placeholder="Anne ve baba adları">
-    <label class="mu">Kaçıncı haftadasın?</label><select id="wk"><option value="">Seçin</option>${Array.from({length:37},(_,i)=>`<option value="${i+4}">${i+4}. hafta</option>`).join('')}</select>
+    app.innerHTML=`<div class="w narrow"><div class="card pad"><h2>Sayfanı oluştur</h2>
+    <input id="bn" placeholder="Bebeğin adı" maxlength="60"><input id="pa" placeholder="Anne ve baba adları" maxlength="120">
+    <label for="wk">Kaçıncı haftadasın?</label><select id="wk"><option value="">Seçin</option>${Array.from({length:37},(_,i)=>`<option value="${i+4}">${i+4}. hafta</option>`).join('')}</select>
     <p class="mu">Bebeğinizin boyutunu her hafta meyve veya sebzeyle kendiliğinden göstereceğiz.</p>
-    <label class="mu">Sayfa teması</label><select id="pt"><option value="neutral">Nötr (sürpriz)</option><option value="girl">Kız teması</option><option value="boy">Erkek teması</option></select>
-    <label class="mu">Tahmini doğum tarihini biliyorsanız (isteğe bağlı)</label><input id="dd" type="date">
-    <div class="r"><button id="mk">Sayfayı oluştur</button><button class="g" id="lo">Çıkış yap</button></div></div></div>`;
+    <label for="pt">Sayfa teması</label><select id="pt"><option value="neutral">Nötr (sürpriz)</option><option value="girl">Kız teması</option><option value="boy">Erkek teması</option></select>
+    <label for="dd">Tahmini doğum tarihini biliyorsanız (isteğe bağlı)</label><input id="dd" type="date">
+    <div class="r" style="margin-top:12px"><button id="mk">Sayfayı oluştur</button><button class="g" id="lo">Çıkış yap</button></div></div></div>`;
     $('mk').onclick=async()=>{const bn=$('bn').value.trim();if(!bn)return alert('Bebeğin adını yazın');
       let dd=$('dd').value;const w=+$('wk').value;
       if(!dd){if(!w)return alert('Kaçıncı haftada olduğunuzu seçin');dd=dueFromWeek(w)}
       const {error}=await sb.from('pages').insert({slug:await mkslug(bn),baby_name:bn,parents:$('pa').value.trim(),lang:LANG,theme:$('pt').value,due_date:dd});if(!err(error))go()};
     $('lo').onclick=out;return;
   }
+  document.body.dataset.pal=pal(pg);
   const ps=(await sb.from('products').select('*').eq('page_id',pg.id).order('id')).data||[];
   const ids=ps.map(p=>p.id);window.PRODS=ps;
   const rs=ids.length?((await sb.from('reservations').select('*').in('product_id',ids).order('created_at',{ascending:false})).data||[]):[];
-  const link=location.origin+location.pathname+'#/p/'+pg.slug;
-  app.innerHTML=`<div class="w"><div class="r" style="justify-content:space-between"><h2>${e(pg.baby_name)} sayfası</h2><button class="g" id="lo">Çıkış yap</button></div>
-  <div class="card"><b>Paylaşım bağlantınız</b><p><a href="${e(link)}" target="_blank">${e(link)}</a></p>
-  <button class="g" onclick="navigator.clipboard.writeText('${e(link)}');alert('Kopyalandı')">Bağlantıyı kopyala</button></div><br>
-  <div class="card"><h3>Ürün ekle</h3><input id="n" placeholder="Ürün adı"><input id="c" placeholder="Kategori (ör: Uyku)">
+  const link=plink(pg);
+  app.innerHTML=`<div class="w narrow panel"><div class="phd"><h1>${e(pg.baby_name)} sayfası</h1><div class="r"><a href="#/p/${e(pg.slug)}"><button class="g">${L('Sayfayı gör','View page')}</button></a><button class="g" id="lo">Çıkış yap</button></div></div>
+  <div class="card sharec"><div><b>Paylaşım bağlantınız</b><p><a href="${e(link)}" target="_blank" rel="noopener">${e(link)}</a></p>
+  <div class="r"><button class="g" id="cpy">Bağlantıyı kopyala</button><a href="${wa(pg)}" target="_blank" rel="noopener"><button class="g">${pg.born?'Doğum haberini WhatsApp\'ta ilet':'WhatsApp\'ta davet et'}</button></a></div></div><div id="qrp" class="qr"></div></div>
+  <div id="pxt"></div>
+  <div class="card"><h3>Ürün ekle</h3><input id="n" placeholder="Ürün adı" maxlength="120"><input id="c" placeholder="Kategori (ör: Uyku)" maxlength="60">
   <input id="q" type="number" min="1" value="1" placeholder="Adet"><input id="t" type="number" min="0" placeholder="Ortak hediye hedefi TL (normal ürün için boş bırakın)">
-  <input id="l" placeholder="Ürün bağlantısı (https://...)"><input id="im" placeholder="Görsel adresi (https://...)"><textarea id="ds" placeholder="Açıklama"></textarea>
-  <button id="ad">Ürünü ekle</button></div><br>
-  <h3>Ürünleriniz (${ps.length})</h3><div class="grid">${ps.map(p=>`<div class="card"><b>${e(p.name)}</b><div class="mu">${e(p.category)} · ${p.target_amount>0?'Ortak hediye '+p.target_amount+' TL':p.quantity+' adet'}</div><div class="r"><button class="g" onclick="ep(${p.id})">Düzenle</button><button class="d" onclick="dp(${p.id})">Sil</button></div></div>`).join('')||'<p class="mu">Henüz ürün yok. Yukarıdan ilk ürünü ekleyin.</p>'}</div><br>
-  <h3>Kim ne aldı</h3>${rs.map(r=>{const p=ps.find(x=>x.id===r.product_id);return `<div class="card" style="margin-bottom:8px"><b>${e(r.name)}</b> · ${e(p?.name)} · ${r.amount>0?r.amount+' TL':r.quantity+' adet'} <button class="d" onclick="dx('reservations',${r.id})">Sil</button>${r.note?`<div class="mu">"${e(r.note)}"</div>`:''}</div>`}).join('')||'<p class="mu">Henüz katkı yok. Bağlantıyı paylaşınca burada görünecek.</p>'}</div>`;
+  <input id="l" placeholder="Ürün bağlantısı (https://...)" maxlength="500"><input id="im" placeholder="Görsel adresi (https://...)" maxlength="500"><textarea id="ds" placeholder="Açıklama" maxlength="500"></textarea>
+  <button id="ad">Ürünü ekle</button></div>
+  <div class="card"><h3>Ürünleriniz (${ps.length})</h3>${ps.map(p=>`<div class="li"><div><b>${e(p.name)}</b><div class="mu">${e(p.category)} · ${p.target_amount>0?'Ortak hediye '+p.target_amount+' TL':p.quantity+' adet'}</div></div><div class="r"><button class="g sm" onclick="ep(${p.id})">Düzenle</button><button class="d sm" onclick="dp(${p.id})">Sil</button></div></div>`).join('')||'<p class="mu">Henüz ürün yok. Yukarıdan ilk ürünü ekleyin.</p>'}</div>
+  <div class="card"><h3>Kim ne aldı</h3>${rs.map(r=>{const p=ps.find(x=>x.id===r.product_id);return `<div class="li"><div><b>${who(r.name,r.relation)}</b> · ${e(p?.name)} · ${r.amount>0?r.amount+' TL':r.quantity+' adet'}${r.note?`<div class="mu">"${e(r.note)}"</div>`:''}</div><button class="d sm" onclick="dx('reservations',${r.id})">Sil</button></div>`}).join('')||'<p class="mu">Henüz katkı yok. Bağlantıyı paylaşınca burada görünecek.</p>'}</div></div>`;
   $('lo').onclick=out;
+  $('cpy').onclick=()=>navigator.clipboard.writeText(link).then(()=>alert('Kopyalandı'),()=>prompt('Paylaşım bağlantınız',link));
+  if(window.QRCode)new QRCode($('qrp'),{text:link,width:120,height:120});
   $('ad').onclick=async()=>{const {error}=await sb.from('products').insert({page_id:pg.id,name:$('n').value.trim(),category:$('c').value.trim(),quantity:+$('q').value||1,target_amount:+$('t').value||0,link:$('l').value.trim(),image:$('im').value.trim(),description:$('ds').value.trim()});if(!err(error))go()};
   pextras(pg);
 }
 /* ---- Yasal metinler (bilgilendirme amaçlı taslak; yayından önce bir avukata kontrol ettirin) ---- */
 const LG={
-privacy:{tr:`<h2>Gizlilik ve KVKK Aydınlatma Metni</h2><p class="mu">Son güncelleme: 7 Ekim 2026. Bu sayfa bilgilendirme amaçlıdır.</p>
+privacy:{tr:`<h2>Gizlilik ve KVKK Aydınlatma Metni</h2><p class="mu">Son güncelleme: 8 Ekim 2026. Bu sayfa bilgilendirme amaçlıdır.</p>
 <h3>1. Veri sorumlusu</h3><p>Minilist (minilist.co) hizmetinin işletmecisi.</p>
-<h3>2. İşlenen veriler</h3><ul><li><b>Hesap:</b> e-posta adresi ve şifre (şifre geri döndürülemez biçimde, karma/hash olarak saklanır).</li><li><b>Aile sayfası:</b> bebeğin adı, anne ve baba adları, tahmini doğum tarihi, hediye listesi, haftalık notlar ve ebeveynin girdiği diğer bilgiler.</li><li><b>Misafirler:</b> hesap açmadan bıraktıkları ad, not, mektup, isim veya ürün önerisi ve hediye ayırma/katkı bilgileri.</li><li><b>Teknik:</b> barındırma sağlayıcısının tuttuğu IP ve cihaz kayıtları; ayrıca kötüye kullanımı önlemek için misafir işlemlerinde IP adresi en fazla 1 gün tutulur.</li><li><b>Reklam:</b> ücretsiz planda reklam sağlayıcısının çerezleri.</li></ul>
+<h3>2. İşlenen veriler</h3><ul><li><b>Hesap:</b> e-posta adresi ve şifre (şifre geri döndürülemez biçimde, karma/hash olarak saklanır).</li><li><b>Aile sayfası:</b> bebeğin adı, anne ve baba adları, tahmini doğum tarihi, hediye listesi, haftalık notlar ve ebeveynin girdiği diğer bilgiler.</li><li><b>Misafirler:</b> hesap açmadan bıraktıkları ad, not, mektup, isim veya ürün önerisi ve hediye ayırma/katkı bilgileri ve isteğe bağlı olarak seçtikleri yakınlık (ör. teyze, dede).</li><li><b>Fotoğraflar:</b> ebeveynin yüklediği kapak ve not fotoğrafları. Yüklemeden önce cihazınızda küçültülür ve konum dahil tüm gizli bilgileri (EXIF) silinir. Fotoğraflar tahmin edilemeyen adreslerde saklanır; adresi bilen kişi fotoğrafı görebilir.</li><li><b>Sayfa şifresi:</b> isteğe bağlıdır ve geri döndürülemez biçimde (bcrypt) saklanır.</li><li><b>Teknik:</b> barındırma sağlayıcısının tuttuğu IP ve cihaz kayıtları; ayrıca kötüye kullanımı önlemek için misafir işlemlerinde IP adresi en fazla 1 gün tutulur.</li><li><b>Reklam:</b> ücretsiz planda reklam sağlayıcısının çerezleri.</li></ul>
 <h3>3. Amaç ve hukuki sebep</h3><p>Hizmeti sunmak ve hesabı yönetmek (sözleşmenin ifası), güvenliği sağlamak, yasal yükümlülükleri yerine getirmek, ücretli plan ödemesini doğrulamak. Reklam çerezleri için ayrıca onayınız istenir.</p>
 <h3>4. Aktarım</h3><p>Verileriniz, hizmeti sunmak için çalıştığımız sağlayıcılara aktarılır ve bunlar yurt dışında olabilir: veritabanı ve kimlik doğrulama (Supabase), yayın ve barındırma (Vercel), ödeme (Polar, kart bilgilerinizi biz görmeyiz) ve ücretsiz planda reklam sağlayıcısı. Yurt dışı aktarımda KVKK'daki şartlara uyulur.</p>
 <h3>5. Saklama</h3><p>Verileriniz hesabınız açık kaldığı sürece saklanır. Silme talebiniz üzerine hesabınız ve sayfanız silinir.</p>
 <h3>6. Haklarınız (KVKK m. 11)</h3><p>Verilerinizin işlenip işlenmediğini öğrenme, bilgi isteme, amacını öğrenme, aktarıldığı kişileri bilme, düzeltme, silme veya yok edilmesini isteme, itiraz etme ve zararın giderilmesini talep etme haklarına sahipsiniz. Başvuru kanalları yakında bu sayfada yayımlanacaktır.</p>
-<h3>7. Önemli: sayfanız herkese açıktır</h3><p>Aile sayfası, bağlantıyı bilen herkes tarafından görülebilir. Bağlantıyı yalnızca güvendiğiniz kişilerle paylaşın ve sağlık gibi hassas bilgileri girmeyin. Bebeğe ait bilgileri ebeveyn olarak siz girersiniz.</p>`,
-en:`<h2>Privacy and Data Protection Notice</h2><p class="mu">Last updated: October 7, 2026. This page is for information purposes.</p>
+<h3>7. Önemli: sayfanız herkese açıktır</h3><p>Aile sayfası, bağlantıyı bilen herkes tarafından görülebilir. Bağlantıyı yalnızca güvendiğiniz kişilerle paylaşın; isterseniz sayfaya bir aile şifresi ekleyin. Sağlık gibi hassas bilgileri ve paylaşmak istemediğiniz fotoğrafları yüklemeyin. Bebeğe ait bilgileri ebeveyn olarak siz girersiniz.</p>`,
+en:`<h2>Privacy and Data Protection Notice</h2><p class="mu">Last updated: October 8, 2026. This page is for information purposes.</p>
 <h3>1. Data controller</h3><p>The operator of the Minilist service (minilist.co).</p>
-<h3>2. Data we process</h3><ul><li><b>Account:</b> email address and password (the password is stored as a one-way hash).</li><li><b>Family page:</b> baby's name, parents' names, due date, gift list, weekly notes and other information entered by the parent.</li><li><b>Guests:</b> the name, note, letter, name or product suggestion and gift reservation/contribution details they leave without creating an account.</li><li><b>Technical:</b> IP and device logs kept by our hosting provider; to prevent abuse, the IP address of guest actions is also kept for at most 1 day.</li><li><b>Advertising:</b> cookies from the ad provider on the free plan.</li></ul>
+<h3>2. Data we process</h3><ul><li><b>Account:</b> email address and password (the password is stored as a one-way hash).</li><li><b>Family page:</b> baby's name, parents' names, due date, gift list, weekly notes and other information entered by the parent.</li><li><b>Guests:</b> the name, note, letter, name or product suggestion and gift reservation/contribution details they leave without creating an account, and the relation they optionally choose (e.g. aunt, grandpa).</li><li><b>Photos:</b> cover and note photos uploaded by the parent. They are resized on your device before upload and all hidden data, including location (EXIF), is removed. Photos are stored at unguessable addresses; anyone who has a photo's address can see it.</li><li><b>Page password:</b> optional and stored as a one-way hash (bcrypt).</li><li><b>Technical:</b> IP and device logs kept by our hosting provider; to prevent abuse, the IP address of guest actions is also kept for at most 1 day.</li><li><b>Advertising:</b> cookies from the ad provider on the free plan.</li></ul>
 <h3>3. Purpose and legal basis</h3><p>To provide the service and manage your account (performance of a contract), keep it secure, meet legal obligations and verify payment for the paid plan. We ask for your consent for advertising cookies.</p>
 <h3>4. Sharing and transfers</h3><p>Your data is shared with providers we use to run the service, which may be located abroad: database and authentication (Supabase), hosting and delivery (Vercel), payments (Polar; we never see your card details) and, on the free plan, the ad provider. Cross-border transfers follow applicable law.</p>
 <h3>5. Retention</h3><p>We keep your data while your account is open. On your deletion request we delete your account and page.</p>
 <h3>6. Your rights</h3><p>You can ask whether we process your data, request access, correction or deletion, object to processing and claim compensation for damage, as provided by the Turkish Personal Data Protection Law (KVKK, Art. 11) and other applicable law. Contact channels will be published on this page soon.</p>
-<h3>7. Important: your page is public</h3><p>A family page can be viewed by anyone who has the link. Share the link only with people you trust and do not enter sensitive information such as health details. You enter information about the baby as a parent.</p>`},
+<h3>7. Important: your page is public</h3><p>A family page can be viewed by anyone who has the link. Share the link only with people you trust, and add a family password if you like. Do not enter sensitive information such as health details or upload photos you would not want shared. You enter information about the baby as a parent.</p>`},
 terms:{tr:`<h2>Kullanım Şartları</h2><p class="mu">Son güncelleme: 7 Ekim 2026. Bu sayfa bilgilendirme amaçlıdır.</p>
 <h3>1. Hizmet</h3><p>Minilist, ailelerin hamilelikten itibaren hediye listesi, mektup ve güncellemelerle çevrelerini sürece katmasını sağlar. Hizmeti kullanarak bu şartları kabul edersiniz.</p>
 <h3>2. Hesap</h3><p>Hesap bilgilerinizin doğruluğundan ve güvenliğinden siz sorumlusunuz. Bir hesap için bir aile sayfası açılabilir.</p>
@@ -418,7 +549,7 @@ en:`<h2>Terms of Use</h2><p class="mu">Last updated: October 7, 2026. This page 
 <h3>8. Changes and disputes</h3><p>We may update these terms and will announce important changes. Turkish law applies; your right to apply to consumer authorities is preserved.</p>`}};
 function legal(k){
   document.title=(k==='terms'?(LANG==='en'?'Terms of Use':'Kullanım Şartları'):(LANG==='en'?'Privacy':'Gizlilik ve KVKK'))+' · Minilist';
-  app.innerHTML=`<div class="w"><div class="card" style="line-height:1.7">${LG[k][LANG==='en'?'en':'tr']}</div><p><a href="#/">Ana sayfaya dön</a></p></div>`;
+  app.innerHTML=`<article class="w narrow legal">${LG[k][LANG==='en'?'en':'tr']}<p><a href="#/">Ana sayfaya dön</a></p></article>`;
 }
 async function mkslug(v){
   const base=v.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ı/g,'i').replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ö/g,'o').replace(/ş/g,'s').replace(/ü/g,'u')
@@ -440,7 +571,8 @@ async function ep(id){
 }
 async function admin(){
   const {data:ok}=await sb.rpc('is_admin');
-  if(!ok){app.innerHTML='<div class="w"><h2>Yetkisiz</h2><a href="#/">Ana sayfaya dön</a></div>';return}
+  if(!ok){const {data:sv}=await sb.rpc('is_stats_viewer');if(sv===true)return stats();
+    app.innerHTML='<div class="w"><h2>Yetkisiz</h2><a href="#/">Ana sayfaya dön</a></div>';return}
   const {data,error}=await sb.rpc('admin_list_pages');if(err(error))return;
   const rows=data||[],pro=rows.filter(r=>r.plan==='pro');
   app.innerHTML=`<div class="w"><div class="r" style="justify-content:space-between"><h2>Yönetim</h2><button class="g" id="lo">Çıkış yap</button></div>
@@ -453,38 +585,65 @@ async function admin(){
     <button class="${r.plan==='pro'?'d':''}" onclick="sp('${e(r.id)}','${r.plan==='pro'?'free':'pro'}')">${r.plan==='pro'?'Ücretsize çevir':'Ücretsiz Pro ver'}</button><button class="g" onclick="tp('${e(r.id)}')">Aileye devret</button></div></div>`).join('')||'<p class="mu">Sonuç yok.</p>'};
   $('fq').oninput=draw;draw();$('lo').onclick=out;
 }
+// İstatistik görüntüleyici: sadece sayılar; içerik, e-posta, ad ve bağlantı yok, işlem butonu yok.
+async function stats(){
+  const {data,error}=await sb.rpc('stats_list_pages');if(err(error))return;
+  const rows=data||[],K=[['products','Ürün'],['reservations','Ayrılan'],['contributions','Katkı'],['letters','Mektup'],['updates','Not'],['hearts','Kalp'],['name_suggestions','İsim önerisi'],['product_suggestions','Ürün önerisi'],['guesses','Tahmin'],['photos','Fotoğraf']];
+  const sum=k=>rows.reduce((a,r)=>a+(r[k]||0),0);
+  app.innerHTML=`<div class="w"><div class="r" style="justify-content:space-between"><h2>İstatistikler</h2><button class="g" id="lo">Çıkış yap</button></div>
+  <div class="card"><b>${rows.length} aile · ${rows.filter(r=>r.plan==='pro').length} Pro · ${rows.filter(r=>r.born).length} doğum · ${rows.filter(r=>r.has_pw).length} şifreli</b>
+  <div class="stats">${K.map(([k,t])=>`<div><b>${sum(k)}</b><span>${t}</span></div>`).join('')}</div></div><br>
+  <div class="card" style="overflow-x:auto"><table class="st"><thead><tr><th>Aile</th><th>Açılış</th><th>Plan</th>${K.map(([,t])=>`<th>${t}</th>`).join('')}</tr></thead>
+  <tbody>${rows.map(r=>`<tr><td>#${e(r.code)}</td><td>${e(r.created_on)}</td><td>${r.plan==='pro'?'Pro':'Ücretsiz'}</td>${K.map(([k])=>`<td>${+r[k]||0}</td>`).join('')}</tr>`).join('')||'<tr><td colspan="13" class="mu">Henüz aile yok.</td></tr>'}</tbody></table></div></div>`;
+  $('lo').onclick=out;
+}
 async function sp(id,plan){
   if(!confirm(plan==='pro'?'Bu sayfaya ücretsiz Pro verilsin mi?':'Bu sayfa ücretsiz plana çevrilsin mi?'))return;
   const {error}=await sb.rpc('admin_set_plan',{pid:id,new_plan:plan});if(!err(error))go();
 }
 async function book(pg){
-  const L=pg.lang==='en',loc=L?'en-US':'tr-TR',gt=async t=>(await sb.from(t).select('*').eq('page_id',pg.id).order('id')).data||[];
+  const EN=pg.lang==='en',loc=EN?'en-US':'tr-TR',gt=async t=>(await sb.from(t).select('*').eq('page_id',pg.id).order('id')).data||[];
   const w=window.open('','_blank');if(!w)return alert('Açılır pencereye izin verin');
   const [ups,ls,ns]=await Promise.all([gt('updates'),gt('letters'),gt('name_suggestions')]);
-  const S=L?{sub:'A little one is on the way',due:'Due date',j:'Our journey',lt:'Letters for you',nm:'Name ideas',ph:'Add a photo',pr:'Save as PDF / Print',tip:'Click a frame to add a photo from your device. Photos never leave your device; empty frames are not printed.',wk:n=>'Week '+n,end:'Welcome to the world'}
-   :{sub:'Yolda küçük bir misafir',due:'Tahmini doğum',j:'Yolculuğumuz',lt:'Sana mektuplar',nm:'İsim fikirleri',ph:'Fotoğraf ekle',pr:'PDF olarak kaydet / Yazdır',tip:'Bir çerçeveye tıklayarak cihazınızdan fotoğraf ekleyin. Fotoğraflar cihazınızdan çıkmaz; boş çerçeveler yazdırılmaz.',wk:n=>n+'. hafta',end:'Dünyaya hoş geldin'};
-  const ac={girl:['#b0566f','#f9e1e8'],boy:['#3f7396','#d9e9f3'],neutral:['#5f8a68','#e4eddc']}[pg.theme]||['#5f8a68','#e4eddc'];
+  const S=EN?{sub:'A little one is on the way',due:'Due date',j:'Our journey',lt:'Your family wrote to you',nm:'Name ideas',st:'The story of your name',ph:'Add a photo',pr:'Save as PDF / Print',tip:'Photos you uploaded are already in the book. Click an empty frame to add more from your device; those never leave your device and empty frames are not printed.',wk:n=>'Week '+n,end:'Welcome to the world'}
+   :{sub:'Yolda küçük bir misafir',due:'Tahmini doğum',j:'Yolculuğumuz',lt:'Ailen sana yazdı',nm:'İsim fikirleri',st:'İsminin hikayesi',ph:'Fotoğraf ekle',pr:'PDF olarak kaydet / Yazdır',tip:'Yüklediğiniz fotoğraflar defterde zaten var. Boş bir çerçeveye tıklayarak cihazınızdan daha fazlasını ekleyin; bunlar cihazınızdan çıkmaz, boş çerçeveler yazdırılmaz.',wk:n=>n+'. hafta',end:'Dünyaya hoş geldin'};
+  const ac={lilac:['#7A5C9E','#ECE6F3'],rose:['#A4486B','#F6E3EA'],sea:['#2E6689','#DFEBF3'],sage:['#46705A','#E1ECE4'],apricot:['#9C5221','#F7E6D6']}[pal(pg)];
+  const base=location.origin+location.pathname.replace(/[^/]*$/,'');
+  const rel=r=>REL[r]?(EN?REL[r][2]:REL[r][1]):'';
   const fd=d=>new Date(d).toLocaleDateString(loc,{day:'numeric',month:'long',year:'numeric'});
   const fm=d=>new Date(d).toLocaleDateString(loc,{month:'long',year:'numeric'});
   const fr=`<label class="ph"><input type="file" accept="image/*" onchange="ld(this)"><span>${S.ph}</span></label>`;
+  const cov=purl(pg.cover_path);
   let mo='',tl2='';
-  ups.forEach(x=>{const m=fm(x.created_at);if(m!==mo){mo=m;tl2+=`<h3>${e(m)}</h3>${fr}`}
-    tl2+=`<div class="ev"><div class="dt">${fd(x.created_at)}${x.week?' · '+S.wk(x.week):''}</div><p>${e(x.body)}</p></div>`});
-  w.document.write(`<!doctype html><html lang="${L?'en':'tr'}"><meta charset="utf-8"><title>${e(pg.baby_name)}</title><style>
-  @page{margin:16mm}*{box-sizing:border-box}body{font:17px/1.7 Georgia,serif;color:#263746;max-width:720px;margin:0 auto;padding:24px}
-  .bar{position:sticky;top:0;background:#fff;padding:10px 0;border-bottom:1px solid #eee;font:14px sans-serif;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-  .bar button{background:${ac[0]};color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer}
-  .cover{min-height:80vh;display:flex;flex-direction:column;justify-content:center;text-align:center;background:${ac[1]};border-radius:24px;padding:32px;page-break-after:always}
-  .cover h1{font-size:56px;margin:12px 0;color:${ac[0]}}.sub{letter-spacing:3px;text-transform:uppercase;font-size:13px;color:#71808c}
-  h2{color:${ac[0]};border-bottom:2px solid ${ac[1]};padding-bottom:6px;margin-top:44px;break-after:avoid}h3{margin:32px 0 0;color:#71808c;break-after:avoid}
-  .ev{break-inside:avoid;border-left:3px solid ${ac[1]};padding-left:16px;margin:16px 0}.dt{font:600 13px sans-serif;color:${ac[0]}}
-  .ph{display:flex;align-items:center;justify-content:center;border:2px dashed #cbbfae;border-radius:14px;height:200px;color:#9a8c78;cursor:pointer;overflow:hidden;margin:16px 0;font:14px sans-serif;break-inside:avoid}
-  .ph input{display:none}.ph img{width:100%;height:100%;object-fit:cover}.m{color:#71808c}
+  ups.forEach(x=>{const m=fm(x.created_at),im=purl(x.photo_path);if(m!==mo){mo=m;tl2+=`<h3>${e(m)}</h3>`}
+    tl2+=`<div class="ev"><div class="dt">${fd(x.created_at)}${x.week?' · '+S.wk(x.week):''}</div><p>${e(x.body)}</p>${im?`<img class="up" src="${im}" alt="">`:fr}</div>`});
+  w.document.write(`<!doctype html><html lang="${EN?'en':'tr'}"><meta charset="utf-8"><title>${e(pg.baby_name)}</title><style>
+  @font-face{font-family:"Young Serif";src:url(${base}fonts/young-serif-latin-400.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+2000-206F}
+  @font-face{font-family:"Young Serif";src:url(${base}fonts/young-serif-latin-ext-400.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02FF,U+1E00-1EFF}
+  @font-face{font-family:Figtree;src:url(${base}fonts/figtree-latin-wght.woff2) format("woff2");font-weight:300 900;unicode-range:U+0000-00FF,U+0131,U+2000-206F}
+  @font-face{font-family:Figtree;src:url(${base}fonts/figtree-latin-ext-wght.woff2) format("woff2");font-weight:300 900;unicode-range:U+0100-02BA,U+02BD-02FF,U+1E00-1EFF}
+  @page{margin:16mm}*{box-sizing:border-box}body{font:17px/1.7 Figtree,system-ui,sans-serif;color:#2E2A3B;max-width:720px;margin:0 auto;padding:24px}
+  h1,h2,h3{font-family:"Young Serif",Georgia,serif;font-weight:400}
+  .bar{position:sticky;top:0;background:#fff;padding:10px 0;border-bottom:1px solid #eee;font-size:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;z-index:2}
+  .bar button{background:${ac[0]};color:#fff;border:0;border-radius:99px;padding:10px 18px;font:inherit;font-weight:650;cursor:pointer}
+  .cover{min-height:80vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:${ac[1]};border-radius:28px;padding:32px;page-break-after:always}
+  .cv{width:260px;height:260px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 6px #fff,0 0 0 9px ${ac[0]};margin:10px 0 24px}.cv img{width:100%;height:100%;object-fit:cover}
+  .cover h1{font-size:60px;line-height:1;margin:8px 0;color:${ac[0]}}.sub{font-size:16px;color:#676174}
+  h2{color:${ac[0]};font-size:30px;margin-top:48px;break-after:avoid}h3{margin:32px 0 0;color:#676174;font-size:20px;break-after:avoid}
+  .ev{break-inside:avoid;border-left:3px solid ${ac[1]};padding-left:18px;margin:18px 0}.dt{font-weight:650;font-size:13px;color:${ac[0]}}
+  .up{width:100%;max-height:420px;object-fit:cover;border-radius:16px;margin-top:8px;break-inside:avoid}
+  .ph{display:flex;align-items:center;justify-content:center;border:2px dashed ${ac[1]};border-radius:16px;height:200px;color:#676174;cursor:pointer;overflow:hidden;margin:14px 0;font-size:14px;break-inside:avoid}
+  .cover .ph{width:260px;height:260px;border-radius:50%;background:#fff}
+  .ph input{display:none}.ph img{width:100%;height:100%;object-fit:cover}.m{color:#676174}
+  .greet{font-size:20px;text-align:center;white-space:pre-line;margin:40px 0}
+  .lt{break-inside:avoid;background:#fff;border:1px solid ${ac[1]};border-radius:4px 20px 20px 20px;padding:16px 20px;margin:14px 0}.lt p{white-space:pre-line;margin:0 0 6px}.by{color:#676174;font-size:15px}.by b{color:${ac[0]}}
   @media print{.bar{display:none}.ph:not(:has(img)){display:none}body{padding:0}}</style>
   <div class="bar"><button onclick="print()">${S.pr}</button><span>${S.tip}</span></div>
-  <div class="cover"><div class="sub">${S.sub}</div><h1>${e(pg.baby_name)}</h1><p>${e(pg.parents)}</p>${pg.due_date?`<p class="m">${S.due}: ${fd(pg.due_date)}</p>`:''}${fr}</div>
+  <div class="cover">${cov?`<div class="cv"><img src="${cov}" alt=""></div>`:fr}<div class="sub">${S.sub}</div><h1>${e(pg.baby_name)}</h1><p>${e(pg.parents)}</p>${pg.sibling?`<p class="m">${e(pg.sibling)}</p>`:''}${pg.due_date?`<p class="m">${S.due}: ${fd(pg.due_date)}</p>`:''}</div>
+  ${pg.greeting?`<p class="greet">${e(pg.greeting)}</p>`:''}
+  ${pg.name_story?`<h2>${S.st}</h2><p style="white-space:pre-line">${e(pg.name_story)}</p>`:''}
   <h2>${S.j}</h2>${tl2||'<p class="m">—</p>'}
-  ${ls.length?`<h2>${S.lt}</h2>${ls.map(x=>`<div class="ev"><p>${e(x.body)}</p><div class="dt">— ${e(x.name)}</div></div>`).join('')}`:''}
+  ${ls.length?`<h2>${S.lt}</h2>${ls.map(x=>`<div class="lt"><p>${e(x.body)}</p><div class="by">${e(x.name)}${x.relation?`, <b>${e(rel(x.relation))}</b>`:''}</div></div>`).join('')}`:''}
   ${ns.length?`<h2>${S.nm}</h2><p>${ns.map(x=>e(x.name)).join(' · ')}</p>`:''}
   <h2>${S.end}</h2>${fr}${fr}
   <script>function ld(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const l=i.parentNode,s=l.querySelector('span');if(s)s.remove();let m=l.querySelector('img');if(!m){m=document.createElement('img');l.appendChild(m)}m.src=r.result};r.readAsDataURL(f)}<\/script>`);
@@ -499,64 +658,128 @@ const dayN=(y,m,d)=>Date.UTC(y,m,d)/864e5,tdayN=()=>{const n=new Date();return d
 const gwk=due=>Math.floor((280-(dueN(due)-tdayN()))/7);
 const dueFromWeek=w=>new Date((tdayN()+280-w*7)*864e5).toISOString().slice(0,10);
 const L=(t,n)=>LANG==='en'?n:t;
+/* ---- Kişiselleştirme: palet, akrabalık, halka ---- */
+const PAL={girl:'rose',boy:'sea',neutral:'lilac'};
+const PALS=[['lilac','Leylak','Lilac','#7A5C9E'],['rose','Gül','Rose','#A4486B'],['sea','Deniz','Sea','#2E6689'],['sage','Adaçayı','Sage','#46705A'],['apricot','Kayısı','Apricot','#9C5221']];
+const pal=pg=>(pg&&(pg.palette||PAL[pg.theme]))||'lilac';
+// anahtar: [seçenek, "Ayşe, teyzesi" biçimi, English]
+const REL={anneanne:['Anneanne','anneannesi','Grandma'],babaanne:['Babaanne','babaannesi','Grandma'],dede:['Dede','dedesi','Grandpa'],teyze:['Teyze','teyzesi','Aunt'],hala:['Hala','halası','Aunt'],dayi:['Dayı','dayısı','Uncle'],amca:['Amca','amcası','Uncle'],kuzen:['Kuzen','kuzeni','Cousin'],kardes:['Kardeş','kardeşi','Sibling'],arkadas:['Aile dostu','aile dostu','Family friend']};
+const relSel=id=>`<select id="${id}" aria-label="${L('Yakınlığınız','Your relation')}"><option value="">${L('Yakınlığınız (isteğe bağlı)','Your relation (optional)')}</option>${Object.entries(REL).map(([k,v])=>`<option value="${k}">${L(v[0],v[2])}</option>`).join('')}</select>`;
+const who=(n,r)=>e(n)+(REL[r]?`, <span class="rel">${L(REL[r][1],REL[r][2])}</span>`:'');
+const da=s=>/[aıou][^aeıioöuü]*$/i.test(s)?'da':'de';   // "Ela abla da", "Mert abi de"
+const fruitIcon=f=>f[2]==='papaya'?'<i class="pap"></i>':f[2];
+function ringHTML(o){
+  const C=2*Math.PI*46,p=o.full?1:Math.max(0,Math.min(1,(o.week||0)/40)),pt=t=>{const a=t*2*Math.PI-Math.PI/2;return [50+46*Math.cos(a),50+46*Math.sin(a)]};
+  const tk=[13,27].map(w=>{const [x,y]=pt(w/40);return `<circle class="tk" cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="1.3"/>`}).join(''),[bx,by]=pt(p);
+  return `<div class="ring"><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="trk" cx="50" cy="50" r="46"/>${tk}<circle class="prg" cx="50" cy="50" r="46" transform="rotate(-90 50 50)" stroke-dasharray="${C.toFixed(2)}" stroke-dashoffset="${C.toFixed(2)}" data-off="${(C*(1-p)).toFixed(2)}"/></svg>
+  <div class="core" aria-hidden="true">${o.photo?`<img src="${o.photo}" alt="">`:(o.emoji||'')}</div>${o.photo&&o.emoji?`<div class="badge" style="left:${bx.toFixed(2)}%;top:${by.toFixed(2)}%" aria-hidden="true">${o.emoji}</div>`:''}</div>`;
+}
+const ringGo=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll('.ring .prg').forEach(c=>{c.style.strokeDashoffset=c.dataset.off})));
+
+/* ---- Fotoğraflar: tarayıcıda küçültülür ve yeniden çizilir, böylece EXIF/konum bilgisi silinir ---- */
+const PH_RE=/^[0-9a-f-]{36}\/[0-9a-f-]{36}\.jpg$/;
+const purl=p=>PH_RE.test(p||'')?SUPABASE_URL+'/storage/v1/object/public/photos/'+p:'';
+async function shrink(f){
+  if(!f||!/^image\//.test(f.type))throw new Error(L('Lütfen bir fotoğraf seçin.','Please choose a photo.'));
+  if(f.size>25e6)throw new Error(L('Fotoğraf çok büyük (en fazla 25 MB).','The photo is too large (max 25 MB).'));
+  let src;
+  try{src=await createImageBitmap(f,{imageOrientation:'from-image'})}
+  catch(_){src=await new Promise((ok,no)=>{const i=new Image(),u=URL.createObjectURL(f);i.onload=()=>{URL.revokeObjectURL(u);ok(i)};i.onerror=()=>no(new Error(L('Bu fotoğraf açılamadı. JPEG veya PNG deneyin.','This photo could not be opened. Try JPEG or PNG.')));i.src=u})}
+  const W=src.width,H=src.height,s=Math.min(1,1600/Math.max(W,H)),c=document.createElement('canvas');
+  c.width=Math.max(1,Math.round(W*s));c.height=Math.max(1,Math.round(H*s));c.getContext('2d').drawImage(src,0,0,c.width,c.height);
+  for(const q of [.85,.7,.55]){const b=await new Promise(r=>c.toBlob(r,'image/jpeg',q));if(b&&b.size<=3e6)return b}
+  throw new Error(L('Fotoğraf küçültülemedi.','The photo could not be resized.'));
+}
+async function upPhoto(pg,f){
+  const b=await shrink(f),path=pg.id+'/'+crypto.randomUUID()+'.jpg';
+  const {error}=await sb.storage.from('photos').upload(path,b,{contentType:'image/jpeg',cacheControl:'31536000',upsert:false});
+  if(error)throw error;return path;
+}
+async function rmPhotos(paths){const p=paths.filter(x=>PH_RE.test(x||''));if(p.length)await sb.storage.from('photos').remove(p)}
+async function rmAllPhotos(pg){const {data}=await sb.storage.from('photos').list(pg.id,{limit:100});if(data&&data.length)await sb.storage.from('photos').remove(data.map(o=>pg.id+'/'+o.name))}
+
 function hero(pg){
-  const due=pg.due_date,tgt=due?new Date(due+'T00:00:00'):null,w=due?gwk(due):null,f=w!==null&&w>=4?FR[Math.min(40,w)]:null;
-  const mon=tgt?tgt.toLocaleDateString(LANG==='en'?'en-US':'tr-TR',{month:'long',year:'numeric'}).toLocaleUpperCase(LANG==='en'?'en-US':'tr-TR'):'';
-  const cm=f?(f[3]<1?'<1':f[3]):'',g=f?(f[4]<1?'<1':f[4]):'';
-  return `<div class="hero2"><div class="w">${mon?`<span class="eb">${L('BEKLENEN GELİŞ','DUE')} · ${e(mon)} 👶</span>`:''}<h1>${e(pg.baby_name)} geliyor!</h1>
-  <p class="sub">${L('Küçük misafirimizin hazırlıklarını birlikte tamamlayalım. Listeden istediğiniz ürünü tek başınıza alabilir ya da ortak hediyeye katkıda bulunabilirsiniz.','Help us get ready for our little one. Reserve an item on your own, or chip in on a group gift.')}</p>
-  ${pg.parents?`<div class="par">${e(pg.parents)} ❤️</div>`:''}
-  <div class="r" style="margin-top:16px"><a href="${wa(pg)}" target="_blank" rel="noopener"><button>${L('WhatsApp\'ta paylaş','Share on WhatsApp')}</button></a><button class="g" id="cpl">${L('Bağlantıyı kopyala','Copy link')}</button></div></div></div>
-  ${tgt&&!pg.born?`<div class="w"><div class="info">
-  ${f?`<div class="card bcard"><div><div class="sl">${L('Şu an yaklaşık','Right now about')}</div><h2>${w>40?'40+':w}. hafta</h2>
-  <p>${e(pg.baby_name)} ${L(`yaklaşık bir <strong>${f[0]}</strong> büyüklüğünde.`,`is about the size of a <strong>${f[1]}</strong>.`)}</p>
-  <div class="stats"><div><b>~${cm} cm</b><span>${L('Boy','Length')}</span></div><div><b>~${g} g</b><span>${L('Ağırlık','Weight')}</span></div><div><b>${L(f[0],f[1])}</b><span>${L('Yaklaşık boyut','Size')}</span></div></div></div>
-  <div class="fruit" aria-hidden="true">${f[2]==='papaya'?'<i class="pap"></i>':f[2]}</div></div>`:''}
-  <div class="card cdown"><div class="sl">${L('Tahmini doğuma kalan','Time until the due date')}</div><h3>${e(pg.baby_name)} ${L('için sabırsızlanıyoruz ✨','— we can\'t wait ✨')}</h3>
-  <div class="cg"><div><b id="cd_d">--</b><span>${L('Gün','Days')}</span></div><div><b id="cd_h">--</b><span>${L('Saat','Hours')}</span></div><div><b id="cd_m">--</b><span>${L('Dakika','Minutes')}</span></div><div><b id="cd_s">--</b><span>${L('Saniye','Seconds')}</span></div></div>
-  <p class="mu" style="margin-top:14px">${L('Tahmini tarih','Due date')}: ${e(tgt.toLocaleDateString(LANG==='en'?'en-US':'tr-TR',{day:'numeric',month:'long',year:'numeric'}))}</p></div></div></div>`:''}`;
+  const due=pg.due_date,tgt=due?new Date(due+'T00:00:00'):null,w=due?gwk(due):null,f=!pg.born&&w!==null&&w>=4?FR[Math.min(40,w)]:null;
+  const cov=purl(pg.cover_path),cm=f?(f[3]<1?'<1':f[3]):'',g=f?(f[4]<1?'<1':f[4]):'',wn=w>40?'40+':w;
+  const ring=ringHTML({week:w,full:pg.born,emoji:pg.born?'👶':f?fruitIcon(f):'🤍',photo:cov});
+  return `<header class="hero"><div class="w">${ring}
+  ${f?`<p class="wk">${L(`${wn}. hafta: yaklaşık bir ${f[0]} kadar`,`Week ${wn}: about the size of a ${f[1]}`)}</p><p class="mu">${L(`Boyu yaklaşık ${cm} cm, ağırlığı ${g} g`,`About ${cm} cm long and ${g} g`)}</p>`:''}
+  <h1>${pg.born?L(`${e(pg.baby_name)} geldi!`,`${e(pg.baby_name)} is here!`):L(`${e(pg.baby_name)} geliyor!`,`${e(pg.baby_name)} is coming!`)}</h1>
+  ${pg.parents?`<p class="par">${e(pg.parents)}</p>`:''}
+  ${pg.sibling?`<p class="sib">${L(`${e(pg.sibling)} ${da(pg.sibling)} sabırsızlanıyor`,`${e(pg.sibling)} can't wait either`)}</p>`:''}
+  ${!pg.born&&pg.theme!=='neutral'?`<p><span class="pill">${pg.theme==='girl'?'💗 Cinsiyet belli oldu: kız!':'💙 Cinsiyet belli oldu: erkek!'}</span></p>`:''}
+  <div class="r c"><a href="${wa(pg)}" target="_blank" rel="noopener"><button>${L('WhatsApp\'ta paylaş','Share on WhatsApp')}</button></a><button class="g" id="cpl">${L('Bağlantıyı kopyala','Copy link')}</button></div>
+  ${tgt&&!pg.born?`<div class="cd" role="group" aria-label="${L('Tahmini doğuma kalan süre','Time until the due date')}"><div><b id="cd_d">--</b><span>${L('gün','days')}</span></div><div><b id="cd_h">--</b><span>${L('saat','hours')}</span></div><div><b id="cd_m">--</b><span>${L('dakika','min')}</span></div><div><b id="cd_s">--</b><span>${L('saniye','sec')}</span></div></div>
+  <p class="mu">${L('Tahmini doğum','Due date')}: ${e(tgt.toLocaleDateString(LANG==='en'?'en-US':'tr-TR',{day:'numeric',month:'long',year:'numeric'}))}</p>`:''}
+  </div></header>
+  ${pg.greeting?`<section class="w narrow"><blockquote class="greet"><p>${e(pg.greeting)}</p>${pg.parents?`<footer>${e(pg.parents)}</footer>`:''}</blockquote></section>`:''}
+  ${pg.name_story?`<section class="w narrow"><div class="story"><div class="nm">${e(pg.baby_name)}</div><div><h2>${L('İsminin hikayesi','The story of the name')}</h2><p>${e(pg.name_story)}</p></div></div></section>`:''}`;
 }
 function tick(due){clearInterval(window._tk);const t=new Date(due+'T00:00:00').getTime(),set=(i,v)=>{const n=$(i);if(n&&n.firstChild)n.firstChild.nodeValue=v};
   const run=()=>{if(!$('cd_d')){clearInterval(window._tk);return}const x=Math.max(0,t-Date.now());
     set('cd_d',Math.floor(x/864e5));set('cd_h',String(Math.floor(x/36e5%24)).padStart(2,'0'));set('cd_m',String(Math.floor(x/6e4%60)).padStart(2,'0'));set('cd_s',String(Math.floor(x/1e3%60)).padStart(2,'0'))};
   run();window._tk=setInterval(run,1000)}
+
+/* ---- Şifreli sayfa: şifre sadece bu sekmede (sessionStorage) tutulur ---- */
+// function bildirimi: pub() ilk açılışta bu satırlar çalışmadan önce çağrılabiliyor.
+function pwGet(s){try{return sessionStorage.getItem('pw:'+s)}catch(_){return (window._pwm||{})[s]||null}}
+function pwSet(s,v){try{v==null?sessionStorage.removeItem('pw:'+s):sessionStorage.setItem('pw:'+s,v)}catch(_){(window._pwm=window._pwm||{})[s]=v}}
+function lockScreen(slug,PD){
+  LANG=PD.lang||'tr';document.body.dataset.pal=PD.palette||PAL[PD.theme]||'lilac';document.title='Minilist';
+  app.innerHTML=`<div class="w lock">${ringHTML({week:0,emoji:'🔒'})}<h2>${L('Bu sayfa şifreli','This page is password protected')}</h2>
+  <p class="mu">${L('Aile bu sayfayı bir şifreyle korudu. Şifreyi aileden isteyebilirsiniz.','The family protected this page with a password. You can ask them for it.')}</p>
+  <form id="lkf"><label for="lkp" class="sr">${L('Sayfa şifresi','Page password')}</label><input id="lkp" type="password" autocomplete="current-password" maxlength="100" required placeholder="${L('Sayfa şifresi','Page password')}">
+  ${PD.wrong?`<p class="errt" role="alert">${L('Şifre yanlış, tekrar deneyin.','Wrong password, please try again.')}</p>`:''}<button>${L('Sayfayı aç','Open the page')}</button></form></div>`;
+  $('lkp').focus();
+  $('lkf').onsubmit=ev=>{ev.preventDefault();pwSet(slug,$('lkp').value);pub(slug)};
+}
+
 async function pub(slug){
-  const {data:PD}=await sb.rpc('get_page',{p_slug:slug});const pg=PD&&PD.page;
-  if(!pg){app.innerHTML='<div class="w"><h2>Sayfa bulunamadı</h2><a href="#/">Ana sayfaya dön</a></div>';return}
-  LANG=pg.lang||'tr';document.body.dataset.theme=pg.theme||'neutral';document.title=pg.baby_name+(LANG==='en'?' is coming!':' geliyor!');
+  const pw=pwGet(slug);
+  const {data:PD,error}=await sb.rpc('get_page',{p_slug:slug,p_pw:pw});
+  if(error){app.innerHTML=`<div class="w narrow"><h2>${L('Sayfa açılamadı','The page could not be opened')}</h2><p class="mu">${e(error.message)}</p><a href="#/">Ana sayfaya dön</a></div>`;return}
+  if(PD&&PD.locked){if(PD.wrong)pwSet(slug,null);return lockScreen(slug,PD)}
+  const pg=PD&&PD.page;
+  if(!pg){app.innerHTML='<div class="w narrow"><h2>Sayfa bulunamadı</h2><a href="#/">Ana sayfaya dön</a></div>';return}
+  window.PW=pw;
+  LANG=pg.lang||'tr';document.body.dataset.theme=pg.theme||'neutral';document.body.dataset.pal=pal(pg);
+  document.title=pg.baby_name+(LANG==='en'?(pg.born?' is here!':' is coming!'):(pg.born?' geldi!':' geliyor!'));
   const ps=PD.products||[];
   const tot=Object.fromEntries((PD.totals||[]).map(t=>[t.product_id,t]));
   clearInterval(window._tk);
-  app.innerHTML=`${hero(pg)}
-  <div class="w" id="pgw"></div>`;
-
+  app.innerHTML=`${hero(pg)}<div class="w" id="pgw"></div>`;
+  ringGo();
   if(pg.due_date&&!pg.born)tick(pg.due_date);
-  $('pgw').innerHTML=`<div class="r" style="margin-bottom:14px"><input id="pq" placeholder="Ürün veya marka ara..." style="flex:1;min-width:180px"><select id="pcat" style="width:auto"><option value="">Tüm kategoriler</option>${[...new Set(ps.map(x=>x.category).filter(Boolean))].map(c=>`<option>${e(c)}</option>`).join('')}</select><button id="psg">+ Ürün öner</button></div><div class="grid" id="pgrid"></div>`;
-  const cardH=p=>{const g=p.target_amount>0,t=tot[p.id]||{qty:0,amt:0},left=p.quantity-t.qty,full=g?t.amt>=p.target_amount:left<=0,pc=Math.min(100,Math.round(t.amt/p.target_amount*100));
-  return `<div class="card">${u(p.image)?`<img src="${u(p.image)}" alt="" loading="lazy">`:''}<div class="mu">${e(p.category)}</div><h3 style="margin:4px 0">${e(p.name)}</h3>
-  ${g?`<span class="pill">Ortak hediye</span><div class="bar"><i style="width:${pc}%"></i></div><div class="mu">${t.amt} / ${p.target_amount} TL</div>`:`<div class="mu">${full?'Tamamı ayrıldı':left+' adet kaldı'}</div>`}
-  <p class="mu">${e(p.description)}</p><div class="r">${u(p.link)?`<a href="${u(p.link)}" target="_blank" rel="noopener">Ürünü incele</a>`:''}
-  <button ${full?'disabled':''} onclick="rv(${p.id})">${full?'Ayrıldı':g?'Katkıda bulun':'Bu ürünü alıyorum'}</button></div></div>`};
-  const drawG=()=>{const q=$('pq').value.toLowerCase(),c=$('pcat').value;
-    const l=ps.filter(x=>(!c||x.category===c)&&(!q||(x.name||'').toLowerCase().includes(q)||(x.description||'').toLowerCase().includes(q)));
-    $('pgrid').innerHTML=l.map(cardH).join('')||`<p class="mu">${ps.length?'Aramanıza uygun ürün bulunamadı.':'Liste yakında burada olacak.'}</p>`};
-  drawG();$('pq').oninput=drawG;$('pcat').onchange=drawG;
+  $('pgw').innerHTML=`<section class="sec"><div class="sh"><div><h2>Hediye listesi</h2><p class="lead">${L('Bir ürünü ayırın ya da ortak hediyeye katkıda bulunun. Aynı hediye iki kez alınmaz.','Reserve an item or chip in on a group gift. Nothing gets bought twice.')}</p></div><button class="g" id="psg">+ Ürün öner</button></div>
+  ${ps.length>4?`<div class="r flt"><input id="pq" type="search" placeholder="Ürün veya marka ara..."><select id="pcat"><option value="">Tüm kategoriler</option>${[...new Set(ps.map(x=>x.category).filter(Boolean))].map(c=>`<option>${e(c)}</option>`).join('')}</select></div>`:''}
+  <div id="pgg"></div><div class="grid" id="pgrid"></div></section>`;
+  const st=p=>{const g=p.target_amount>0,t=tot[p.id]||{qty:0,amt:0},left=p.quantity-t.qty;return {g,t,left,full:g?t.amt>=p.target_amount:left<=0,pc:g?Math.min(100,Math.round(t.amt/p.target_amount*100)):0}};
+  const cardH=p=>{const {g,t,left,full,pc}=st(p),im=u(p.image);
+    return `<article class="prod${g?' gg':''}${full?' done':''}">${im?`<img src="${im}" alt="" loading="lazy">`:'<div class="noimg" aria-hidden="true">🎁</div>'}<div class="pb">
+    ${g?'<span><span class="pill">Ortak hediye</span></span>':`<div class="meta">${e(p.category)}</div>`}<h3>${e(p.name)}</h3>${p.description?`<p class="mu">${e(p.description)}</p>`:''}
+    ${g?`<div class="bar" role="progressbar" aria-valuenow="${pc}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pc}%"></i></div><div class="meta">${t.amt} / ${p.target_amount} TL</div>`:`<div class="meta">${full?'Tamamı ayrıldı':left+' adet kaldı'}</div>`}
+    <div class="r">${u(p.link)?`<a href="${u(p.link)}" target="_blank" rel="noopener">Ürünü incele</a>`:'<span></span>'}<button ${full?'disabled':''} onclick="rv(${p.id})">${full?'Ayrıldı':g?'Katkıda bulun':'Bu ürünü alıyorum'}</button></div></div></article>`};
+  const drawG=()=>{const q=$('pq')?$('pq').value.toLowerCase():'',c=$('pcat')?$('pcat').value:'';
+    const l=ps.filter(x=>(!c||x.category===c)&&(!q||(x.name||'').toLowerCase().includes(q)||(x.description||'').toLowerCase().includes(q))).sort((a,b)=>st(a).full-st(b).full);
+    $('pgg').innerHTML=l.filter(x=>x.target_amount>0).map(cardH).join('');
+    $('pgrid').innerHTML=l.filter(x=>!(x.target_amount>0)).map(cardH).join('');
+    if(!l.length)$('pgrid').innerHTML=`<p class="mu">${ps.length?'Aramanıza uygun ürün bulunamadı.':'Liste yakında burada olacak.'}</p>`};
+  drawG();if($('pq')){$('pq').oninput=drawG;$('pcat').onchange=drawG}
   $('cpl').onclick=()=>navigator.clipboard.writeText(plink(pg)).then(()=>alert('Kopyalandı'),()=>prompt('Bağlantı',plink(pg)));
   $('psg').onclick=()=>{dlg.innerHTML=`<h3>Ürün öner</h3><p class="mu">Aileye bir ürün önerin. Öneri sadece ailenin panelinde görünür, aile isterse listeye ekler.</p><input id="sn" placeholder="Ürün adı" maxlength="120"><input id="sl2" placeholder="Ürün bağlantısı (isteğe bağlı)" maxlength="500"><input id="sf" placeholder="Adınız" maxlength="80"><textarea id="st" placeholder="Not (isteğe bağlı)" maxlength="300"></textarea><div class="r"><button id="sok">Gönder</button><button class="g" onclick="dlg.close()">Vazgeç</button></div>`;
     dlg.showModal();
     $('sok').onclick=async()=>{const n=$('sn').value.trim(),f=$('sf').value.trim();if(!n||!f)return alert('Lütfen ürün adı ve adınızı yazın');
-      const {error}=await sb.rpc('guest_product_suggest',{p_slug:slug,p_name:n,p_from:f,p_link:$('sl2').value.trim()||null,p_note:$('st').value.trim()||null});if(err(error))return;dlg.close();alert('Öneriniz iletildi!')}};
-  (async()=>{try{const {data:own}=await sb.rpc('is_owner',{pid:pg.id});if(own===true){const d=document.createElement('div');d.className='w';d.style.paddingBottom='0';d.innerHTML='<div class="card" style="background:var(--soft)">Bu sizin sayfanız · <a href="#/panel">Ürün ekle ve yönet</a></div>';app.prepend(d)}}catch(_){}})();
+      const {error}=await sb.rpc('guest_product_suggest',{p_slug:slug,p_name:n,p_from:f,p_link:$('sl2').value.trim()||null,p_note:$('st').value.trim()||null,p_pw:window.PW});if(err(error))return;dlg.close();alert('Öneriniz iletildi!')}};
+  (async()=>{try{const {data:own}=await sb.rpc('is_owner',{pid:pg.id});if(own===true){const d=document.createElement('div');d.className='w';d.style.paddingBottom='0';d.innerHTML='<div class="card" style="background:var(--soft);margin:0">Bu sizin sayfanız · <a href="#/panel">Ürün ekle ve yönet</a></div>';app.prepend(d)}}catch(_){}})();
   extras(pg,PD);
-  {const f=document.createElement('div');f.className='w mu';f.style.cssText='text-align:center;padding:8px 0 0';f.innerHTML='<a href="#/panel" style="font-size:12px;color:var(--mu)">Ebeveyn Girişi (Admin)</a>';app.append(f)}
-  if(pg.plan==='free'){const f=document.createElement('div');f.className='w mu';f.style.textAlign='center';f.innerHTML='<a href="#/">Minilist ile oluşturuldu · Sen de kendi sayfanı aç</a>';app.append(f)}
+  {const f=document.createElement('footer');f.className='w mu';f.innerHTML='<a href="#/panel" style="font-size:13px;color:var(--mu)">Ebeveyn Girişi (Admin)</a>'+(pg.plan==='free'?'<p style="margin-top:6px"><a href="#/">Minilist ile oluşturuldu · Sen de kendi sayfanı aç</a></p>':'');app.append(f)}
   window.rv=id=>{const p=ps.find(x=>x.id===id),g=p.target_amount>0,l=p.quantity-(tot[id]?.qty||0);
-    dlg.innerHTML=`<h3>${e(p.name)}</h3><input id="rn" placeholder="Adınız" maxlength="80">${g?'<input id="ra" type="number" min="1" placeholder="Katkı tutarı (TL)">':`<input id="rq" type="number" min="1" max="${l}" value="1">`}<textarea id="rt" placeholder="Not (isteğe bağlı)" maxlength="300"></textarea><div class="r"><button id="ok">Gönder</button><button class="g" onclick="dlg.close()">Vazgeç</button></div>`;
+    dlg.innerHTML=`<h3>${e(p.name)}</h3><input id="rn" placeholder="Adınız" maxlength="80">${relSel('rr')}${g?'<input id="ra" type="number" min="1" placeholder="Katkı tutarı (TL)">':`<input id="rq" type="number" min="1" max="${l}" value="1" aria-label="${L('Adet','Quantity')}">`}<textarea id="rt" placeholder="Not (isteğe bağlı)" maxlength="300"></textarea><div class="r"><button id="ok">Gönder</button><button class="g" onclick="dlg.close()">Vazgeç</button></div>`;
     dlg.showModal();
     $('ok').onclick=async()=>{const n=$('rn').value.trim();if(!n)return alert('Adınızı yazın');
       const row={product_id:id,name:n,note:$('rt').value.trim(),quantity:g?1:+$('rq').value,amount:g?+$('ra').value:0};
       if(g&&!(row.amount>0))return alert('Katkı tutarını girin');
-      const {error}=await sb.rpc('guest_reserve',{p_slug:slug,p_product:row.product_id,p_name:row.name,p_note:row.note,p_qty:row.quantity,p_amount:row.amount});if(err(error))return;dlg.close();alert('Teşekkürler!');pub(slug)}};
+      const {error}=await sb.rpc('guest_reserve',{p_slug:slug,p_product:row.product_id,p_name:row.name,p_note:row.note,p_qty:row.quantity,p_amount:row.amount,p_rel:$('rr').value||null,p_pw:window.PW});if(err(error))return;dlg.close();alert('Teşekkürler!');pub(slug)}};
 }
 // Reklam kodunuz (ör. AdSense <ins class="adsbygoogle" ...></ins>). Boş bırakılırsa reklam gösterilmez.
 // Sadece ücretsiz plandaki sayfalarda görünür; Pro'da otomatik kalkar.
@@ -565,65 +788,84 @@ const today=()=>new Date().toISOString().slice(0,10);
 const plink=pg=>location.origin+location.pathname+'#/p/'+pg.slug;
 const wa=pg=>'https://wa.me/?text='+encodeURIComponent(pg.lang==='en'?(pg.born?`${pg.baby_name} is here! 💙 ${plink(pg)}`:`${pg.baby_name} is on the way! Wait with us: ${plink(pg)}`):(pg.born?`${pg.baby_name} geldi! 💙 ${plink(pg)}`:`${pg.baby_name} yolda! Bizimle birlikte bekle: ${plink(pg)}`));
 const sel=id=>`<select id="${id}"><option value="">Seçin</option><option value="kiz">Kız</option><option value="erkek">Erkek</option></select>`;
-window.hr=async(id,b)=>{const {error}=await sb.rpc('heart',{uid:id});if(err(error))return;b.textContent='💙 '+(+b.dataset.n+1);b.disabled=true};
+window.hr=async(id,b)=>{const {error}=await sb.rpc('heart',{uid:id,p_pw:window.PW});if(err(error))return;b.textContent='💙 '+(+b.dataset.n+1);b.disabled=true};
 
 async function extras(pg,PD){
-  const box=[...app.querySelectorAll('.w')].pop(),d=document.createElement('div');box.append(d);
+  const box=$('pgw'),d=document.createElement('div');box.append(d);
   const ups=PD.updates||[],open=pg.letters_open_at&&pg.letters_open_at<=today(),ls=PD.letters||[];
-  d.innerHTML=`${pg.born?`<br><div class="card" style="background:var(--soft)"><h2 style="margin:0">💙 ${e(pg.baby_name)} geldi!</h2></div>`:''}
-  ${!pg.born&&pg.theme!=='neutral'?`<br><div class="card" style="background:var(--soft)"><b>${pg.theme==='girl'?'💗 Cinsiyet belli oldu: kız!':'💙 Cinsiyet belli oldu: erkek!'}</b></div>`:''}
-  <br><h3>Büyüme notları</h3>${ups.map(x=>`<div class="card" style="margin-bottom:8px">${x.week?`<span class="pill">${x.week}. hafta</span> `:''}${e(x.body)}<div class="r"><button class="g" data-n="${x.hearts}" onclick="hr(${x.id},this)">💙 ${x.hearts}</button></div></div>`).join('')||'<p class="mu">Ebeveynler yakında ilk notu paylaşacak.</p>'}
-  <br><h3>İsim tavsiyesi</h3><div class="card"><p class="mu">Aileye bir isim önerin. Öneriler sadece ailenin panelinde görünür.</p><input id="nn" placeholder="Önerdiğiniz isim" maxlength="60"><input id="nf" placeholder="Adınız" maxlength="80"><input id="nt" placeholder="Anlamı veya notunuz (isteğe bağlı)" maxlength="200"><button id="nsb">Öneriyi gönder</button></div>
-  <br><h3>Bebeğe mektup</h3><div class="card">${open?ls.map(l=>`<p><b>${e(l.name)}:</b> ${e(l.body)}</p>`).join('')||'<p class="mu">Henüz mektup yok.</p>':`<p class="mu">Mektuplar ${pg.letters_open_at?e(pg.letters_open_at)+' tarihinde':'ebeveynlerin seçtiği gün'} açılacak. Şimdi yaz, o güne kadar sır kalsın.</p>`}
-  <input id="ln" placeholder="Adınız" maxlength="80"><textarea id="lb" placeholder="Bebeğe bir mektup bırakın" maxlength="1000"></textarea><button id="ls">Mektubu bırak</button></div>
-  ${u(pg.wishlist_url)?`<br><div class="card"><a href="${u(pg.wishlist_url)}" target="_blank" rel="noopener"><button>Harici hediye listemiz</button></a></div>`:''}
-  ${pg.plan==='free'&&AD_HTML?`<br><div class="card" id="adbox">${AD_HTML}</div>`:''}
-  <br><div class="card r"><a href="${wa(pg)}" target="_blank" rel="noopener"><button>WhatsApp'ta paylaş</button></a><div id="qrv"></div></div>`;
+  const fdt=x=>new Date(x).toLocaleDateString(LANG==='en'?'en-US':'tr-TR',{day:'numeric',month:'long'});
+  d.innerHTML=`<section class="sec"><h2>Büyüme notları</h2>${ups.length?`<div class="tl">${ups.map(x=>`<article class="it"><div class="wkl">${x.week?x.week+'. hafta':e(fdt(x.created_at))}</div><p class="pre">${e(x.body)}</p>${purl(x.photo_path)?`<img src="${purl(x.photo_path)}" alt="" loading="lazy">`:''}<button class="g sm" data-n="${x.hearts}" onclick="hr(${x.id},this)" aria-label="${L('Kalp bırak','Send a heart')}">💙 ${x.hearts}</button></article>`).join('')}</div>`:'<p class="mu">Ebeveynler yakında ilk notu paylaşacak.</p>'}</section>
+  <section class="sec two"><div><h2>Bebeğe mektup</h2>${open?(ls.length?`<div class="letters">${ls.map(l=>`<div class="letter"><p>${e(l.body)}</p><div class="from">${who(l.name,l.relation)}</div></div>`).join('')}</div>`:'<p class="mu">Henüz mektup yok.</p>'):`<p class="mu">Mektuplar ${pg.letters_open_at?e(pg.letters_open_at)+' tarihinde':'ebeveynlerin seçtiği gün'} açılacak. Şimdi yaz, o güne kadar sır kalsın.</p>`}</div>
+  <div class="card"><input id="ln" placeholder="Adınız" maxlength="80">${relSel('lr')}<textarea id="lb" placeholder="Bebeğe bir mektup bırakın" maxlength="1000"></textarea><button id="ls">Mektubu bırak</button></div></section>
+  <section class="sec"><div class="card"><h3>İsim tavsiyesi</h3><p class="mu">Aileye bir isim önerin. Öneriler sadece ailenin panelinde görünür.</p><input id="nn" placeholder="Önerdiğiniz isim" maxlength="60"><input id="nf" placeholder="Adınız" maxlength="80"><input id="nt" placeholder="Anlamı veya notunuz (isteğe bağlı)" maxlength="200"><button id="nsb">Öneriyi gönder</button></div>
+  ${u(pg.wishlist_url)?`<div class="card"><a href="${u(pg.wishlist_url)}" target="_blank" rel="noopener"><button>Harici hediye listemiz</button></a></div>`:''}
+  ${pg.plan==='free'&&AD_HTML?`<div class="card" id="adbox">${AD_HTML}</div>`:''}</section>
+  <section class="share"><div><h2>${L('Sevdiklerinizle paylaşın','Share it with your people')}</h2><p class="mu">${L('Bağlantıyı gönderin ya da QR kodu okutun.','Send the link or scan the QR code.')}</p><a href="${wa(pg)}" target="_blank" rel="noopener"><button>WhatsApp'ta paylaş</button></a></div><div id="qrv" class="qr"></div></section>`;
   if($('adbox'))try{(window.adsbygoogle=window.adsbygoogle||[]).push({})}catch(_){}
   if(window.QRCode)new QRCode($('qrv'),{text:plink(pg),width:120,height:120});
   $('nsb').onclick=async()=>{const a=$('nn').value.trim(),f=$('nf').value.trim();if(!a||!f)return alert('Lütfen isim ve adınızı yazın');
-    const {error}=await sb.rpc('guest_suggest',{p_slug:pg.slug,p_name:a,p_from:f,p_note:$('nt').value.trim()||null});if(!err(error)){alert('Öneriniz iletildi!');['nn','nf','nt'].forEach(i=>$(i).value='')}};
+    const {error}=await sb.rpc('guest_suggest',{p_slug:pg.slug,p_name:a,p_from:f,p_note:$('nt').value.trim()||null,p_pw:window.PW});if(!err(error)){alert('Öneriniz iletildi!');['nn','nf','nt'].forEach(i=>$(i).value='')}};
   $('ls').onclick=async()=>{const n=$('ln').value.trim(),b=$('lb').value.trim();if(!n||!b)return alert('Adınızı ve mektubu yazın');
-    const {error}=await sb.rpc('guest_letter',{p_slug:pg.slug,p_name:n,p_body:b});if(!err(error)){alert('Mektubunuz bırakıldı 💌');$('lb').value=''}};
+    const {error}=await sb.rpc('guest_letter',{p_slug:pg.slug,p_name:n,p_body:b,p_rel:$('lr').value||null,p_pw:window.PW});if(!err(error)){alert('Mektubunuz bırakıldı 💌');$('lb').value=''}};
 }
 
 async function pextras(pg){
   const box=[...app.querySelectorAll('.w')].pop(),d=document.createElement('div');box.append(d);
   const gq=t=>sb.from(t).select('*').eq('page_id',pg.id).order('id',{ascending:false});
   const [ls,ns,ups,sg]=(await Promise.all(['letters','name_suggestions','updates','product_suggestions'].map(gq))).map(r=>r.data||[]);
-  const v=x=>e(x??'');
-  window.SG=sg;window.PG=pg;
+  const v=x=>e(x??''),cov=purl(pg.cover_path),cur=pal(pg),ACC='image/jpeg,image/png,image/webp';
+  window.SG=sg;window.PG=pg;window.UPS=ups;
+  $('pxt').innerHTML=`<section class="card"><h3>${L('Sayfanızı kişiselleştirin','Personalise your page')}</h3>
+  <div class="cov">${cov?`<img class="thumb" src="${cov}" alt="">`:'<div class="thumb" aria-hidden="true">📷</div>'}<div style="flex:1"><label for="cvf" style="margin-top:0">${L('Kapak fotoğrafı','Cover photo')}</label><input id="cvf" type="file" accept="${ACC}">
+  <p class="mu sm">${L('Fotoğraf yüklenmeden önce cihazınızda küçültülür; konum dahil tüm gizli bilgileri silinir.','Photos are resized on your device before upload and all hidden data, including location, is removed.')}</p>${cov?`<button class="d sm" id="cvd">${L('Kapak fotoğrafını kaldır','Remove cover photo')}</button>`:''}</div></div>
+  <label for="k_gr">${L('Karşılama mesajınız','Your welcome message')}</label><textarea id="k_gr" maxlength="600" placeholder="${L('Sevdiklerinize birkaç cümle: bu bebeği nasıl beklediğinizi anlatın.','A few lines for your loved ones about waiting for this baby.')}">${v(pg.greeting)}</textarea>
+  <label for="k_ns">${L('İsminin hikayesi','The story of the name')}</label><textarea id="k_ns" maxlength="600" placeholder="${L('İsim ne anlama geliyor, neden seçtiniz?','What does the name mean and why did you choose it?')}">${v(pg.name_story)}</textarea>
+  <label for="k_sb">${L('Kardeşi (varsa)','Sibling (if any)')}</label><input id="k_sb" maxlength="80" value="${v(pg.sibling)}" placeholder="${L('ör. Ela abla','e.g. big sister Ela')}">
+  <fieldset class="sw"><legend>${L('Sayfa rengi','Page colour')}</legend>${PALS.map(([k,t,n,c])=>`<label><input type="radio" name="kpal" value="${k}"${k===cur?' checked':''}><span class="dot" style="background:${c}"></span>${L(t,n)}</label>`).join('')}</fieldset>
+  <button id="k_sv">${L('Kişiselleştirmeyi kaydet','Save personalisation')}</button></section>
+  <section class="card"><h3>${L('Sayfa şifresi','Page password')}</h3><p class="mu">${pg.pw_hash?L('Sayfanız şifreli. Ziyaretçiler bağlantıya ek olarak bu şifreyi de girmeli. Şifreyi aileye ayrıca iletin.','Your page is password protected. Visitors need the link and this password. Share the password separately.'):L('Şu an bağlantıyı bilen herkes sayfanızı görebilir. İsterseniz bir aile şifresi ekleyin.','Right now anyone with the link can see your page. Add a family password if you like.')}</p>
+  <input id="pw1" type="password" autocomplete="new-password" minlength="4" maxlength="100" placeholder="${L('Yeni şifre (en az 4 karakter)','New password (at least 4 characters)')}"><div class="r"><button id="pwset">${L('Şifreyi kaydet','Save password')}</button>${pg.pw_hash?`<button class="d" id="pwdel">${L('Şifreyi kaldır','Remove password')}</button>`:''}</div></section>`;
   d.innerHTML=`
-  <br><div class="card"><h3>Gelen ürün önerileri (${sg.length})</h3>${sg.map(x=>`<p><b>${e(x.name)}</b> · ${e(x.from_name)}${x.note?` <span class="mu">— ${e(x.note)}</span>`:''}${u(x.link)?` <a href="${u(x.link)}" target="_blank" rel="noopener">bağlantı</a>`:''} <button class="g" onclick="sga(${x.id})">Listeye ekle</button> <button class="d" onclick="dx('product_suggestions',${x.id})">Sil</button></p>`).join('')||'<p class="mu">Henüz öneri yok. Sayfanızı açan misafirler "Ürün öner" ile ekleyebilir.</p>'}</div>
-  <br><div class="card"><h3>Toplu ekle ve Amazon istek listesi</h3>
+  <div class="card"><h3>Hafta hafta paylaş</h3><p class="mu">Kısa bir not yeterli: bebek ne yaptı, nasıl hissediyorsunuz? Aile kalp bırakır.</p>
+  <input id="uw" type="number" min="1" max="42" placeholder="Hamilelik haftası"><textarea id="ub" placeholder="Bu hafta neler oldu?" maxlength="2000"></textarea>
+  <label for="uf">${L('Fotoğraf (isteğe bağlı)','Photo (optional)')}</label><input id="uf" type="file" accept="${ACC}"><button id="pu">Paylaş</button></div>
+  <div class="card"><h3>Paylaşımlarınız</h3>${ups.map(x=>`<div class="li">${purl(x.photo_path)?`<img src="${purl(x.photo_path)}" alt="">`:''}<div style="flex:1">${x.week?`<b>${x.week}. hafta</b> · `:''}${e(x.body)}</div><button class="d sm" onclick="dup(${x.id})">Sil</button></div>`).join('')||'<p class="mu">Henüz paylaşım yok.</p>'}</div>
+  <div class="card"><h3>${ls.length} mektup geldi</h3><p class="mu">Mektuplar ${pg.letters_open_at?v(pg.letters_open_at)+' tarihinde':'bir tarih seçince'} herkese açılır.</p>
+  ${ls.map(l=>`<div class="li"><div><b>${who(l.name,l.relation)}:</b> ${e(l.body)}</div><button class="d sm" onclick="dx('letters',${l.id})">Sil</button></div>`).join('')}</div>
+  <div class="card"><h3>İsim önerileri</h3>${ns.map(n=>`<div class="li"><div><b>${e(n.name)}</b> · ${e(n.from_name)}${n.note?` <span class="mu">— ${e(n.note)}</span>`:''}</div><button class="d sm" onclick="dx('name_suggestions',${n.id})">Sil</button></div>`).join('')||'<p class="mu">Henüz isim önerisi yok.</p>'}</div>
+  <div class="card"><h3>Gelen ürün önerileri (${sg.length})</h3>${sg.map(x=>`<div class="li"><div><b>${e(x.name)}</b> · ${e(x.from_name)}${x.note?` <span class="mu">— ${e(x.note)}</span>`:''}${u(x.link)?` <a href="${u(x.link)}" target="_blank" rel="noopener">bağlantı</a>`:''}</div><div class="r"><button class="g sm" onclick="sga(${x.id})">Listeye ekle</button><button class="d sm" onclick="dx('product_suggestions',${x.id})">Sil</button></div></div>`).join('')||'<p class="mu">Henüz öneri yok. Sayfanızı açan misafirler "Ürün öner" ile ekleyebilir.</p>'}</div>
+  <div class="card"><h3>Toplu ekle ve Amazon istek listesi</h3>
   <p class="mu"><b>Hızlı başlangıç:</b> hazır bir bebek listesiyle başlayın, sonra düzenleyin.</p><button class="g" id="stl">Örnek listeyi ekle</button>
   <p class="mu" style="margin-top:14px"><b>Amazon istek listesi:</b> Amazon, listelerini başka sitelerin otomatik okumasına izin vermiyor. Bu yüzden listeyi tarayıcınızdan siz aktarırsınız:</p>
   <ol class="mu"><li>Aşağıdaki <a id="bkm" href="#">Minilist'e aktar</a> bağlantısını yer imleri çubuğuna sürükleyin (bir kez).</li><li>Amazon'da istek listenizi açın, tüm ürünler yüklenene kadar aşağı kaydırın ve yer imine tıklayın. Liste kopyalanır.</li><li>Aşağıdaki kutuya yapıştırıp "Listeye aktar" deyin.</li></ol>
   <textarea id="bk" rows="5" placeholder="Her satıra bir ürün: Ürün adı | https://bağlantı | https://görsel (görsel isteğe bağlı). Sadece ürün bağlantısı da yapıştırabilirsiniz."></textarea>
   <button id="bkgo">Listeye aktar</button></div>
-  <br><div class="card"><h3>Sayfayı aileye devret</h3><p class="mu">Aile henüz kayıt olmadıysa sorun değil. Bir davet bağlantısı oluşturun, aileye WhatsApp veya e-postayla gönderin. Aile kayıt olup bağlantıyı açınca sayfa onların olur ve sizin erişiminiz kalkar. Bağlantı tek kullanımlıktır ve 30 gün geçerlidir.</p>
+  <div class="card"><h3>Sayfa ayarları</h3><input id="s_bn" value="${v(pg.baby_name)}" placeholder="Bebeğin adı" maxlength="60"><input id="s_pa" value="${v(pg.parents)}" placeholder="Anne ve baba adları" maxlength="120"><label for="s_lang">Sayfa dili / Page language</label><select id="s_lang"><option value="tr">Türkçe</option><option value="en">English</option></select><label for="s_theme">Sayfa teması (cinsiyet belli olunca değiştirin, sayfada duyuru çıkar)</label><select id="s_theme"><option value="neutral">Nötr (sürpriz)</option><option value="girl">Kız teması</option><option value="boy">Erkek teması</option></select>
+  <label for="s_dd">Tahmini doğum tarihi</label><input id="s_dd" type="date" value="${v(pg.due_date)}">
+  <input id="s_wl" value="${v(pg.wishlist_url)}" placeholder="Harici hediye listesi bağlantısı (Amazon vb.)" maxlength="500">
+  <label for="s_lo">Mektupların açılacağı tarih</label><input id="s_lo" type="date" value="${v(pg.letters_open_at)}">
+  <label><input id="s_born" type="checkbox" ${pg.born?'checked':''}> Bebek doğdu 🎉 (sayfada doğum haberi görünür)</label>
+  <button id="sv">Kaydet</button></div>
+  ${pg.plan==='free'?`<div class="card"><h3>Reklamsız Pro</h3><p class="mu">Reklamları kaldırır, ürün sınırını açar ve anı defterini PDF indirmenizi sağlar. Tek seferlik ödeme.</p>${PAYMENTS?'<button id="up">Pro\'ya geç</button>':'<p class="mu"><b>Beta:</b> Pro özellikleri davet edilen ailelere ücretsiz açılır.</p>'}</div>`:'<div class="card"><b>Pro aktif ✓</b><p class="mu">'+L('Anı defteri yüklediğiniz fotoğrafları, notlarınızı ve ailenizin mektuplarını içerir.','The memory book includes your photos, notes and your family\'s letters.')+'</p><button id="bookbtn">Anı defterini indir (PDF)</button></div>'}
+  <div class="card"><h3>Sayfayı aileye devret</h3><p class="mu">Aile henüz kayıt olmadıysa sorun değil. Bir davet bağlantısı oluşturun, aileye WhatsApp veya e-postayla gönderin. Aile kayıt olup bağlantıyı açınca sayfa onların olur ve sizin erişiminiz kalkar. Bağlantı tek kullanımlıktır ve 30 gün geçerlidir.</p>
   <input id="tr_em" type="email" placeholder="Ailenin e-posta adresi (isteğe bağlı, sadece e-posta taslağı için)"><button class="d" id="tr_go">Davet bağlantısı oluştur</button>
   <div id="tr_out" style="margin-top:10px"></div></div>
-  ${pg.plan==='free'?`<br><div class="card"><h3>Reklamsız Pro</h3><p class="mu">Reklamları kaldırır, ürün sınırını açar ve anı defterini PDF indirmenizi sağlar. Tek seferlik ödeme.</p>${PAYMENTS?'<button id="up">Pro\'ya geç</button>':'<p class="mu"><b>Beta:</b> Pro özellikleri davet edilen ailelere ücretsiz açılır.</p>'}</div>`:'<br><div class="card"><b>Pro aktif ✓</b><div class="r"><button id="bk">Anı defterini indir (PDF)</button></div></div>'}
-  <br><div class="card"><h3>Hafta hafta paylaş</h3><p class="mu">Kısa bir not yeterli: bebek ne yaptı, nasıl hissediyorsunuz? Aile kalp bırakır.</p>
-  <input id="uw" type="number" min="1" max="42" placeholder="Hamilelik haftası"><textarea id="ub" placeholder="Bu hafta neler oldu?"></textarea><button id="pu">Paylaş</button></div>
-  <br><div class="card"><h3>Sayfa ayarları</h3><input id="s_bn" value="${v(pg.baby_name)}" placeholder="Bebeğin adı"><input id="s_pa" value="${v(pg.parents)}" placeholder="Anne ve baba adları"><label class="mu">Sayfa dili / Page language</label><select id="s_lang"><option value="tr">Türkçe</option><option value="en">English</option></select><label class="mu">Sayfa teması (cinsiyet belli olunca değiştirin, sayfada duyuru çıkar)</label><select id="s_theme"><option value="neutral">Nötr (sürpriz)</option><option value="girl">Kız teması</option><option value="boy">Erkek teması</option></select>
-  <label class="mu">Tahmini doğum tarihi</label><input id="s_dd" type="date" value="${v(pg.due_date)}">
-  <input id="s_wl" value="${v(pg.wishlist_url)}" placeholder="Harici hediye listesi bağlantısı (Amazon vb.)">
-  <label class="mu">Mektupların açılacağı tarih</label><input id="s_lo" type="date" value="${v(pg.letters_open_at)}">
-  <label><input id="s_born" type="checkbox" style="width:auto" ${pg.born?'checked':''}> Bebek doğdu 🎉 (sayfada doğum haberi görünür)</label>
-  <button id="sv">Kaydet</button></div>
-  <br><div class="card"><b>${ls.length} mektup geldi</b><p class="mu">Mektuplar ${pg.letters_open_at?v(pg.letters_open_at)+' tarihinde':'bir tarih seçince'} herkese açılır.</p>
-  ${ls.map(l=>`<p><b>${e(l.name)}:</b> ${e(l.body)} <button class="d" onclick="dx('letters',${l.id})">Sil</button></p>`).join('')}
-  <a href="${wa(pg)}" target="_blank" rel="noopener"><button>${pg.born?'Doğum haberini WhatsApp\'ta ilet':'WhatsApp\'ta davet et'}</button></a><div id="qrp" style="margin-top:12px"></div></div>
-  <br><div class="card"><h3>İsim önerileri</h3>${ns.map(n=>`<p><b>${e(n.name)}</b> · ${e(n.from_name)}${n.note?` <span class="mu">— ${e(n.note)}</span>`:''} <button class="d" onclick="dx('name_suggestions',${n.id})">Sil</button></p>`).join('')||'<p class="mu">Henüz isim önerisi yok.</p>'}</div>
-  <br><div class="card"><h3>Paylaşımlarınız</h3>${ups.map(u=>`<p>${u.week?`<b>${u.week}. hafta</b> · `:''}${e(u.body)} <button class="d" onclick="dx('updates',${u.id})">Sil</button></p>`).join('')||'<p class="mu">Henüz paylaşım yok.</p>'}</div>
-  <br><div class="card"><h3>Tehlikeli bölge</h3><div class="r"><button class="d" id="dpg">Sayfamı sil</button><button class="d" id="dac">Hesabımı sil</button></div></div>`;
+  <div class="card"><h3>Tehlikeli bölge</h3><div class="r"><button class="d" id="dpg">Sayfamı sil</button><button class="d" id="dac">Hesabımı sil</button></div></div>`;
   $('s_lang').value=pg.lang||'tr';$('s_theme').value=pg.theme||'neutral';
-  if($('bk'))$('bk').onclick=()=>book(pg);
+  if($('bookbtn'))$('bookbtn').onclick=()=>book(pg);
   if($('up'))$('up').onclick=async()=>{const {data,error}=await sb.functions.invoke('polar-checkout');if(err(error))return;if(data?.url)location.href=data.url;else alert(data?.error||'Ödeme açılamadı')};
-  if(window.QRCode)new QRCode($('qrp'),{text:plink(pg),width:120,height:120});
-
+  const busy=(b,on)=>{if(b){b.disabled=on}};
+  $('k_sv').onclick=async()=>{const n=k=>$(k).value.trim()||null,pv=(document.querySelector('input[name=kpal]:checked')||{}).value||null;
+    const {error}=await sb.from('pages').update({greeting:n('k_gr'),name_story:n('k_ns'),sibling:n('k_sb'),palette:pv}).eq('id',pg.id);if(!err(error)){alert('Kaydedildi');go()}};
+  $('cvf').onchange=async ev=>{const f=ev.target.files[0];if(!f)return;busy(ev.target,true);let path;
+    try{path=await upPhoto(pg,f);const {error}=await sb.from('pages').update({cover_path:path}).eq('id',pg.id);
+      if(error){await rmPhotos([path]);busy(ev.target,false);return err(error)}
+      await rmPhotos([pg.cover_path]);go()}catch(x){busy(ev.target,false);ev.target.value='';alert(x.message)}};
+  if($('cvd'))$('cvd').onclick=async()=>{if(!confirm('Silinsin mi?'))return;const {error}=await sb.from('pages').update({cover_path:null}).eq('id',pg.id);if(err(error))return;await rmPhotos([pg.cover_path]);go()};
+  $('pwset').onclick=async()=>{const p=$('pw1').value;if(p.length<4)return alert(L('Şifre en az 4 karakter olmalı','The password must be at least 4 characters'));
+    const {error}=await sb.rpc('set_page_password',{pid:pg.id,p_pw:p});if(!err(error)){alert(L('Şifre kaydedildi. Aileye ayrıca iletin.','Password saved. Share it with your family separately.'));go()}};
+  if($('pwdel'))$('pwdel').onclick=async()=>{if(!confirm(L('Şifre kaldırılsın mı? Bağlantıyı bilen herkes sayfayı görebilir.','Remove the password? Anyone with the link will be able to see the page.')))return;
+    const {error}=await sb.rpc('set_page_password',{pid:pg.id,p_pw:''});if(!err(error))go()};
   $('stl').onclick=async()=>{const k=LANG==='en'?'en':'tr',rows=STARTER[k].map(r=>({page_id:pg.id,name:r[0],category:r[1],description:r[2]+' · '+r[3],quantity:r[4],target_amount:r[5]}));
     await addRows(pg,rows)};
   $('bkgo').onclick=()=>addRows(pg,parseLines(pg,$('bk').value));
@@ -634,11 +876,16 @@ async function pextras(pg){
     const lk=location.origin+location.pathname+'#/devral/'+tok,msg=LANG==='en'?`${pg.baby_name}'s Minilist page is yours! Sign up and open this link to take it over: ${lk}`:`${pg.baby_name} sayfası artık sizin! Kayıt olup bu bağlantıyı açarak devralın: ${lk}`;
     $('tr_out').innerHTML=`<input id="tr_link" readonly value="${e(lk)}"><div class="r"><button class="g" id="tr_cp">Bağlantıyı kopyala</button><a href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener"><button class="g">WhatsApp ile gönder</button></a><a href="mailto:${encodeURIComponent(m)}?subject=${encodeURIComponent('Minilist')}&body=${encodeURIComponent(msg)}"><button class="g">E-posta taslağı aç</button></a></div><p class="mu">Bağlantıyı sadece ailenize verin. Bağlantıya sahip olan ve kayıt olan ilk kişi sayfayı devralır. Yenisini oluşturursanız eskisi geçersiz olur.</p>`;
     $('tr_cp').onclick=()=>navigator.clipboard.writeText(lk).then(()=>alert('Kopyalandı'),()=>$('tr_link').select())};
-  $('dpg').onclick=async()=>{if(!confirm('Sayfa silinsin mi? Bu işlem geri alınamaz.'))return;const {error}=await sb.from('pages').delete().eq('id',pg.id);if(!err(error))go()};
-  $('dac').onclick=async()=>{if(!confirm('Hesabınız ve tüm verileriniz kalıcı olarak silinsin mi? Bu işlem geri alınamaz.'))return;const {error}=await sb.rpc('delete_my_account');if(err(error))return;await sb.auth.signOut();alert('Hesabınız silindi.');nav('#/')};
-  $('pu').onclick=async()=>{const b=$('ub').value.trim();if(!b)return;const {error}=await sb.from('updates').insert({page_id:pg.id,body:b,week:+$('uw').value||null});if(!err(error)){alert('Paylaşıldı');go()}};
+  $('dpg').onclick=async()=>{if(!confirm('Sayfa silinsin mi? Bu işlem geri alınamaz.'))return;await rmAllPhotos(pg);const {error}=await sb.from('pages').delete().eq('id',pg.id);if(!err(error))go()};
+  $('dac').onclick=async()=>{if(!confirm('Hesabınız ve tüm verileriniz kalıcı olarak silinsin mi? Bu işlem geri alınamaz.'))return;await rmAllPhotos(pg);const {error}=await sb.rpc('delete_my_account');if(err(error))return;await sb.auth.signOut();alert('Hesabınız silindi.');nav('#/')};
+  $('pu').onclick=async ev=>{const b=$('ub').value.trim();if(!b)return;const f=$('uf').files[0];let path=null;busy(ev.target,true);
+    try{if(f)path=await upPhoto(pg,f)}catch(x){busy(ev.target,false);return alert(x.message)}
+    const {error}=await sb.from('updates').insert({page_id:pg.id,body:b,week:+$('uw').value||null,photo_path:path});
+    if(error){if(path)await rmPhotos([path]);busy(ev.target,false);return err(error)}alert('Paylaşıldı');go()};
   $('sv').onclick=async()=>{const n=k=>$(k).value.trim()||null;
     const {error}=await sb.from('pages').update({baby_name:$('s_bn').value.trim(),parents:$('s_pa').value.trim(),lang:$('s_lang').value,theme:$('s_theme').value,wishlist_url:n('s_wl'),due_date:n('s_dd'),letters_open_at:n('s_lo'),born:$('s_born').checked}).eq('id',pg.id);
     if(!err(error)){alert('Kaydedildi');go()}};
 }
+window.dup=async id=>{if(!confirm('Silinsin mi?'))return;const x=(window.UPS||[]).find(r=>r.id===id);
+  const {error}=await sb.from('updates').delete().eq('id',id);if(err(error))return;if(x)await rmPhotos([x.photo_path]);go()};
 </script></body></html>
