@@ -211,6 +211,7 @@ async function go(){
   if(SUPABASE_URL.includes('PROJE-ID')){app.innerHTML='<div class="w"><div class="card"><h3>Kurulum eksik</h3><p>index.html içindeki SUPABASE_URL ve SUPABASE_KEY değerlerini kendi Supabase projenizle değiştirin.</p></div></div>';return}
   const h=location.hash,isP=h.startsWith('#/p/');
   $('mrob').content=isP?'noindex,nofollow':'index,follow';
+  if(!isP)document.title=pref()==='en'?'Minilist: baby gift list and pregnancy page':'Minilist: bebek hediye listesi ve hamilelik sayfası';
   if(h.startsWith('#/?r=')){try{localStorage.setItem('ref',decodeURIComponent(h.slice(5)).slice(0,80))}catch(_){}}
   if(!isP){LANG=pref();document.body.removeAttribute('data-theme');document.body.removeAttribute('data-pal')}
   $('lg').style.display=isP?'none':'block';$('lg').textContent=LANG==='tr'?'EN':'TR';
@@ -470,7 +471,6 @@ function demoPhone(){
   </div></div>`;
 }
 function home(){
-  document.title='Minilist';
   const K=[
     [L('Hamilelik halkası ve geri sayım','Pregnancy ring and countdown'),L('Halka 40 haftada dolar. Ortasında bu haftanın meyvesi var; kapak fotoğrafı yüklerseniz fotoğrafınız. Altında doğuma kalan süre.','The ring fills over 40 weeks. In the middle is this week\'s fruit, or your cover photo if you add one. Below it, the time left until the due date.')],
     [L('Ailenin sesi','The family\'s voice'),L('Kendi karşılama mesajınız, abla ya da abinin adı ve isterseniz ismin hikayesi.','Your own welcome message, the big sibling\'s name and, if you like, the story behind the name.')],
@@ -488,10 +488,10 @@ function home(){
   <ol class="keys k">${K.map(([h,p],i)=>`<li><span class="pin" aria-hidden="true">${i+1}</span><div><h3>${h}</h3><p class="mu">${p}</p></div></li>`).join('')}
   <li><span class="pin" aria-hidden="true">+</span><div><h3>${L('Sizin paneliniz','Your dashboard')}</h3><p class="mu">${L('Ürün ekleme, Amazon listesinden aktarma, kim ne aldı, isim önerileri ve fotoğraflı anı defteri (PDF).','Add items, import from an Amazon list, see who got what, name suggestions and a memory book with your photos (PDF).')}</p></div></li></ol></section>
   <section class="w"><h2>${L('Bebek bekleyen ailelere rehberler','Guides for expecting families')}</h2><div class="grid">
-  <a class="card" href="/blog/bebek-ihtiyac-listesi"><h3>${L('Bebek ihtiyaç listesi','Baby essentials list')}</h3><p class="mu">${L('Yenidoğan için gerçekten gerekenler ve bekleyebilecekler.','What a newborn really needs, and what can wait.')}</p></a>
-  <a class="card" href="/blog/hafta-hafta-bebek-boyutu"><h3>${L('Hafta hafta bebeğin boyutu','Baby size week by week')}</h3><p class="mu">${L('Meyve tablosu ve tahmini doğum tarihi hesaplama.','Fruit chart and due date calculator.')}</p></a>
-  <a class="card" href="/blog/bebege-mektup-ornekleri"><h3>${L('Bebeğe mektup örnekleri','Letters to the baby')}</h3><p class="mu">${L('Anneden, dededen, teyzeden örnekler.','Examples from mum, grandpa and aunts.')}</p></a></div>
-  <p><a href="/blog">${L('Tüm yazılar','All articles')}</a></p></section>
+  <a class="card" href="${L('/blog/bebek-ihtiyac-listesi','/en/blog/baby-registry-checklist')}"><h3>${L('Bebek ihtiyaç listesi','Baby essentials list')}</h3><p class="mu">${L('Yenidoğan için gerçekten gerekenler ve bekleyebilecekler.','What a newborn really needs, and what can wait.')}</p></a>
+  <a class="card" href="${L('/blog/hafta-hafta-bebek-boyutu','/en/blog/baby-size-by-week')}"><h3>${L('Hafta hafta bebeğin boyutu','Baby size week by week')}</h3><p class="mu">${L('Meyve tablosu ve tahmini doğum tarihi hesaplama.','Fruit chart and due date calculator.')}</p></a>
+  <a class="card" href="${L('/blog/bebege-mektup-ornekleri','/en/blog/letters-to-baby')}"><h3>${L('Bebeğe mektup örnekleri','Letters to the baby')}</h3><p class="mu">${L('Anneden, dededen, teyzeden örnekler.','Examples from mum, grandpa and aunts.')}</p></a></div>
+  <p><a href="${L('/blog','/en/blog')}">${L('Tüm yazılar','All articles')}</a></p></section>
   <section class="w plans"><div class="card"><h3>Ücretsiz</h3><p class="mu">${L('Reklamsız sayfa, 25 ürüne kadar liste, ortak hediye, mektuplar, fotoğraflı haftalık notlar, aile şifresi, WhatsApp ve QR.','Ad-free page, a list of up to 25 items, group gifts, letters, weekly notes with photos, a family password, WhatsApp and QR.')}</p></div>
   <div class="card ac"><h3>Pro${PAYMENTS?'':' <span class="pill">Yakında</span>'}</h3><p class="mu">${L('Sınırsız ürün ve fotoğraflarınız, notlarınız, ailenizin mektuplarıyla anı defteri (PDF). Basılı anı defteri yakında. Tek seferlik ödeme.','Unlimited items and a memory book (PDF) with your photos, notes and your family\'s letters. Printed memory book coming soon. One-time payment.')}</p></div></section>
   <section class="w narrow"><div class="card pad"><h2>Giriş yap veya sayfanı aç</h2>
@@ -599,7 +599,7 @@ en:`<h2>Privacy and Data Protection Notice</h2><p class="mu">Last updated: Octob
 <h3>5. Retention</h3><p>We keep your data while your account is open. On your deletion request we delete your account and page.</p>
 <h3>6. Your rights</h3><p>You can ask whether we process your data, request access, correction or deletion, object to processing and claim compensation for damage, as provided by the Turkish Personal Data Protection Law (KVKK, Art. 11) and other applicable law. Contact channels will be published on this page soon.</p>
 <h3>7. Important: your page is public</h3><p>A family page can be viewed by anyone who has the link. Share the link only with people you trust, and add a family password if you like. Do not enter sensitive information such as health details or upload photos you would not want shared. You enter information about the baby as a parent.</p>`},
-terms:{tr:`<h2>Kullanım Şartları</h2><p class="mu">Son güncelleme: 7 Ekim 2026. Bu sayfa bilgilendirme amaçlıdır.</p>
+terms:{tr:`<h2>Kullanım Şartları</h2><p class="mu">Son güncelleme: 8 Ekim 2026. Bu sayfa bilgilendirme amaçlıdır.</p>
 <h3>1. Hizmet</h3><p>Minilist, ailelerin hamilelikten itibaren hediye listesi, mektup ve güncellemelerle çevrelerini sürece katmasını sağlar. Hizmeti kullanarak bu şartları kabul edersiniz.</p>
 <h3>2. Hesap</h3><p>Hesap bilgilerinizin doğruluğundan ve güvenliğinden siz sorumlusunuz. Bir hesap için bir aile sayfası açılabilir.</p>
 <h3>3. İçerik</h3><p>Sayfanıza ve misafirlerin bıraktığı içeriğe siz ve misafirler sorumlusunuz. Hukuka aykırı, aşağılayıcı veya başkalarının haklarını ihlal eden içerikleri kaldırma ve ilgili hesapları kapatma hakkımız saklıdır.</p>
@@ -608,7 +608,7 @@ terms:{tr:`<h2>Kullanım Şartları</h2><p class="mu">Son güncelleme: 7 Ekim 20
 <h3>6. İade</h3><p>Pro plan için iade talepleri, satın alma sırasında kullanılan ödeme sağlayıcısı üzerinden yürütülür. Yasal haklarınız saklıdır.</p>
 <h3>7. Sorumluluk</h3><p>Hizmet "olduğu gibi" sunulur; kesintisiz veya hatasız olacağı garanti edilmez. Yasaların izin verdiği ölçüde dolaylı zararlardan sorumlu değiliz.</p>
 <h3>8. Değişiklik ve uyuşmazlık</h3><p>Şartları güncelleyebiliriz; önemli değişiklikleri duyururuz. Türk hukuku uygulanır; tüketici mercilerine başvuru hakkınız saklıdır.</p>`,
-en:`<h2>Terms of Use</h2><p class="mu">Last updated: October 7, 2026. This page is for information purposes.</p>
+en:`<h2>Terms of Use</h2><p class="mu">Last updated: October 8, 2026. This page is for information purposes.</p>
 <h3>1. The service</h3><p>Minilist lets families involve their circle from pregnancy onward with a gift list, letters and updates. By using the service you accept these terms.</p>
 <h3>2. Account</h3><p>You are responsible for the accuracy and security of your account details. One family page can be created per account.</p>
 <h3>3. Content</h3><p>You and your guests are responsible for the content on your page. We may remove unlawful, abusive or rights-infringing content and close the related accounts.</p>
@@ -658,13 +658,13 @@ async function admin(){
 // İstatistik görüntüleyici: sadece sayılar; içerik, e-posta, ad ve bağlantı yok, işlem butonu yok.
 async function stats(){
   const {data,error}=await sb.rpc('stats_list_pages');if(err(error))return;
-  const rows=data||[],K=[['products','Ürün'],['reservations','Ayrılan'],['contributions','Katkı'],['letters','Mektup'],['updates','Not'],['hearts','Kalp'],['name_suggestions','İsim önerisi'],['product_suggestions','Ürün önerisi'],['guesses','Tahmin'],['photos','Fotoğraf'],['referred','Getirdiği aile']];
-  const sum=k=>rows.reduce((a,r)=>a+(r[k]||0),0);
-  app.innerHTML=`<div class="w"><div class="r" style="justify-content:space-between"><h2>İstatistikler</h2><button class="g" id="lo">Çıkış yap</button></div>
-  <div class="card"><b>${rows.length} aile · ${rows.filter(r=>r.plan==='pro').length} Pro · ${rows.filter(r=>r.born).length} doğum · ${rows.filter(r=>r.has_pw).length} şifreli</b>
+  const rows=data||[],K=[['products',L('Ürün','Items')],['reservations',L('Ayrılan','Reserved')],['contributions',L('Katkı','Contrib.')],['letters',L('Mektup','Letters')],['updates',L('Not','Notes')],['hearts',L('Kalp','Hearts')],['name_suggestions',L('İsim önerisi','Name ideas')],['product_suggestions',L('Ürün önerisi','Item ideas')],['guesses',L('Tahmin','Guesses')],['photos',L('Fotoğraf','Photos')],['referred',L('Getirdiği aile','Families referred')]];
+  const sum=k=>rows.reduce((a,r)=>a+(r[k]||0),0),n=k=>rows.filter(r=>r[k]).length;
+  app.innerHTML=`<div class="w"><div class="r" style="justify-content:space-between"><h2>${L('İstatistikler','Statistics')}</h2><button class="g" id="lo">Çıkış yap</button></div>
+  <div class="card"><b>${L(`${rows.length} aile · ${rows.filter(r=>r.plan==='pro').length} Pro · ${n('born')} doğum · ${n('has_pw')} şifreli`,`${rows.length} families · ${rows.filter(r=>r.plan==='pro').length} Pro · ${n('born')} born · ${n('has_pw')} password protected`)}</b>
   <div class="stats">${K.map(([k,t])=>`<div><b>${sum(k)}</b><span>${t}</span></div>`).join('')}</div></div><br>
-  <div class="card" style="overflow-x:auto"><table class="st"><thead><tr><th>Aile</th><th>Açılış</th><th>Plan</th>${K.map(([,t])=>`<th>${t}</th>`).join('')}</tr></thead>
-  <tbody>${rows.map(r=>`<tr><td>#${e(r.code)}</td><td>${e(r.created_on)}</td><td>${r.plan==='pro'?'Pro':'Ücretsiz'}</td>${K.map(([k])=>`<td>${+r[k]||0}</td>`).join('')}</tr>`).join('')||'<tr><td colspan="14" class="mu">Henüz aile yok.</td></tr>'}</tbody></table></div></div>`;
+  <div class="card" style="overflow-x:auto"><table class="st"><thead><tr><th>${L('Aile','Family')}</th><th>${L('Açılış','Opened')}</th><th>Plan</th>${K.map(([,t])=>`<th>${t}</th>`).join('')}</tr></thead>
+  <tbody>${rows.map(r=>`<tr><td>#${e(r.code)}</td><td>${e(r.created_on)}</td><td>${r.plan==='pro'?'Pro':L('Ücretsiz','Free')}</td>${K.map(([k])=>`<td>${+r[k]||0}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="14" class="mu">${L('Henüz aile yok.','No families yet.')}</td></tr>`}</tbody></table></div></div>`;
   $('lo').onclick=out;
 }
 async function sp(id,plan){
@@ -737,6 +737,7 @@ const REL={anneanne:['Anneanne','anneannesi','Grandma'],babaanne:['Babaanne','ba
 const relSel=id=>`<select id="${id}" aria-label="${L('Yakınlığınız','Your relation')}"><option value="">${L('Yakınlığınız (isteğe bağlı)','Your relation (optional)')}</option>${Object.entries(REL).map(([k,v])=>`<option value="${k}">${L(v[0],v[2])}</option>`).join('')}</select>`;
 const who=(n,r)=>e(n)+(REL[r]?`, <span class="rel">${L(REL[r][1],REL[r][2])}</span>`:'');
 const da=s=>/[aıou][^aeıioöuü]*$/i.test(s)?'da':'de';   // "Ela abla da", "Mert abi de"
+const an=w=>(/^[aeiou]/i.test(w)?'an ':'a ')+w;
 const fruitIcon=f=>f[2]==='papaya'?'<i class="pap"></i>':f[2];
 function ringHTML(o){
   const C=2*Math.PI*46,p=o.full?1:Math.max(0,Math.min(1,(o.week||0)/40)),pt=t=>{const a=t*2*Math.PI-Math.PI/2;return [50+46*Math.cos(a),50+46*Math.sin(a)]};
@@ -773,7 +774,7 @@ function hero(pg){
   const cov=purl(pg.cover_path),cm=f?(f[3]<1?'<1':f[3]):'',g=f?(f[4]<1?'<1':f[4]):'',wn=w>40?'40+':w;
   const ring=ringHTML({week:w,full:pg.born,emoji:pg.born?'👶':f?fruitIcon(f):'🤍',photo:cov});
   return `<header class="hero"><div class="w">${ring}
-  ${f?`<p class="wk">${L(`${wn}. hafta: yaklaşık bir ${f[0]} kadar`,`Week ${wn}: about the size of a ${f[1]}`)}</p><p class="mu">${L(`Boyu yaklaşık ${cm} cm, ağırlığı ${g} g`,`About ${cm} cm long and ${g} g`)}</p>`:''}
+  ${f?`<p class="wk">${L(`${wn}. hafta: yaklaşık bir ${f[0]} kadar`,`Week ${wn}: about the size of ${an(f[1])}`)}</p><p class="mu">${L(`Boyu yaklaşık ${cm} cm, ağırlığı ${g} g`,`About ${cm} cm long and ${g} g`)}</p>`:''}
   <h1>${pg.born?L(`${e(pg.baby_name)} geldi!`,`${e(pg.baby_name)} is here!`):L(`${e(pg.baby_name)} geliyor!`,`${e(pg.baby_name)} is coming!`)}</h1>
   ${pg.parents?`<p class="par">${e(pg.parents)}</p>`:''}
   ${pg.sibling?`<p class="sib">${L(`${e(pg.sibling)} ${da(pg.sibling)} sabırsızlanıyor`,`${e(pg.sibling)} can't wait either`)}</p>`:''}
@@ -910,16 +911,16 @@ async function pextras(pg){
   <div class="card"><h3>İsim önerileri</h3>${ns.map(n=>`<div class="li"><div><b>${e(n.name)}</b> · ${e(n.from_name)}${n.note?` <span class="mu">— ${e(n.note)}</span>`:''}</div><button class="d sm" onclick="dx('name_suggestions',${n.id})">Sil</button></div>`).join('')||'<p class="mu">Henüz isim önerisi yok.</p>'}</div>
   <div class="card"><h3>Gelen ürün önerileri (${sg.length})</h3>${sg.map(x=>`<div class="li"><div><b>${e(x.name)}</b> · ${e(x.from_name)}${x.note?` <span class="mu">— ${e(x.note)}</span>`:''}${u(x.link)?` <a href="${u(x.link)}" target="_blank" rel="noopener">bağlantı</a>`:''}</div><div class="r"><button class="g sm" onclick="sga(${x.id})">Listeye ekle</button><button class="d sm" onclick="dx('product_suggestions',${x.id})">Sil</button></div></div>`).join('')||'<p class="mu">Henüz öneri yok. Sayfanızı açan misafirler "Ürün öner" ile ekleyebilir.</p>'}</div>
   <div class="card"><h3>Toplu ekle ve Amazon istek listesi</h3>
-  <p class="mu"><b>Hızlı başlangıç:</b> hazır bir bebek listesiyle başlayın, sonra düzenleyin.</p><button class="g" id="stl">Örnek listeyi ekle</button>
-  <p class="mu" style="margin-top:14px"><b>Amazon istek listesi:</b> Amazon, listelerini başka sitelerin otomatik okumasına izin vermiyor. Bu yüzden listeyi tarayıcınızdan siz aktarırsınız:</p>
-  <ol class="mu"><li>Aşağıdaki <a id="bkm" href="#">Minilist'e aktar</a> bağlantısını yer imleri çubuğuna sürükleyin (bir kez).</li><li>Amazon'da istek listenizi açın, tüm ürünler yüklenene kadar aşağı kaydırın ve yer imine tıklayın. Liste kopyalanır.</li><li>Aşağıdaki kutuya yapıştırıp "Listeye aktar" deyin.</li></ol>
-  <textarea id="bk" rows="5" placeholder="Her satıra bir ürün: Ürün adı | https://bağlantı | https://görsel (görsel isteğe bağlı). Sadece ürün bağlantısı da yapıştırabilirsiniz."></textarea>
+  <p class="mu"><b>${L('Hızlı başlangıç:','Quick start:')}</b> ${L('hazır bir bebek listesiyle başlayın, sonra düzenleyin.','begin with a ready-made baby list, then edit it.')}</p><button class="g" id="stl">Örnek listeyi ekle</button>
+  <p class="mu" style="margin-top:14px"><b>${L('Amazon istek listesi:','Amazon wish list:')}</b> ${L('Amazon, istek listelerinin başka sitelerce otomatik okunmasına izin vermiyor. Bu yüzden listeyi kendi tarayıcınızdan, tek tıkla aktarırsınız:','Amazon does not let other sites read wish lists automatically, so you import your list from your own browser with one click:')}</p>
+  <ol class="mu"><li>${L('Bu bağlantıyı yer imleri çubuğuna sürükleyin (bir kez):','Drag this link to your bookmarks bar (once):')} <a id="bkm" href="#">${L('Minilist\'e aktar','Import to Minilist')}</a></li><li>${L('Amazon\'da istek listenizi açın, tüm ürünler yüklenene kadar aşağı kaydırın ve yer imine tıklayın. Liste kopyalanır.','Open your wish list on Amazon, scroll down until all items load, then click the bookmark. The list is copied.')}</li><li>${L('Aşağıdaki kutuya yapıştırıp "Listeye aktar" deyin.','Paste it in the box below and click "Import to list".')}</li></ol>
+  <textarea id="bk" rows="5" placeholder="${L('Her satıra bir ürün: Ürün adı | https://bağlantı | https://görsel (görsel isteğe bağlı). Sadece ürün bağlantısı da yapıştırabilirsiniz.','One item per line: Item name | https://link | https://image (image optional). You can also paste just item links.')}"></textarea>
   <button id="bkgo">Listeye aktar</button></div>
   <div class="card"><h3>Sayfa ayarları</h3><input id="s_bn" value="${v(pg.baby_name)}" placeholder="Bebeğin adı" maxlength="60"><input id="s_pa" value="${v(pg.parents)}" placeholder="Anne ve baba adları" maxlength="120"><label for="s_lang">Sayfa dili / Page language</label><select id="s_lang"><option value="tr">Türkçe</option><option value="en">English</option></select><label for="s_theme">Sayfa teması (cinsiyet belli olunca değiştirin, sayfada duyuru çıkar)</label><select id="s_theme"><option value="neutral">Nötr (sürpriz)</option><option value="girl">Kız teması</option><option value="boy">Erkek teması</option></select>
   <label for="s_dd">Tahmini doğum tarihi</label><input id="s_dd" type="date" value="${v(pg.due_date)}">
   <input id="s_wl" value="${v(pg.wishlist_url)}" placeholder="Harici hediye listesi bağlantısı (Amazon vb.)" maxlength="500">
   <label for="s_lo">Mektupların açılacağı tarih</label><input id="s_lo" type="date" value="${v(pg.letters_open_at)}">
-  <label><input id="s_born" type="checkbox" ${pg.born?'checked':''}> Bebek doğdu 🎉 (sayfada doğum haberi görünür)</label>
+  <label><input id="s_born" type="checkbox" ${pg.born?'checked':''}> ${L('Bebek doğdu 🎉 (sayfada doğum haberi görünür)','The baby is born 🎉 (the page shows the birth news)')}</label>
   <button id="sv">Kaydet</button></div>
   ${pg.plan==='free'?`<div class="card"><h3>Pro</h3><p class="mu">${L('Sınırsız ürün ve fotoğraflarınız, notlarınız, ailenizin mektuplarıyla anı defteri (PDF). Basılı anı defteri yakında. Tek seferlik ödeme.','Unlimited items and a memory book (PDF) with your photos, notes and your family\'s letters. Printed memory book coming soon. One-time payment.')}</p>${PAYMENTS?'<button id="up">Pro\'ya geç</button>':'<p class="mu"><b>Beta:</b> Pro özellikleri davet edilen ailelere ücretsiz açılır.</p>'}</div>`:'<div class="card"><b>Pro aktif ✓</b><p class="mu">'+L('Anı defteri yüklediğiniz fotoğrafları, notlarınızı ve ailenizin mektuplarını içerir.','The memory book includes your photos, notes and your family\'s letters.')+'</p><button id="bookbtn">Anı defterini indir (PDF)</button></div>'}
   <div class="card"><h3>Sayfayı aileye devret</h3><p class="mu">Aile henüz kayıt olmadıysa sorun değil. Bir davet bağlantısı oluşturun, aileye WhatsApp veya e-postayla gönderin. Aile kayıt olup bağlantıyı açınca sayfa onların olur ve sizin erişiminiz kalkar. Bağlantı tek kullanımlıktır ve 30 gün geçerlidir.</p>
@@ -944,8 +945,8 @@ async function pextras(pg){
     const {error}=await sb.rpc('set_page_password',{pid:pg.id,p_pw:''});if(!err(error))go()};
   $('stl').onclick=async()=>{const k=LANG==='en'?'en':'tr',rows=STARTER[k].map(r=>({page_id:pg.id,name:r[0],category:r[1],description:r[2]+' · '+r[3],quantity:r[4],target_amount:r[5]}));
     await addRows(pg,rows)};
-  $('bkgo').onclick=()=>addRows(pg,parseLines(pg,$('bk').value));
-  $('bkm').onclick=ev=>ev.preventDefault();$('bkm').href='javascript:'+encodeURIComponent(BKM);
+  $('bkgo').onclick=()=>{const t=$('bk').value;if(/amazon\.[a-z.]+\/(hz\/wishlist|wishlist|gp\/registry)/i.test(t)&&t.split('\n').filter(x=>x.trim()).length<=2)return alert(L('Bu bir istek listesi bağlantısı. Amazon listeleri bağlantıdan okunamıyor; yukarıdaki "Minilist\'e aktar" yer imini kullanın.','This is a wish list link. Amazon lists cannot be read from a link; use the "Import to Minilist" bookmark above.'));addRows(pg,parseLines(pg,t))};
+  $('bkm').onclick=ev=>ev.preventDefault();$('bkm').href='javascript:'+encodeURIComponent(LANG==='en'?BKM.replace('Liste bulunamadı. Amazon istek listesi sayfasında olduğunuzdan ve ürünleri aşağı kaydırarak yüklediğinizden emin olun.','No list found. Make sure you are on an Amazon wish list page and have scrolled down to load every item.').replace("' ürün kopyalandı. Minilist panelinde yapıştırın.'","' items copied. Paste them in your Minilist dashboard.'").replace('Kopyalayıp Minilist panelinde yapıştırın','Copy this and paste it in your Minilist dashboard'):BKM);
   $('tr_go').onclick=async()=>{const m=$('tr_em').value.trim();
     if(!confirm('Davet bağlantısı oluşturulsun mu? Bağlantıyı açıp kayıt olan kişi sayfanın sahibi olur.'))return;
     const {data:tok,error}=await sb.rpc('create_transfer',{p_page:pg.id,p_email:m||null});if(err(error))return;
@@ -981,7 +982,7 @@ async function storyCard(pg){
   x.fillStyle=P[1];x.font='600 54px Figtree,sans-serif';
   x.fillText(pg.born?L('Merhaba dünya','Hello world'):L(`${w>40?'40+':w}. hafta`,`Week ${w>40?'40+':w}`),cx,1230);
   x.fillStyle='#2E2A3B';
-  const l1=pg.born?L(`${pg.baby_name}`,`${pg.baby_name}`):L('Bu hafta bir','This week we are'),l2=pg.born?L('geldi!','is here!'):L(`${f[0]} kadarız`,`the size of a ${f[1]}`);
+  const l1=pg.born?L(`${pg.baby_name}`,`${pg.baby_name}`):L('Bu hafta bir','This week we are'),l2=pg.born?L('geldi!','is here!'):L(`${f[0]} kadarız`,`the size of ${an(f[1])}`);
   x.font=fit(l1,920,104,'S "Young Serif",Georgia,serif');x.fillText(l1,cx,1360);
   x.font=fit(l2,920,104,'S "Young Serif",Georgia,serif');x.fillText(l2,cx,1480);
   x.fillStyle='#676174';x.font=fit(pg.baby_name,920,50,'600 S Figtree,sans-serif');
