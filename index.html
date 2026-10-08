@@ -211,6 +211,7 @@ async function go(){
   if(SUPABASE_URL.includes('PROJE-ID')){app.innerHTML='<div class="w"><div class="card"><h3>Kurulum eksik</h3><p>index.html içindeki SUPABASE_URL ve SUPABASE_KEY değerlerini kendi Supabase projenizle değiştirin.</p></div></div>';return}
   const h=location.hash,isP=h.startsWith('#/p/');
   $('mrob').content=isP?'noindex,nofollow':'index,follow';
+  if(h.startsWith('#/?r=')){try{localStorage.setItem('ref',decodeURIComponent(h.slice(5)).slice(0,80))}catch(_){}}
   if(!isP){LANG=pref();document.body.removeAttribute('data-theme');document.body.removeAttribute('data-pal')}
   $('lg').style.display=isP?'none':'block';$('lg').textContent=LANG==='tr'?'EN':'TR';
   if(isP)return pub(decodeURIComponent(h.slice(4)));
@@ -491,8 +492,8 @@ function home(){
   <a class="card" href="/blog/hafta-hafta-bebek-boyutu"><h3>${L('Hafta hafta bebeğin boyutu','Baby size week by week')}</h3><p class="mu">${L('Meyve tablosu ve tahmini doğum tarihi hesaplama.','Fruit chart and due date calculator.')}</p></a>
   <a class="card" href="/blog/bebege-mektup-ornekleri"><h3>${L('Bebeğe mektup örnekleri','Letters to the baby')}</h3><p class="mu">${L('Anneden, dededen, teyzeden örnekler.','Examples from mum, grandpa and aunts.')}</p></a></div>
   <p><a href="/blog">${L('Tüm yazılar','All articles')}</a></p></section>
-  <section class="w plans"><div class="card"><h3>Ücretsiz</h3><p class="mu">Sayfa, 25 ürüne kadar liste, ürün önerileri, mektup duvarı, güncellemeler, WhatsApp ve QR.</p></div>
-  <div class="card ac"><h3>Pro${PAYMENTS?'':' <span class="pill">Yakında</span>'}</h3><p class="mu">Reklamsız sayfa, sınırsız ürün ve anı defteri PDF indirme. Tek seferlik ödeme.</p></div></section>
+  <section class="w plans"><div class="card"><h3>Ücretsiz</h3><p class="mu">${L('Reklamsız sayfa, 25 ürüne kadar liste, ortak hediye, mektuplar, fotoğraflı haftalık notlar, aile şifresi, WhatsApp ve QR.','Ad-free page, a list of up to 25 items, group gifts, letters, weekly notes with photos, a family password, WhatsApp and QR.')}</p></div>
+  <div class="card ac"><h3>Pro${PAYMENTS?'':' <span class="pill">Yakında</span>'}</h3><p class="mu">${L('Sınırsız ürün ve fotoğraflarınız, notlarınız, ailenizin mektuplarıyla anı defteri (PDF). Basılı anı defteri yakında. Tek seferlik ödeme.','Unlimited items and a memory book (PDF) with your photos, notes and your family\'s letters. Printed memory book coming soon. One-time payment.')}</p></div></section>
   <section class="w narrow"><div class="card pad"><h2>Giriş yap veya sayfanı aç</h2>
   <input id="em" type="email" autocomplete="email" placeholder="E-posta"><input id="pw" type="password" autocomplete="current-password" placeholder="Şifre (en az 6 karakter)">
   <div class="r"><button id="li">Giriş yap</button><button id="su" class="g">Kayıt ol</button></div>${GOOGLE?'<button id="gg" class="g" style="width:100%;margin-top:8px">Google ile devam et</button>':''}<p class="mu" style="margin:8px 0"><a href="#" id="fp">Şifremi unuttum</a></p><p class="mu">Kayıt olarak şunları kabul edersiniz: <a href="#/terms">Kullanım Şartları</a> · <a href="#/privacy">Gizlilik ve KVKK</a></p></div></section>`;
@@ -548,11 +549,15 @@ async function panel(user){
     <p class="mu">Bebeğinizin boyutunu her hafta meyve veya sebzeyle kendiliğinden göstereceğiz.</p>
     <label for="pt">Sayfa teması</label><select id="pt"><option value="neutral">Nötr (sürpriz)</option><option value="girl">Kız teması</option><option value="boy">Erkek teması</option></select>
     <label for="dd">Tahmini doğum tarihini biliyorsanız (isteğe bağlı)</label><input id="dd" type="date">
+    <label style="display:flex;gap:8px;align-items:flex-start;font-weight:500"><input id="kv" type="checkbox" style="margin-top:4px"><span>${L('Hamilelik haftam ve tahmini doğum tarihim dahil bilgilerimin, sayfamı oluşturmak ve sevdiklerime göstermek amacıyla işlenmesine açık rıza veriyorum.','I explicitly consent to my information, including my pregnancy week and due date, being processed to create my page and show it to my loved ones.')} <a href="#/privacy" target="_blank">${L('Gizlilik ve KVKK','Privacy')}</a></span></label>
     <div class="r" style="margin-top:12px"><button id="mk">Sayfayı oluştur</button><button class="g" id="lo">Çıkış yap</button></div></div></div>`;
     $('mk').onclick=async()=>{const bn=$('bn').value.trim();if(!bn)return alert('Bebeğin adını yazın');
+      if(!$('kv').checked)return alert(L('Devam etmek için açık rıza kutusunu işaretleyin.','Please tick the consent box to continue.'));
       let dd=$('dd').value;const w=+$('wk').value;
       if(!dd){if(!w)return alert('Kaçıncı haftada olduğunuzu seçin');dd=dueFromWeek(w)}
-      const {error}=await sb.from('pages').insert({slug:await mkslug(bn),baby_name:bn,parents:$('pa').value.trim(),lang:LANG,theme:$('pt').value,due_date:dd});if(!err(error))go()};
+      let ref=null;try{ref=localStorage.getItem('ref')}catch(_){}
+      const {error}=await sb.from('pages').insert({slug:await mkslug(bn),baby_name:bn,parents:$('pa').value.trim(),lang:LANG,theme:$('pt').value,due_date:dd,ref,consent_at:new Date().toISOString()});
+      if(!err(error)){try{localStorage.removeItem('ref')}catch(_){}go()}};
     $('lo').onclick=out;return;
   }
   document.body.dataset.pal=pal(pg);
@@ -580,17 +585,17 @@ async function panel(user){
 const LG={
 privacy:{tr:`<h2>Gizlilik ve KVKK Aydınlatma Metni</h2><p class="mu">Son güncelleme: 8 Ekim 2026. Bu sayfa bilgilendirme amaçlıdır.</p>
 <h3>1. Veri sorumlusu</h3><p>Minilist (minilist.co) hizmetinin işletmecisi.</p>
-<h3>2. İşlenen veriler</h3><ul><li><b>Hesap:</b> e-posta adresi ve şifre (şifre geri döndürülemez biçimde, karma/hash olarak saklanır).</li><li><b>Aile sayfası:</b> bebeğin adı, anne ve baba adları, tahmini doğum tarihi, hediye listesi, haftalık notlar ve ebeveynin girdiği diğer bilgiler.</li><li><b>Misafirler:</b> hesap açmadan bıraktıkları ad, not, mektup, isim veya ürün önerisi ve hediye ayırma/katkı bilgileri ve isteğe bağlı olarak seçtikleri yakınlık (ör. teyze, dede).</li><li><b>Fotoğraflar:</b> ebeveynin yüklediği kapak ve not fotoğrafları. Yüklemeden önce cihazınızda küçültülür ve konum dahil tüm gizli bilgileri (EXIF) silinir. Fotoğraflar tahmin edilemeyen adreslerde saklanır; adresi bilen kişi fotoğrafı görebilir.</li><li><b>Sayfa şifresi:</b> isteğe bağlıdır ve geri döndürülemez biçimde (bcrypt) saklanır.</li><li><b>Teknik:</b> barındırma sağlayıcısının tuttuğu IP ve cihaz kayıtları; ayrıca kötüye kullanımı önlemek için misafir işlemlerinde IP adresi en fazla 1 gün tutulur.</li><li><b>Reklam:</b> ücretsiz planda reklam sağlayıcısının çerezleri.</li></ul>
-<h3>3. Amaç ve hukuki sebep</h3><p>Hizmeti sunmak ve hesabı yönetmek (sözleşmenin ifası), güvenliği sağlamak, yasal yükümlülükleri yerine getirmek, ücretli plan ödemesini doğrulamak. Reklam çerezleri için ayrıca onayınız istenir.</p>
-<h3>4. Aktarım</h3><p>Verileriniz, hizmeti sunmak için çalıştığımız sağlayıcılara aktarılır ve bunlar yurt dışında olabilir: veritabanı ve kimlik doğrulama (Supabase), yayın ve barındırma (Vercel), ödeme (Polar, kart bilgilerinizi biz görmeyiz) ve ücretsiz planda reklam sağlayıcısı. Yurt dışı aktarımda KVKK'daki şartlara uyulur.</p>
+<h3>2. İşlenen veriler</h3><ul><li><b>Hesap:</b> e-posta adresi ve şifre (şifre geri döndürülemez biçimde, karma/hash olarak saklanır).</li><li><b>Aile sayfası:</b> bebeğin adı, anne ve baba adları, tahmini doğum tarihi, hediye listesi, haftalık notlar ve ebeveynin girdiği diğer bilgiler.</li><li><b>Misafirler:</b> hesap açmadan bıraktıkları ad, not, mektup, isim veya ürün önerisi ve hediye ayırma/katkı bilgileri ve isteğe bağlı olarak seçtikleri yakınlık (ör. teyze, dede).</li><li><b>Fotoğraflar:</b> ebeveynin yüklediği kapak ve not fotoğrafları. Yüklemeden önce cihazınızda küçültülür ve konum dahil tüm gizli bilgileri (EXIF) silinir. Fotoğraflar tahmin edilemeyen adreslerde saklanır; adresi bilen kişi fotoğrafı görebilir.</li><li><b>Sayfa şifresi:</b> isteğe bağlıdır ve geri döndürülemez biçimde (bcrypt) saklanır.</li><li><b>Teknik:</b> barındırma sağlayıcısının tuttuğu IP ve cihaz kayıtları; ayrıca kötüye kullanımı önlemek için misafir işlemlerinde IP adresi en fazla 1 gün tutulur.</li></ul>
+<h3>3. Amaç ve hukuki sebep</h3><p>Hizmeti sunmak ve hesabı yönetmek (sözleşmenin ifası), güvenliği sağlamak, yasal yükümlülükleri yerine getirmek, ücretli plan ödemesini doğrulamak. Hamilelik haftası ve tahmini doğum tarihi gibi sağlık verisi niteliği taşıyabilecek bilgiler, sayfa oluşturulurken verdiğiniz açık rızaya dayanılarak işlenir; rızanızı sayfanızı silerek geri alabilirsiniz. Sitede reklam ve reklam çerezi yoktur.</p>
+<h3>4. Aktarım</h3><p>Verileriniz, hizmeti sunmak için çalıştığımız sağlayıcılara aktarılır ve bunlar yurt dışında olabilir: veritabanı ve kimlik doğrulama (Supabase), yayın ve barındırma (Vercel), ödeme (Polar, kart bilgilerinizi biz görmeyiz). Yurt dışı aktarımda KVKK'daki şartlara uyulur.</p>
 <h3>5. Saklama</h3><p>Verileriniz hesabınız açık kaldığı sürece saklanır. Silme talebiniz üzerine hesabınız ve sayfanız silinir.</p>
 <h3>6. Haklarınız (KVKK m. 11)</h3><p>Verilerinizin işlenip işlenmediğini öğrenme, bilgi isteme, amacını öğrenme, aktarıldığı kişileri bilme, düzeltme, silme veya yok edilmesini isteme, itiraz etme ve zararın giderilmesini talep etme haklarına sahipsiniz. Başvuru kanalları yakında bu sayfada yayımlanacaktır.</p>
 <h3>7. Önemli: sayfanız herkese açıktır</h3><p>Aile sayfası, bağlantıyı bilen herkes tarafından görülebilir. Bağlantıyı yalnızca güvendiğiniz kişilerle paylaşın; isterseniz sayfaya bir aile şifresi ekleyin. Sağlık gibi hassas bilgileri ve paylaşmak istemediğiniz fotoğrafları yüklemeyin. Bebeğe ait bilgileri ebeveyn olarak siz girersiniz.</p>`,
 en:`<h2>Privacy and Data Protection Notice</h2><p class="mu">Last updated: October 8, 2026. This page is for information purposes.</p>
 <h3>1. Data controller</h3><p>The operator of the Minilist service (minilist.co).</p>
-<h3>2. Data we process</h3><ul><li><b>Account:</b> email address and password (the password is stored as a one-way hash).</li><li><b>Family page:</b> baby's name, parents' names, due date, gift list, weekly notes and other information entered by the parent.</li><li><b>Guests:</b> the name, note, letter, name or product suggestion and gift reservation/contribution details they leave without creating an account, and the relation they optionally choose (e.g. aunt, grandpa).</li><li><b>Photos:</b> cover and note photos uploaded by the parent. They are resized on your device before upload and all hidden data, including location (EXIF), is removed. Photos are stored at unguessable addresses; anyone who has a photo's address can see it.</li><li><b>Page password:</b> optional and stored as a one-way hash (bcrypt).</li><li><b>Technical:</b> IP and device logs kept by our hosting provider; to prevent abuse, the IP address of guest actions is also kept for at most 1 day.</li><li><b>Advertising:</b> cookies from the ad provider on the free plan.</li></ul>
-<h3>3. Purpose and legal basis</h3><p>To provide the service and manage your account (performance of a contract), keep it secure, meet legal obligations and verify payment for the paid plan. We ask for your consent for advertising cookies.</p>
-<h3>4. Sharing and transfers</h3><p>Your data is shared with providers we use to run the service, which may be located abroad: database and authentication (Supabase), hosting and delivery (Vercel), payments (Polar; we never see your card details) and, on the free plan, the ad provider. Cross-border transfers follow applicable law.</p>
+<h3>2. Data we process</h3><ul><li><b>Account:</b> email address and password (the password is stored as a one-way hash).</li><li><b>Family page:</b> baby's name, parents' names, due date, gift list, weekly notes and other information entered by the parent.</li><li><b>Guests:</b> the name, note, letter, name or product suggestion and gift reservation/contribution details they leave without creating an account, and the relation they optionally choose (e.g. aunt, grandpa).</li><li><b>Photos:</b> cover and note photos uploaded by the parent. They are resized on your device before upload and all hidden data, including location (EXIF), is removed. Photos are stored at unguessable addresses; anyone who has a photo's address can see it.</li><li><b>Page password:</b> optional and stored as a one-way hash (bcrypt).</li><li><b>Technical:</b> IP and device logs kept by our hosting provider; to prevent abuse, the IP address of guest actions is also kept for at most 1 day.</li></ul>
+<h3>3. Purpose and legal basis</h3><p>To provide the service and manage your account (performance of a contract), keep it secure, meet legal obligations and verify payment for the paid plan. Information that may count as health data, such as your pregnancy week and due date, is processed based on the explicit consent you give when creating your page; you can withdraw it by deleting your page. There are no ads or advertising cookies on the site.</p>
+<h3>4. Sharing and transfers</h3><p>Your data is shared with providers we use to run the service, which may be located abroad: database and authentication (Supabase), hosting and delivery (Vercel), payments (Polar; we never see your card details). Cross-border transfers follow applicable law.</p>
 <h3>5. Retention</h3><p>We keep your data while your account is open. On your deletion request we delete your account and page.</p>
 <h3>6. Your rights</h3><p>You can ask whether we process your data, request access, correction or deletion, object to processing and claim compensation for damage, as provided by the Turkish Personal Data Protection Law (KVKK, Art. 11) and other applicable law. Contact channels will be published on this page soon.</p>
 <h3>7. Important: your page is public</h3><p>A family page can be viewed by anyone who has the link. Share the link only with people you trust, and add a family password if you like. Do not enter sensitive information such as health details or upload photos you would not want shared. You enter information about the baby as a parent.</p>`},
@@ -598,8 +603,8 @@ terms:{tr:`<h2>Kullanım Şartları</h2><p class="mu">Son güncelleme: 7 Ekim 20
 <h3>1. Hizmet</h3><p>Minilist, ailelerin hamilelikten itibaren hediye listesi, mektup ve güncellemelerle çevrelerini sürece katmasını sağlar. Hizmeti kullanarak bu şartları kabul edersiniz.</p>
 <h3>2. Hesap</h3><p>Hesap bilgilerinizin doğruluğundan ve güvenliğinden siz sorumlusunuz. Bir hesap için bir aile sayfası açılabilir.</p>
 <h3>3. İçerik</h3><p>Sayfanıza ve misafirlerin bıraktığı içeriğe siz ve misafirler sorumlusunuz. Hukuka aykırı, aşağılayıcı veya başkalarının haklarını ihlal eden içerikleri kaldırma ve ilgili hesapları kapatma hakkımız saklıdır.</p>
-<h3>4. Ödeme toplanmaz</h3><p>Minilist hediye parası toplamaz, tutmaz veya aktarmaz. "Ortak hediye" katkıları yalnızca bir söz kaydıdır; ödeme aile ile katkıda bulunan arasında gerçekleşir.</p>
-<h3>5. Planlar ve ödeme</h3><p>Ücretsiz plan reklam içerir ve 25 ürünle sınırlıdır. Pro plan, reklamsız sayfa, sınırsız ürün ve anı defteri PDF indirmeyi içerir; tek seferlik ödenir. Ödemeler, satıcı kaydı sağlayıcısı Polar üzerinden alınır. Güncel fiyat ödeme sayfasında gösterilir.</p>
+<h3>4. Ödeme toplanmaz</h3><p>Minilist hediye parası toplamaz, tutmaz veya aktarmaz. "Ortak hediye" katkıları yalnızca bir söz kaydıdır; ödeme aile ile katkıda bulunan arasında gerçekleşir. Bazı ürün bağlantıları satış ortaklığı bağlantısı olabilir; bu bağlantılardan alışveriş yapılırsa Minilist mağazadan komisyon alabilir, fiyat değişmez. Bu durum sayfada belirtilir.</p>
+<h3>5. Planlar ve ödeme</h3><p>Ücretsiz plan reklam içermez ve 25 ürünle sınırlıdır. Pro plan, sınırsız ürün ve anı defteri PDF indirmeyi içerir; tek seferlik ödenir. Ödemeler, satıcı kaydı sağlayıcısı Polar üzerinden alınır. Güncel fiyat ödeme sayfasında gösterilir.</p>
 <h3>6. İade</h3><p>Pro plan için iade talepleri, satın alma sırasında kullanılan ödeme sağlayıcısı üzerinden yürütülür. Yasal haklarınız saklıdır.</p>
 <h3>7. Sorumluluk</h3><p>Hizmet "olduğu gibi" sunulur; kesintisiz veya hatasız olacağı garanti edilmez. Yasaların izin verdiği ölçüde dolaylı zararlardan sorumlu değiliz.</p>
 <h3>8. Değişiklik ve uyuşmazlık</h3><p>Şartları güncelleyebiliriz; önemli değişiklikleri duyururuz. Türk hukuku uygulanır; tüketici mercilerine başvuru hakkınız saklıdır.</p>`,
@@ -607,8 +612,8 @@ en:`<h2>Terms of Use</h2><p class="mu">Last updated: October 7, 2026. This page 
 <h3>1. The service</h3><p>Minilist lets families involve their circle from pregnancy onward with a gift list, letters and updates. By using the service you accept these terms.</p>
 <h3>2. Account</h3><p>You are responsible for the accuracy and security of your account details. One family page can be created per account.</p>
 <h3>3. Content</h3><p>You and your guests are responsible for the content on your page. We may remove unlawful, abusive or rights-infringing content and close the related accounts.</p>
-<h3>4. We do not collect payments for gifts</h3><p>Minilist does not collect, hold or transfer gift money. "Group gift" contributions are only a record of a promise; the payment happens between the family and the contributor.</p>
-<h3>5. Plans and payment</h3><p>The free plan includes ads and is limited to 25 items. The Pro plan includes an ad-free page, unlimited items and memory book PDF download, paid once. Payments are processed through our merchant-of-record provider, Polar. The current price is shown at checkout.</p>
+<h3>4. We do not collect payments for gifts</h3><p>Minilist does not collect, hold or transfer gift money. "Group gift" contributions are only a record of a promise; the payment happens between the family and the contributor. Some item links may be affiliate links; if a purchase is made through them, Minilist may earn a commission from the store at no extra cost. This is disclosed on the page.</p>
+<h3>5. Plans and payment</h3><p>The free plan has no ads and is limited to 25 items. The Pro plan includes unlimited items and memory book PDF download, paid once. Payments are processed through our merchant-of-record provider, Polar. The current price is shown at checkout.</p>
 <h3>6. Refunds</h3><p>Refund requests for the Pro plan are handled through the payment provider used at purchase. Your statutory rights are not affected.</p>
 <h3>7. Liability</h3><p>The service is provided "as is" and we do not guarantee it will be uninterrupted or error-free. To the extent permitted by law, we are not liable for indirect damages.</p>
 <h3>8. Changes and disputes</h3><p>We may update these terms and will announce important changes. Turkish law applies; your right to apply to consumer authorities is preserved.</p>`}};
@@ -653,13 +658,13 @@ async function admin(){
 // İstatistik görüntüleyici: sadece sayılar; içerik, e-posta, ad ve bağlantı yok, işlem butonu yok.
 async function stats(){
   const {data,error}=await sb.rpc('stats_list_pages');if(err(error))return;
-  const rows=data||[],K=[['products','Ürün'],['reservations','Ayrılan'],['contributions','Katkı'],['letters','Mektup'],['updates','Not'],['hearts','Kalp'],['name_suggestions','İsim önerisi'],['product_suggestions','Ürün önerisi'],['guesses','Tahmin'],['photos','Fotoğraf']];
+  const rows=data||[],K=[['products','Ürün'],['reservations','Ayrılan'],['contributions','Katkı'],['letters','Mektup'],['updates','Not'],['hearts','Kalp'],['name_suggestions','İsim önerisi'],['product_suggestions','Ürün önerisi'],['guesses','Tahmin'],['photos','Fotoğraf'],['referred','Getirdiği aile']];
   const sum=k=>rows.reduce((a,r)=>a+(r[k]||0),0);
   app.innerHTML=`<div class="w"><div class="r" style="justify-content:space-between"><h2>İstatistikler</h2><button class="g" id="lo">Çıkış yap</button></div>
   <div class="card"><b>${rows.length} aile · ${rows.filter(r=>r.plan==='pro').length} Pro · ${rows.filter(r=>r.born).length} doğum · ${rows.filter(r=>r.has_pw).length} şifreli</b>
   <div class="stats">${K.map(([k,t])=>`<div><b>${sum(k)}</b><span>${t}</span></div>`).join('')}</div></div><br>
   <div class="card" style="overflow-x:auto"><table class="st"><thead><tr><th>Aile</th><th>Açılış</th><th>Plan</th>${K.map(([,t])=>`<th>${t}</th>`).join('')}</tr></thead>
-  <tbody>${rows.map(r=>`<tr><td>#${e(r.code)}</td><td>${e(r.created_on)}</td><td>${r.plan==='pro'?'Pro':'Ücretsiz'}</td>${K.map(([k])=>`<td>${+r[k]||0}</td>`).join('')}</tr>`).join('')||'<tr><td colspan="13" class="mu">Henüz aile yok.</td></tr>'}</tbody></table></div></div>`;
+  <tbody>${rows.map(r=>`<tr><td>#${e(r.code)}</td><td>${e(r.created_on)}</td><td>${r.plan==='pro'?'Pro':'Ücretsiz'}</td>${K.map(([k])=>`<td>${+r[k]||0}</td>`).join('')}</tr>`).join('')||'<tr><td colspan="14" class="mu">Henüz aile yok.</td></tr>'}</tbody></table></div></div>`;
   $('lo').onclick=out;
 }
 async function sp(id,plan){
@@ -817,13 +822,13 @@ async function pub(slug){
   if(pg.due_date&&!pg.born)tick(pg.due_date);
   $('pgw').innerHTML=`<section class="sec"><div class="sh"><div><h2>Hediye listesi</h2><p class="lead">${L('Bir ürünü ayırın ya da ortak hediyeye katkıda bulunun. Aynı hediye iki kez alınmaz.','Reserve an item or chip in on a group gift. Nothing gets bought twice.')}</p></div><button class="g" id="psg">+ Ürün öner</button></div>
   ${ps.length>4?`<div class="r flt"><input id="pq" type="search" placeholder="Ürün veya marka ara..."><select id="pcat"><option value="">Tüm kategoriler</option>${[...new Set(ps.map(x=>x.category).filter(Boolean))].map(c=>`<option>${e(c)}</option>`).join('')}</select></div>`:''}
-  <div id="pgg"></div><div class="grid" id="pgrid"></div></section>`;
+  <div id="pgg"></div><div class="grid" id="pgrid"></div>${ps.some(p=>u(p.link)&&aff(p.link)!==p.link)?`<p class="mu sm" style="margin-top:12px">${L('Bazı ürün bağlantıları satış ortaklığı bağlantısıdır: bu bağlantılardan alışveriş yaparsanız Minilist mağazadan küçük bir komisyon alabilir. Fiyat sizin için değişmez.','Some item links are affiliate links: if you buy through them, Minilist may earn a small commission from the store. The price stays the same for you.')}</p>`:''}</section>`;
   const st=p=>{const g=p.target_amount>0,t=tot[p.id]||{qty:0,amt:0},left=p.quantity-t.qty;return {g,t,left,full:g?t.amt>=p.target_amount:left<=0,pc:g?Math.min(100,Math.round(t.amt/p.target_amount*100)):0}};
   const cardH=p=>{const {g,t,left,full,pc}=st(p),im=u(p.image);
     return `<article class="prod${g?' gg':''}${full?' done':''}">${im?`<img src="${im}" alt="" loading="lazy">`:'<div class="noimg" aria-hidden="true">🎁</div>'}<div class="pb">
     ${g?'<span><span class="pill">Ortak hediye</span></span>':`<div class="meta">${e(p.category)}</div>`}<h3>${e(p.name)}</h3>${p.description?`<p class="mu">${e(p.description)}</p>`:''}
     ${g?`<div class="bar" role="progressbar" aria-valuenow="${pc}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pc}%"></i></div><div class="meta">${t.amt} / ${p.target_amount} TL</div>`:`<div class="meta">${full?'Tamamı ayrıldı':left+' adet kaldı'}</div>`}
-    <div class="r">${u(p.link)?`<a href="${u(p.link)}" target="_blank" rel="noopener">Ürünü incele</a>`:'<span></span>'}<button ${full?'disabled':''} onclick="rv(${p.id})">${full?'Ayrıldı':g?'Katkıda bulun':'Bu ürünü alıyorum'}</button></div></div></article>`};
+    <div class="r">${u(p.link)?`<a href="${u(aff(p.link))}" target="_blank" rel="noopener sponsored">Ürünü incele</a>`:'<span></span>'}<button ${full?'disabled':''} onclick="rv(${p.id})">${full?'Ayrıldı':g?'Katkıda bulun':'Bu ürünü alıyorum'}</button></div></div></article>`};
   const drawG=()=>{const q=$('pq')?$('pq').value.toLowerCase():'',c=$('pcat')?$('pcat').value:'';
     const l=ps.filter(x=>(!c||x.category===c)&&(!q||(x.name||'').toLowerCase().includes(q)||(x.description||'').toLowerCase().includes(q))).sort((a,b)=>st(a).full-st(b).full);
     $('pgg').innerHTML=l.filter(x=>x.target_amount>0).map(cardH).join('');
@@ -834,21 +839,26 @@ async function pub(slug){
   $('psg').onclick=()=>{dlg.innerHTML=`<h3>Ürün öner</h3><p class="mu">Aileye bir ürün önerin. Öneri sadece ailenin panelinde görünür, aile isterse listeye ekler.</p><input id="sn" placeholder="Ürün adı" maxlength="120"><input id="sl2" placeholder="Ürün bağlantısı (isteğe bağlı)" maxlength="500"><input id="sf" placeholder="Adınız" maxlength="80"><textarea id="st" placeholder="Not (isteğe bağlı)" maxlength="300"></textarea><div class="r"><button id="sok">Gönder</button><button class="g" onclick="dlg.close()">Vazgeç</button></div>`;
     dlg.showModal();
     $('sok').onclick=async()=>{const n=$('sn').value.trim(),f=$('sf').value.trim();if(!n||!f)return alert('Lütfen ürün adı ve adınızı yazın');
-      const {error}=await sb.rpc('guest_product_suggest',{p_slug:slug,p_name:n,p_from:f,p_link:$('sl2').value.trim()||null,p_note:$('st').value.trim()||null,p_pw:window.PW});if(err(error))return;dlg.close();alert('Öneriniz iletildi!')}};
+      const {error}=await sb.rpc('guest_product_suggest',{p_slug:slug,p_name:n,p_from:f,p_link:$('sl2').value.trim()||null,p_note:$('st').value.trim()||null,p_pw:window.PW});if(err(error))return;thanks('Öneriniz iletildi!',pg)}};
   (async()=>{try{const {data:own}=await sb.rpc('is_owner',{pid:pg.id});if(own===true){const d=document.createElement('div');d.className='w';d.style.paddingBottom='0';d.innerHTML='<div class="card" style="background:var(--soft);margin:0">Bu sizin sayfanız · <a href="#/panel">Ürün ekle ve yönet</a></div>';app.prepend(d)}}catch(_){}})();
   extras(pg,PD);
-  {const f=document.createElement('footer');f.className='w mu';f.innerHTML='<a href="#/panel" style="font-size:13px;color:var(--mu)">Ebeveyn Girişi (Admin)</a>'+(pg.plan==='free'?'<p style="margin-top:6px"><a href="#/">Minilist ile oluşturuldu · Sen de kendi sayfanı aç</a></p>':'');app.append(f)}
+  {const v=document.createElement('section');v.className='w narrow';v.innerHTML=`<div class="card pad" style="text-align:center"><h3>${L('Bir yakınınız bebek mi bekliyor?','Is someone close to you expecting?')}</h3><p class="mu">${L('Ona böyle bir sayfa hediye edin: siz açıp hazırlayın, sonra tek bağlantıyla aileye devredin. Ücretsiz.','Gift them a page like this one: you set it up, then hand it over to the family with one link. Free.')}</p><a href="${refLink(pg)}"><button class="g">${L('Ücretsiz sayfa aç','Open a free page')}</button></a></div>`;app.append(v);
+   const f=document.createElement('footer');f.className='w mu';f.innerHTML='<a href="#/panel" style="font-size:13px;color:var(--mu)">Ebeveyn Girişi (Admin)</a>';app.append(f)}
   window.rv=id=>{const p=ps.find(x=>x.id===id),g=p.target_amount>0,l=p.quantity-(tot[id]?.qty||0);
     dlg.innerHTML=`<h3>${e(p.name)}</h3><input id="rn" placeholder="Adınız" maxlength="80">${relSel('rr')}${g?'<input id="ra" type="number" min="1" placeholder="Katkı tutarı (TL)">':`<input id="rq" type="number" min="1" max="${l}" value="1" aria-label="${L('Adet','Quantity')}">`}<textarea id="rt" placeholder="Not (isteğe bağlı)" maxlength="300"></textarea><div class="r"><button id="ok">Gönder</button><button class="g" onclick="dlg.close()">Vazgeç</button></div>`;
     dlg.showModal();
     $('ok').onclick=async()=>{const n=$('rn').value.trim();if(!n)return alert('Adınızı yazın');
       const row={product_id:id,name:n,note:$('rt').value.trim(),quantity:g?1:+$('rq').value,amount:g?+$('ra').value:0};
       if(g&&!(row.amount>0))return alert('Katkı tutarını girin');
-      const {error}=await sb.rpc('guest_reserve',{p_slug:slug,p_product:row.product_id,p_name:row.name,p_note:row.note,p_qty:row.quantity,p_amount:row.amount,p_rel:$('rr').value||null,p_pw:window.PW});if(err(error))return;dlg.close();alert('Teşekkürler!');pub(slug)}};
+      const {error}=await sb.rpc('guest_reserve',{p_slug:slug,p_product:row.product_id,p_name:row.name,p_note:row.note,p_qty:row.quantity,p_amount:row.amount,p_rel:$('rr').value||null,p_pw:window.PW});if(err(error))return;thanks('Teşekkürler!',pg);pub(slug)}};
 }
-// Reklam kodunuz (ör. AdSense <ins class="adsbygoogle" ...></ins>). Boş bırakılırsa reklam gösterilmez.
-// Sadece ücretsiz plandaki sayfalarda görünür; Pro'da otomatik kalkar.
-const AD_HTML='';
+// Satış ortaklığı: mağaza alan adı -> [URL parametresi, ortaklık kimliğiniz]. Kimlik boşsa bağlantı değiştirilmez.
+// Kimlik girildiğinde sayfada misafire açıkça belirtilir (ticari reklam mevzuatı).
+const AFF={'amazon.com.tr':['tag','']};
+const aff=l=>{try{const x=new URL(l),k=Object.keys(AFF).find(d=>x.hostname===d||x.hostname.endsWith('.'+d));if(!k||!AFF[k][1])return l;x.searchParams.set(AFF[k][0],AFF[k][1]);return x.href}catch(_){return l}};
+const refLink=pg=>'#/?r='+encodeURIComponent(pg.slug);
+// Misafir bir şey bıraktıktan sonra: teşekkür + kendi sayfasını açma daveti (büyümenin ana döngüsü)
+function thanks(msg,pg){dlg.innerHTML=`<h3>${e(msg)}</h3><p class="mu">${L('Bir yakınınız da bebek bekliyor mu, ya da siz mi bekliyorsunuz? Bu sayfanın benzerini birkaç dakikada ücretsiz açabilirsiniz.','Is someone close to you expecting too, or are you? You can open a page like this in a few minutes, for free.')}</p><div class="r"><a href="${refLink(pg)}"><button>${L('Ücretsiz sayfa aç','Open a free page')}</button></a><button class="g" onclick="dlg.close()">${L('Kapat','Close')}</button></div>`;if(!dlg.open)dlg.showModal()}
 const today=()=>new Date().toISOString().slice(0,10);
 const plink=pg=>location.origin+location.pathname+'#/p/'+pg.slug;
 const wa=pg=>'https://wa.me/?text='+encodeURIComponent(pg.lang==='en'?(pg.born?`${pg.baby_name} is here! 💙 ${plink(pg)}`:`${pg.baby_name} is on the way! Wait with us: ${plink(pg)}`):(pg.born?`${pg.baby_name} geldi! 💙 ${plink(pg)}`:`${pg.baby_name} yolda! Bizimle birlikte bekle: ${plink(pg)}`));
@@ -864,14 +874,13 @@ async function extras(pg,PD){
   <div class="card"><input id="ln" placeholder="Adınız" maxlength="80">${relSel('lr')}<textarea id="lb" placeholder="Bebeğe bir mektup bırakın" maxlength="1000"></textarea><button id="ls">Mektubu bırak</button></div></section>
   <section class="sec"><div class="card"><h3>İsim tavsiyesi</h3><p class="mu">Aileye bir isim önerin. Öneriler sadece ailenin panelinde görünür.</p><input id="nn" placeholder="Önerdiğiniz isim" maxlength="60"><input id="nf" placeholder="Adınız" maxlength="80"><input id="nt" placeholder="Anlamı veya notunuz (isteğe bağlı)" maxlength="200"><button id="nsb">Öneriyi gönder</button></div>
   ${u(pg.wishlist_url)?`<div class="card"><a href="${u(pg.wishlist_url)}" target="_blank" rel="noopener"><button>Harici hediye listemiz</button></a></div>`:''}
-  ${pg.plan==='free'&&AD_HTML?`<div class="card" id="adbox">${AD_HTML}</div>`:''}</section>
+</section>
   <section class="share"><div><h2>${L('Sevdiklerinizle paylaşın','Share it with your people')}</h2><p class="mu">${L('Bağlantıyı gönderin ya da QR kodu okutun.','Send the link or scan the QR code.')}</p><a href="${wa(pg)}" target="_blank" rel="noopener"><button>WhatsApp'ta paylaş</button></a></div><div id="qrv" class="qr"></div></section>`;
-  if($('adbox'))try{(window.adsbygoogle=window.adsbygoogle||[]).push({})}catch(_){}
   if(window.QRCode)new QRCode($('qrv'),{text:plink(pg),width:120,height:120});
   $('nsb').onclick=async()=>{const a=$('nn').value.trim(),f=$('nf').value.trim();if(!a||!f)return alert('Lütfen isim ve adınızı yazın');
-    const {error}=await sb.rpc('guest_suggest',{p_slug:pg.slug,p_name:a,p_from:f,p_note:$('nt').value.trim()||null,p_pw:window.PW});if(!err(error)){alert('Öneriniz iletildi!');['nn','nf','nt'].forEach(i=>$(i).value='')}};
+    const {error}=await sb.rpc('guest_suggest',{p_slug:pg.slug,p_name:a,p_from:f,p_note:$('nt').value.trim()||null,p_pw:window.PW});if(!err(error)){thanks('Öneriniz iletildi!',pg);['nn','nf','nt'].forEach(i=>$(i).value='')}};
   $('ls').onclick=async()=>{const n=$('ln').value.trim(),b=$('lb').value.trim();if(!n||!b)return alert('Adınızı ve mektubu yazın');
-    const {error}=await sb.rpc('guest_letter',{p_slug:pg.slug,p_name:n,p_body:b,p_rel:$('lr').value||null,p_pw:window.PW});if(!err(error)){alert('Mektubunuz bırakıldı 💌');$('lb').value=''}};
+    const {error}=await sb.rpc('guest_letter',{p_slug:pg.slug,p_name:n,p_body:b,p_rel:$('lr').value||null,p_pw:window.PW});if(!err(error)){thanks('Mektubunuz bırakıldı 💌',pg);$('lb').value=''}};
 }
 
 async function pextras(pg){
@@ -891,6 +900,7 @@ async function pextras(pg){
   <section class="card"><h3>${L('Sayfa şifresi','Page password')}</h3><p class="mu">${pg.pw_hash?L('Sayfanız şifreli. Ziyaretçiler bağlantıya ek olarak bu şifreyi de girmeli. Şifreyi aileye ayrıca iletin.','Your page is password protected. Visitors need the link and this password. Share the password separately.'):L('Şu an bağlantıyı bilen herkes sayfanızı görebilir. İsterseniz bir aile şifresi ekleyin.','Right now anyone with the link can see your page. Add a family password if you like.')}</p>
   <input id="pw1" type="password" autocomplete="new-password" minlength="4" maxlength="100" placeholder="${L('Yeni şifre (en az 4 karakter)','New password (at least 4 characters)')}"><div class="r"><button id="pwset">${L('Şifreyi kaydet','Save password')}</button>${pg.pw_hash?`<button class="d" id="pwdel">${L('Şifreyi kaldır','Remove password')}</button>`:''}</div></section>`;
   d.innerHTML=`
+  <div class="card"><h3>${L('Instagram hikayesi','Instagram story')}</h3><p class="mu">${L('Bu haftanın meyvesiyle hazır bir hikaye görseli. Telefonda doğrudan paylaşabilir ya da indirebilirsiniz.','A ready-made story image with this week\'s fruit. Share it straight from your phone or download it.')}</p><button id="story">${L('Bu haftanın görselini oluştur','Create this week\'s image')}</button></div>
   <div class="card"><h3>Hafta hafta paylaş</h3><p class="mu">Kısa bir not yeterli: bebek ne yaptı, nasıl hissediyorsunuz? Aile kalp bırakır.</p>
   <input id="uw" type="number" min="1" max="42" placeholder="Hamilelik haftası"><textarea id="ub" placeholder="Bu hafta neler oldu?" maxlength="2000"></textarea>
   <label for="uf">${L('Fotoğraf (isteğe bağlı)','Photo (optional)')}</label><input id="uf" type="file" accept="${ACC}"><button id="pu">Paylaş</button></div>
@@ -911,12 +921,13 @@ async function pextras(pg){
   <label for="s_lo">Mektupların açılacağı tarih</label><input id="s_lo" type="date" value="${v(pg.letters_open_at)}">
   <label><input id="s_born" type="checkbox" ${pg.born?'checked':''}> Bebek doğdu 🎉 (sayfada doğum haberi görünür)</label>
   <button id="sv">Kaydet</button></div>
-  ${pg.plan==='free'?`<div class="card"><h3>Reklamsız Pro</h3><p class="mu">Reklamları kaldırır, ürün sınırını açar ve anı defterini PDF indirmenizi sağlar. Tek seferlik ödeme.</p>${PAYMENTS?'<button id="up">Pro\'ya geç</button>':'<p class="mu"><b>Beta:</b> Pro özellikleri davet edilen ailelere ücretsiz açılır.</p>'}</div>`:'<div class="card"><b>Pro aktif ✓</b><p class="mu">'+L('Anı defteri yüklediğiniz fotoğrafları, notlarınızı ve ailenizin mektuplarını içerir.','The memory book includes your photos, notes and your family\'s letters.')+'</p><button id="bookbtn">Anı defterini indir (PDF)</button></div>'}
+  ${pg.plan==='free'?`<div class="card"><h3>Pro</h3><p class="mu">${L('Sınırsız ürün ve fotoğraflarınız, notlarınız, ailenizin mektuplarıyla anı defteri (PDF). Basılı anı defteri yakında. Tek seferlik ödeme.','Unlimited items and a memory book (PDF) with your photos, notes and your family\'s letters. Printed memory book coming soon. One-time payment.')}</p>${PAYMENTS?'<button id="up">Pro\'ya geç</button>':'<p class="mu"><b>Beta:</b> Pro özellikleri davet edilen ailelere ücretsiz açılır.</p>'}</div>`:'<div class="card"><b>Pro aktif ✓</b><p class="mu">'+L('Anı defteri yüklediğiniz fotoğrafları, notlarınızı ve ailenizin mektuplarını içerir.','The memory book includes your photos, notes and your family\'s letters.')+'</p><button id="bookbtn">Anı defterini indir (PDF)</button></div>'}
   <div class="card"><h3>Sayfayı aileye devret</h3><p class="mu">Aile henüz kayıt olmadıysa sorun değil. Bir davet bağlantısı oluşturun, aileye WhatsApp veya e-postayla gönderin. Aile kayıt olup bağlantıyı açınca sayfa onların olur ve sizin erişiminiz kalkar. Bağlantı tek kullanımlıktır ve 30 gün geçerlidir.</p>
   <input id="tr_em" type="email" placeholder="Ailenin e-posta adresi (isteğe bağlı, sadece e-posta taslağı için)"><button class="d" id="tr_go">Davet bağlantısı oluştur</button>
   <div id="tr_out" style="margin-top:10px"></div></div>
   <div class="card"><h3>Tehlikeli bölge</h3><div class="r"><button class="d" id="dpg">Sayfamı sil</button><button class="d" id="dac">Hesabımı sil</button></div></div>`;
   $('s_lang').value=pg.lang||'tr';$('s_theme').value=pg.theme||'neutral';
+  $('story').onclick=()=>storyCard(pg);
   if($('bookbtn'))$('bookbtn').onclick=()=>book(pg);
   if($('up'))$('up').onclick=async()=>{const {data,error}=await sb.functions.invoke('polar-checkout');if(err(error))return;if(data?.url)location.href=data.url;else alert(data?.error||'Ödeme açılamadı')};
   const busy=(b,on)=>{if(b){b.disabled=on}};
@@ -953,4 +964,32 @@ async function pextras(pg){
 }
 window.dup=async id=>{if(!confirm('Silinsin mi?'))return;const x=(window.UPS||[]).find(r=>r.id===id);
   const {error}=await sb.from('updates').delete().eq('id',id);if(err(error))return;if(x)await rmPhotos([x.photo_path]);go()};
+// Haftalık Instagram hikaye görseli (1080x1920). Telefonda paylaşım menüsü, masaüstünde indirme.
+async function storyCard(pg){
+  const w=pg.due_date?gwk(pg.due_date):null,f=!pg.born&&w!==null&&w>=4?FR[Math.min(40,w)]:null;
+  if(!pg.born&&!f)return alert(L('Görsel 4. haftadan itibaren hazırlanabilir. Sayfa ayarlarında tahmini doğum tarihini kontrol edin.','The image is available from week 4. Check the due date in page settings.'));
+  try{await Promise.all([document.fonts.load('96px "Young Serif"'),document.fonts.load('600 54px Figtree')])}catch(_){}
+  const P={lilac:['#F7F5F9','#7A5C9E','#ECE6F3'],rose:['#FBF5F7','#A4486B','#F6E3EA'],sea:['#F3F7FA','#2E6689','#DFEBF3'],sage:['#F4F7F4','#46705A','#E1ECE4'],apricot:['#FCF7F2','#9C5221','#F7E6D6']}[pal(pg)];
+  const c=document.createElement('canvas');c.width=1080;c.height=1920;const x=c.getContext('2d'),cx=540,cy=780;
+  x.fillStyle=P[0];x.fillRect(0,0,1080,1920);
+  x.lineWidth=22;x.lineCap='round';x.strokeStyle='#E4DFEA';x.beginPath();x.arc(cx,cy,340,0,2*Math.PI);x.stroke();
+  x.strokeStyle=P[1];x.beginPath();x.arc(cx,cy,340,-Math.PI/2,-Math.PI/2+2*Math.PI*(pg.born?1:Math.min(1,w/40)));x.stroke();
+  x.fillStyle=P[2];x.beginPath();x.arc(cx,cy,290,0,2*Math.PI);x.fill();
+  x.textAlign='center';x.textBaseline='middle';
+  x.font='250px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';x.fillText(pg.born?'👶':(f[2]==='papaya'?'🍈':f[2]),cx,cy+10);
+  const fit=(t,max,size,font)=>{let s=size;do{x.font=font.replace('S',s+'px');s-=4}while(x.measureText(t).width>max&&s>40);return x.font};
+  x.fillStyle=P[1];x.font='600 54px Figtree,sans-serif';
+  x.fillText(pg.born?L('Merhaba dünya','Hello world'):L(`${w>40?'40+':w}. hafta`,`Week ${w>40?'40+':w}`),cx,1230);
+  x.fillStyle='#2E2A3B';
+  const l1=pg.born?L(`${pg.baby_name}`,`${pg.baby_name}`):L('Bu hafta bir','This week we are'),l2=pg.born?L('geldi!','is here!'):L(`${f[0]} kadarız`,`the size of a ${f[1]}`);
+  x.font=fit(l1,920,104,'S "Young Serif",Georgia,serif');x.fillText(l1,cx,1360);
+  x.font=fit(l2,920,104,'S "Young Serif",Georgia,serif');x.fillText(l2,cx,1480);
+  x.fillStyle='#676174';x.font=fit(pg.baby_name,920,50,'600 S Figtree,sans-serif');
+  if(!pg.born)x.fillText(L(`${pg.baby_name} yolda`,`${pg.baby_name} is on the way`),cx,1610);
+  x.font='600 36px Figtree,sans-serif';x.fillText('minilist',cx,1830);
+  const b=await new Promise(r=>c.toBlob(r,'image/png'));if(!b)return alert(L('Görsel oluşturulamadı.','The image could not be created.'));
+  const name=`minilist-${pg.born?'merhaba':'hafta-'+w}.png`,file=new File([b],name,{type:'image/png'});
+  try{if(navigator.canShare&&navigator.canShare({files:[file]}))return await navigator.share({files:[file]})}catch(x){if(x&&x.name==='AbortError')return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+}
 </script></body></html>
