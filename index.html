@@ -1,6 +1,9 @@
 <!DOCTYPE html>
-<html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
-<title>Minilist</title>
+<html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="index,follow" id="mrob">
+<title>Minilist: bebek hediye listesi ve hamilelik sayfası</title>
+<meta name="description" content="Bebeğiniz için ücretsiz bir sayfa açın: hediye listesi, ortak hediye, doğuma geri sayım, hafta hafta notlar ve aileden bebeğe mektuplar tek bağlantıda.">
+<link rel="canonical" href="https://minilist-flame.vercel.app/">
+<meta property="og:type" content="website"><meta property="og:title" content="Minilist: bebeğinizin yolculuğu, sevdiklerinizle birlikte"><meta property="og:description" content="Hediye listesi, doğuma geri sayım, hafta hafta notlar ve bebeğe mektuplar tek bağlantıda."><meta property="og:url" content="https://minilist-flame.vercel.app/"><meta property="og:locale" content="tr_TR">
 <meta name="theme-color" content="#F7F5F9">
 <link rel="preload" href="fonts/young-serif-latin-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/figtree-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
@@ -37,6 +40,7 @@ a{color:var(--ac);text-underline-offset:3px}
 .r{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .r.c{justify-content:center}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+a.card{display:block;color:var(--ink);text-decoration:none;margin:0}a.card:hover{border-color:var(--ac)}a.card h3{font-size:20px;margin-bottom:4px}a.card p{margin:0}
 .pill{display:inline-block;background:var(--soft);color:var(--ac);padding:3px 12px;border-radius:99px;font-size:14px;font-weight:650}
 label{display:block;font-size:14px;font-weight:600;margin:14px 0 2px}
 input,select,textarea{font:inherit;color:inherit;width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;margin:4px 0}
@@ -190,7 +194,7 @@ footer.w{text-align:center}
   .cd{padding:10px 18px}
 }
 </style><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous"></script></head><body><button id="lg">EN</button><div id="app"></div><dialog id="dlg"></dialog>
-<footer class="w mu" style="text-align:center"><a href="#/privacy">Gizlilik ve KVKK</a> · <a href="#/terms">Kullanım Şartları</a></footer>
+<footer class="w mu" style="text-align:center"><a href="/blog">Blog</a> · <a href="#/privacy">Gizlilik ve KVKK</a> · <a href="#/terms">Kullanım Şartları</a></footer>
 <script>
 const SUPABASE_URL='https://wkzjdcqpnosvvfsmqkjw.supabase.co', SUPABASE_KEY='sb_publishable_QQZK8UFIlFolBibWCpMTDg_m0rubZdz';
 // Beta ayarları: ödeme (Polar) ve Google girişi kurulup test edilince true yapın.
@@ -206,6 +210,7 @@ const out=()=>sb.auth.signOut().then(()=>nav('#/'));
 async function go(){
   if(SUPABASE_URL.includes('PROJE-ID')){app.innerHTML='<div class="w"><div class="card"><h3>Kurulum eksik</h3><p>index.html içindeki SUPABASE_URL ve SUPABASE_KEY değerlerini kendi Supabase projenizle değiştirin.</p></div></div>';return}
   const h=location.hash,isP=h.startsWith('#/p/');
+  $('mrob').content=isP?'noindex,nofollow':'index,follow';
   if(!isP){LANG=pref();document.body.removeAttribute('data-theme');document.body.removeAttribute('data-pal')}
   $('lg').style.display=isP?'none':'block';$('lg').textContent=LANG==='tr'?'EN':'TR';
   if(isP)return pub(decodeURIComponent(h.slice(4)));
@@ -481,6 +486,11 @@ function home(){
   <p class="pvn">${L('Rengi siz seçersiniz. İsterseniz sayfaya bir aile şifresi koyarsınız.','You choose the colour. Add a family password if you like.')}</p></div>
   <ol class="keys k">${K.map(([h,p],i)=>`<li><span class="pin" aria-hidden="true">${i+1}</span><div><h3>${h}</h3><p class="mu">${p}</p></div></li>`).join('')}
   <li><span class="pin" aria-hidden="true">+</span><div><h3>${L('Sizin paneliniz','Your dashboard')}</h3><p class="mu">${L('Ürün ekleme, Amazon listesinden aktarma, kim ne aldı, isim önerileri ve fotoğraflı anı defteri (PDF).','Add items, import from an Amazon list, see who got what, name suggestions and a memory book with your photos (PDF).')}</p></div></li></ol></section>
+  <section class="w"><h2>${L('Bebek bekleyen ailelere rehberler','Guides for expecting families')}</h2><div class="grid">
+  <a class="card" href="/blog/bebek-ihtiyac-listesi"><h3>${L('Bebek ihtiyaç listesi','Baby essentials list')}</h3><p class="mu">${L('Yenidoğan için gerçekten gerekenler ve bekleyebilecekler.','What a newborn really needs, and what can wait.')}</p></a>
+  <a class="card" href="/blog/hafta-hafta-bebek-boyutu"><h3>${L('Hafta hafta bebeğin boyutu','Baby size week by week')}</h3><p class="mu">${L('Meyve tablosu ve tahmini doğum tarihi hesaplama.','Fruit chart and due date calculator.')}</p></a>
+  <a class="card" href="/blog/bebege-mektup-ornekleri"><h3>${L('Bebeğe mektup örnekleri','Letters to the baby')}</h3><p class="mu">${L('Anneden, dededen, teyzeden örnekler.','Examples from mum, grandpa and aunts.')}</p></a></div>
+  <p><a href="/blog">${L('Tüm yazılar','All articles')}</a></p></section>
   <section class="w plans"><div class="card"><h3>Ücretsiz</h3><p class="mu">Sayfa, 25 ürüne kadar liste, ürün önerileri, mektup duvarı, güncellemeler, WhatsApp ve QR.</p></div>
   <div class="card ac"><h3>Pro${PAYMENTS?'':' <span class="pill">Yakında</span>'}</h3><p class="mu">Reklamsız sayfa, sınırsız ürün ve anı defteri PDF indirme. Tek seferlik ödeme.</p></div></section>
   <section class="w narrow"><div class="card pad"><h2>Giriş yap veya sayfanı aç</h2>

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /graphify-out/
+Disallow: /supabase/
+
+Sitemap: https://minilist-flame.vercel.app/sitemap.xml
