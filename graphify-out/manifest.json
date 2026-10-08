@@ -1,0 +1,14 @@
+{
+  "vercel.json": {
+    "mtime": 1791442923.0128417,
+    "seen": 1791443225.5385404,
+    "ast_hash": "3ef52842707c04d478d18f6667b38ca5",
+    "semantic_hash": "3ef52842707c04d478d18f6667b38ca5"
+  },
+  "index.html": {
+    "mtime": 1791442923.0098453,
+    "seen": 1791443225.5385404,
+    "ast_hash": "af487b8d19b20b41630e954ce5747c25",
+    "semantic_hash": "af487b8d19b20b41630e954ce5747c25"
+  }
+}
